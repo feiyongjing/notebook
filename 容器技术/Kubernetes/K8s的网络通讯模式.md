@@ -1,0 +1,11 @@
+K8s的网络模型假定了所有Pod都在一个可以直接连通的扁平的网络空间中，这在GCE（Google Compute Engine）里面是现成的网络模型，K8s假定这个网络已经存在。而在私有云搭建K8s集群，就不能假定这个网络已经存在了。需要自己实现这个网络假设，将不同节点上的Docker容器之间的互相访问先打通，然后运行K8s
+
+同一个Pod内的多个容器之间通过localhost可以直接进行IO通信
+
+不同的Pod之间的通讯通过 Overlay NetWork
+
+Pod与Service之间的通讯通过 Iptables 或者 LVS 规则
+
+Flannel 是 CoreOS 团队针对K8s设计的一个网络规划服务，它的功能是让集群中的不同节点主机创建的Docker容器都具有全集群唯一的虚拟IP地址。而且它还能在这些IP地址之间建立一个覆盖网络（Overlay Network），通过这个覆盖网络，将数据包原封不动的传递到目标容器内
+
+ 

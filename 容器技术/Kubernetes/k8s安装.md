@@ -1,0 +1,1 @@
+方式一：使用额外的服务器安装：https://kuboard-spray.cn/

@@ -1,12 +1,18 @@
 # 数据库操作sql
 ~~~sql
-SHOW DATABASES;                 -- 查看数据库
+SHOW DATABASES;                 -- 查看数据库，默认的存在的四个数据库   information_schema ，mysql， performance_schema ， sys 
 CREATE DATABASE [数据库名字];    -- 创建数据库   
 DROP DATABASE 数据库名字;        -- 删除数据库
 USE 数据库的名字;                -- 选择数据库
 ~~~
 ---
+# 常见数据类型
 
+- 整数类型                    int和bigint(相对于long)
+- 字符串类型                  varchar(最长长度)和text文本类型
+- 时间类型                    timestamp
+
+---
 # 表格创建sql
 ~~~sql
 -- 创建数据表，IF NOT EXISTS 是当指定名字的表不存在时创建，例子：CREATE TABLE table_name IF NOT EXISTS (column_name column_typ); 
@@ -57,6 +63,26 @@ SELECT * FROM `USER` WHERE [条件筛选];
 -- like通配符_表示匹配单个的任意字符，例子：where name like '_abc';  过滤name是4个字符长度并且以abc结尾的数据
 
 -- regexp 正则表达式，例子：where name regexp binary 'abc';  regexp之后的字符串是正则表达式，binary表示区分大小写，去除则不区分
+
+
+
+-- table_1表只有sex列表示男或女
+-- 例子：将男变成女，女变成男
+-- 方式一
+update table_1 set sex﻿= case sex when '男' then '女' else '男' end;​
+-- 方式二
+update table_1 set = if(sex='男','女','男');
+
+
+-- 排行榜
+-- Scores表根据分数排名（分数相同的人排名不同）
+select Score, row_number() over(order by Score desc) 'Rank' from Scores;
+ 
+-- Scores表根据分数排名（分数相同的人排名相同，且排名连续）
+select Score, dense_rank() over(order by Score desc) 'Rank' from Scores;
+ 
+-- Scores表根据分数排名（分数相同的人排名相同，且排名不连续）
+select Score, rank() over(order by Score desc) 'Rank' from Scores;
 ~~~
 ---
  
