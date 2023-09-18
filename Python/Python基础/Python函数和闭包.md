@@ -19,7 +19,7 @@ main(message="沙漠死神",name="内瑟斯")
 main("艾尼维亚", age="???", message="冰晶凤凰")
 
 
-# 函数的定义中如果在参数的前面加* 就表示这是一个元组
+# 函数的定义中如果在参数的前面加* 就表示接收的参数在方法内部被当成是一个元组
 def main1(*args):
     print(args)
 
@@ -62,8 +62,38 @@ main(*lst)
 def main(*args):
     print(args)
     # return会立即退出函数，不写return 或者 return时不写返回值会返回None
+    # return 值1,值2,值3,... 该函数返回多个值，在外界是得到一个元组，元组内部存放的是返回的多个值
     return args
 
+~~~
+---
+
+### 闭包
+~~~python
+# 通过函数的嵌套来封装内部的变量，暴露的函数就是闭包函数
+def main():
+    b = 1
+    def aaa():
+        nonlocal b
+        b += 1
+        return b
+    return aaa
+
+f = main()
+
+print(f())
+print(f())
+~~~
+---
+
+### 匿名函数（lambda表达式）
+~~~python
+# 语法 
+# lambda 参数1, 参数2, ... : 返回值
+
+fn = lambda a, b: a + b
+
+print(fn(10, 20))
 
 ~~~
 ---

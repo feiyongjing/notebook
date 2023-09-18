@@ -30,6 +30,10 @@ print("列表通过索引循环遍历")
 for i in range(len(lst)):
     print(lst[i])
 
+print("列表通过enumerate() 函数循环遍历")
+# enumerate() 函数可以获取到列表的索引和元素
+for index, item in enumerate(["cy","232","123"]):
+    print(index, item)
 
 ~~~
 ---

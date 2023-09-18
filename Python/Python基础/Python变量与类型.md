@@ -1,3 +1,4 @@
+### 常见类型
 ~~~python
 # 单行注释
 
@@ -15,11 +16,44 @@ PI = 3.14
 # ""以外的字符串转换为布尔都是True，而""字符串转换为布尔是False
 # []以外的列表转换为布尔都是True，而[]列表转换为布尔是False
 
+# 空None
 # 字符串类型str
 # 列表list
 # 元组tuple
 # set
 # 字典dict
 # bytes
+# 函数function 函数的名称就代表函数变量，本质是一个内存地址
 
 ~~~
+---
+
+
+### 局部变量和全家变量
+~~~python
+# global 关键字在函数内部引入全局变量并且修改
+a=10
+def abc():
+    global a
+    a = 20
+    print(a)
+
+abc()
+print(a)
+
+
+# nonlocal 关键字在函数内部引入上一层作用域的变量并且修改
+def main():
+    b = 10
+    print(b)
+    def aaa():
+        nonlocal b
+        b = 20
+    aaa()
+    print(b)
+
+main()
+
+~~~
+---
+
