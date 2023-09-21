@@ -18,10 +18,10 @@
 # 常见的Request header
 
 - Accept* ：代表客户端希望接受的数据类型
-- Content-type：请求发送的数据的数据格式
-- Cookie ：代表用户的信息的字符串
-- User-Agent： 用户在浏览器的凭证
-- Refere：请求的上一个页面的URL
+- Content-type：客户端请求发送的请求体数据格式
+- Cookie ：客户端可以代表用户的信息的字符串
+- User-Agent： 用户在浏览器的凭证（其实是指使用的什么程序发送的请求，一般是浏览器或者是各种编程语言的sdk库）
+- Refere：请求的上一个页面的URL（做防盗链使用，服务器端只允许指定的域名下的页面访问当前请求，而其他请求拒绝连接）
 ---
 
 # 常见的Response header

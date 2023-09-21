@@ -95,5 +95,8 @@ fn = lambda a, b: a + b
 
 print(fn(10, 20))
 
+# 简写
+# print((lambda a, b: a+b)(10, 20))
+
 ~~~
 ---
