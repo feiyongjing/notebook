@@ -40,11 +40,13 @@ hobby="丢沙包、骑自行车"
 
 s0 = "我叫%s，我家住在%s，我今年%d岁了，我的爱好是%s" % (name, address, age, hobby)
 s1 = "我叫{}，我家住在{}，我今年{}岁了，我的爱好是{}".format(name, address, age, hobby)
-s2 = f"我叫{name}，我家住在{address}，我今年{age}岁了，我的爱好是{hobby}"
+s2 = f"我叫{name}，我家住在{address}，我今年{age}岁了，我的爱好是{hobby}"  # 字符串前面添加 f 表示字符串是模板字符串
 
 print(s0)
 print(s1)
 print(s2)
+
+print(r"E:\workspace\notebook")  # 字符串前面添加 r 表示是一个原始字符串，即字符串中的转义字符（如 \n、\t 等）不会被转义，通常用于正则表示式或文件的路径
 ~~~
 ---
 
