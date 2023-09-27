@@ -38,3 +38,5 @@ mount /dev/centos/data /data
 # 将挂载信息写入/etc/fstab让电脑开机自动挂载
 echo “/dev/mapper/centos-data /data  xfs  defaults  0 0” >>/etc/fstab
 ~~~
+
+### 非LVM文件系统分区:  https://zhuanlan.zhihu.com/p/83340525
