@@ -1,6 +1,9 @@
 
 
 ~~~python
+# 在 Python 中，traceback 模块提供了处理和格式化异常信息的功能。
+# 当程序发生异常时，可以使用 traceback 模块来获取异常的详细信息，包括异常类型、异常消息、异常发生的位置等。
+import traceback
 s = "abdiuhbdu"
 
 # 使用 try 关键字确定可能出现异常的代码块
@@ -13,6 +16,10 @@ try:
     a = s[20]
 except IndexError as e :
     print("处理IndexError")
+    # print_exc()函数会打印出当前异常的详细信息，包括异常类型、异常消息、异常发生的位置等。
+    # 可以通过 limit 参数指定打印堆栈的深度，如果不指定则打印所有堆栈信息。
+    # 可以通过 file 参数指定打印输出的文件，如果不指定则输出到标准错误流。
+    traceback.print_exc()
 except Exception as e :
     print("Exception")
 else:

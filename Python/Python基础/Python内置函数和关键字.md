@@ -7,7 +7,7 @@ print("121w")
 # type() 函数判断参数类型
 print(type("aaa"))
 
-# input() 函数打印字符串，并且阻塞等待标准输入
+# input() 函数打印字符串，并且阻塞等待标准输入返回输入的字符串
 input("用户请输入密码")
 
 # len() 函数获取字符串的长度
@@ -196,3 +196,13 @@ for i in range(65536):
 ---
 
 ###
+
+
+# python的关键字
+### 以下代码打印的都是关键字
+~~~python
+import keyword
+
+print(keyword.kwlist)
+~~~
+---

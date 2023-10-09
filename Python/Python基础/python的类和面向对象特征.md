@@ -3,7 +3,21 @@
 class User:
     name = None
 
-    # 类中的方法参数必须含有self参数，self是一个关键字表示方法的调用者对象，类似与java的this
+    # staticmethod 是 Python 中的一个内置装饰器，它可以将一个方法转换为静态方法。
+    # 静态方法是不需要访问实例或类的状态（class对象）的方法，因此它们不需要传递 self 或 cls 参数。
+    # 静态方法可以通过类或实例调用，但是它们不会自动传递类或实例作为第一个参数。
+    @staticmethod
+    def sfn():
+        print("静态方法不和class对象绑定")
+
+    # classmethod 也是 Python 中的一个内置装饰器，它可以将一个方法转换为类方法。
+    # 类方法是需要访问类状态（class对象）的方法，因此它们需要传递 cls 参数。
+    # 类方法可以通过类或实例调用，但是它们会自动传递类（class对象）作为第一个参数
+    @classmethod
+    def cfn(cls):
+        print("class方法和class对象绑定，必须有cls方法参数，cls参数就是class对象")
+
+    # 类中的实例方法和类的对象实例绑定，参数必须含有self参数，self是一个关键字表示方法的调用者对象，类似与java的this
     # 在调用方法时不用传递self参数，默认该参数就是调用者本身
     # 在方法内部可以通过self获取和修改对象成员属性
     def say_hi(self):
@@ -34,6 +48,11 @@ class User:
     def __eq__(self, other):
         return self.age == other.age
 
+# 静态方法
+User.sfn()
+
+# 类方法
+User.cfn()
 
 user = User(18)
 user.name = "张三"
@@ -54,6 +73,35 @@ user4 = User(30)
 print(user3 <= user4)
 print(user3 >= user4)
 print(user3 == user4)
+
+~~~
+---
+
+# 对象动态绑定属性和方法
+~~~python
+class User:
+    name = None
+    age = None
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+
+user = User("张三", 18)
+
+# python可以在对象创建之后给对象单独绑定自定义的属性和方法
+# 绑定新的属性gender
+user.gender = '男'
+
+# 绑定新的方法如果需要使用方法内部的属性必须这样写
+def show(self):
+    print(self.name, self.age, self.gender)
+
+user.show = lambda :show(user)
+
+# 绑定新的方法后就可以调用新方法了
+user.show()
 ~~~
 ---
 
@@ -92,15 +140,23 @@ user.__age=20
 class Animal:
     name = None
 
-    def __init__(self,name):
+    def __init__(self, name):
         self.name = name
 
 # 猫继承动物
 class Cat(Animal):
-    def animalSound(self):
-        print(f"{self.name}的叫声：喵喵")
 
-cat =Cat("猫猫")
+    age = None
+
+    # 子类默认继承父类的构造器，旧的属性可以直接调用父类构造器赋值，新的属性需要在子类构造器中自行赋值
+    def __init__(self, name, age):
+        super().__init__(name)
+        self.age = age
+
+    def animalSound(self):
+        print(f"{self.name}的叫声：喵喵，年龄是{self.age}")
+
+cat =Cat("猫猫", 18)
 cat.animalSound()
 ~~~
 ---
@@ -129,6 +185,76 @@ sheepTuo =SheepTuo("羊驼")
 sheepTuo.animalSound()
 ~~~
 ---
+
+### 所有的类都继承与Object类
+~~~python
+obj = object()
+print(type(obj))
+
+# Object类中可以进行的操作，这里面有很多特殊的属性和方法
+print(dir(obj))
+
+
+
+# 一些常见的特殊属性和方法如下
+class User:
+    name = None
+    age = None
+
+    def say_hi(self):
+        print(f"我的名称是：{self.name}")
+
+    # 创建对象是先执行的 __new__() 函数创建对象再执行的 __init__() 函数初始化对象
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    # 自定义对象的相加
+    # 实现了 __add__() 函数则对象就可以使用运算符 + 进行加了，结果就是 __add__() 函数的返回值
+    def __add__(self, other):
+        return self.age + other.age
+
+    # 自定义对象的长度
+    # 实现了 __len__() 函数则对象就可以使用内置函数len()计算对象的长度，结果就是 __len__() 函数的返回值
+    def __len__(self):
+        return len(self.name)
+
+
+user = User("张三", 18)
+
+# __dict__属性获取对象的属性名称和值组成的字典，当然可以可以获取class对象的属性字典里面包含函数名称和函数对象
+print(user.__dict__)
+
+# __class__属性获取对象的class对象，当然也可以直接使用 type(对象) 获取 或者 直接通过类名获取
+print(user.__class__)
+print(type(user))
+print(User)
+
+# class对象的__bases__属性返回一个元组存放类所继承的全部父类类型
+print(User.__bases__)
+
+# class对象的__base__属性获取类所继承的主要父类，即声明继承时最左边的父类
+print(User.__base__)
+
+# class对象的__mro__属性返回一个元组存放类的继承链，内部包含类自己和全部的父类直到object类
+print(User.__mro__)
+
+# class对象的__subclasses__方法返回一个元组存放当前类被那些类继承了
+print(dict.__subclasses__())
+
+# 实现了 __add__() 函数则对象就可以使用运算符 + 进行加了，结果就是__add__() 函数的返回值
+user1 = User("xxx", 12)
+user2 = User("eee", 19)
+print(user1 + user2)
+
+# 实现了 __len__() 函数则对象就可以使用内置函数len()计算对象的长度，结果就是 __len__() 函数的返回值
+user3 = User("xxaqsx12wx", 12)
+print(len(user3))
+print(user3.__len__())
+
+~~~
+---
+
 
 ### 在子类中调用父类的成员或方法
 ~~~python
