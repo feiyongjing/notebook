@@ -80,7 +80,7 @@ def main():
     return aaa
 
 f = main()
-
+# 保护了变量b，使其只能通过调用aaa函数去修改变量b，而其他的地方无法修改和获取变量b
 print(f())
 print(f())
 ~~~
