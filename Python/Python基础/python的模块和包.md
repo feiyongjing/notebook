@@ -24,10 +24,14 @@ from [模块名] import [类 | 变量 | 函数 | *] [as 别名]
 ### __name__ 内置变量
 ~~~python
 
+# 注意当导入一个模块时该模块中没有缩进的代码块就会全部执行一遍
+# 而为了防止执行不必要的代码（这段代码可能会需要）执行一般都是使用  if __name__ == '__main__' 判断代码块是否执行
+
 # __name__是一个内置变量，当以当前文件作为启动文件时该变量就是 '__main__' 就会执行代码块
 # 而当前文件作为自定义模块导入时，以其他文件作为启动文件时该变量不是 '__main__' 就不会执行代码块
 if __name__ == '__main__':
     print(3)
+
 ~~~
 ---
 
@@ -60,6 +64,16 @@ from [包名.模块名] import [类 | 变量 | 函数 | *] [as 别名]
 ~~~
 ---
 
+# 模块的 __file__ 变量
+~~~python
+
+import threading
+
+# 模块的 __file__ 变量会打印模块的所在目录（包括系统模块或者是自定义模块所在的目录）
+print(threading.__file__)
+~~~
+---
+
 # 安装使用第三方的包
 ### pip命令安装第三方包
 ### 清华源参考：https://mirrors.tuna.tsinghua.edu.cn/help/pypi/
@@ -67,6 +81,9 @@ from [包名.模块名] import [类 | 变量 | 函数 | *] [as 别名]
 
 # pip 安装 第三方包 如果速度比较慢请使用 清华源
 pip install [包名]
+
+# pip 卸载包
+pip uninstall [包名]
 
 # 临时使用 清华源
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple [包名]
@@ -78,5 +95,52 @@ python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
 # 设置长期默认使用 清华源
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
+~~~
+---
+
+# 自定义模块打包给其他人使用
+
+### 第一步：在自定义模块目录下创建一个名为 setup.py 的文件，内容如下
+~~~python
+from setuptools import setup
+
+setup(
+    name='my_package',   # name 参数指定包的名称
+    version='0.1',       # version 参数指定包的版本号
+    description='My custom Python package',           # description 参数指定包的描述信息
+    author='Your Name',                               # author 参数指定包的作者
+    author_email='your_email@example.com',            # author_email 参数指定作者的电子邮件地址
+    packages=['my_module', 'my_module.test'],         # packages 参数指定包含的模块或子包的名称
+    install_requires=[                                # install_requires 参数指定包的依赖项
+        'numpy>=1.21.2',
+        'pandas>=1.3.3',
+    ],
+)
+~~~
+---
+
+### 第二步：包目录下打开命令行终端，执行以下命令来生成打包后的 Python 包
+### 该命令会在包目录下生成一个名为 dist 的目录，其中包含了打包后的 Python 包。打包后的 Python 包的文件名格式为 <包名>-<版本号>.tar.gz，例如 my_package-0.1.tar.gz
+~~~shell
+python setup.py sdist
+~~~
+---
+
+### 第三步：将打包后的 Python 包分享给其他人。其他人可以通过以下命令来安装该包
+~~~shell
+pip install <包名>-<版本号>.tar.gz
+# 例如 pip install my_package-0.1.tar.gz
+~~~
+---
+
+### 第四步：安装完成后，就可以在 Python 中导入该包的模块
+~~~python
+import my_module
+~~~
+---
+
+### 第五步：卸载该包
+~~~shell
+pip uninstall my_package
 ~~~
 ---

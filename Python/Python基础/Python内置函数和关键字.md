@@ -85,9 +85,7 @@ dt = [
     {"id": 2, "age": 38, "name": "打野破败之王 佛耶戈"},
     {"id": 3, "age": 21, "name": "AD暗夜猎手 薇恩"}
 ]
-
 f = filter(lambda item: not item["name"].startswith("AD"), dt)
-
 for i in f:
     print(i)
 
@@ -100,9 +98,39 @@ dt = [
     {"id": 2, "age": 38, "name": "中单时间刺客 艾克"},
     {"id": 3, "age": 21, "name": "中单刀锋之影 泰隆"}
 ]
-
 for i in map(lambda item: "打野" + item["name"][2:], dt):
     print(i)
+
+# exec函数接收一段字符串，会将这段字符串当成代码去解析执行，并且其中的变量可能会在exec()函数执行完后存活
+code = """
+import os
+
+os.system('chcp 65001')
+os.system('dir')
+x=1
+"""
+# 注意不要使用用户的输入做为exec函数代码去执行，可能有些恶意用户获取隐私信息或修改系统（比如删除系统配置文件导致系统崩溃）
+exec(code)
+# x变量在exec()函数执行完后存活
+print(x)
+
+# eval函数有三个参数，其中 expression 是字符串代码，用于做运算；globals 与 locals 是可选参数，默认值是 None
+# globals 用于指定运行时的全局变量，类型是字典，
+# locals 指定运行时的局部变量，类型是字典，缺省时使用 globals 的值。
+# expression 参数代码中时使用的变量来源于 locals定义的局部变量 > globals定义的全部变量 > 外面作用域的变量
+# locals定义的局部变量 和 globals定义的全部变量 在 expression 参数代码 执行完后会销毁
+eval("[__import__('os').system('chcp 65001'), __import__('os').system('dir')]")
+# 注意不要使用用户的输入做为eval函数代码去执行，可能有些恶意用户获取隐私信息或修改系统（比如删除系统配置文件导致系统崩溃）
+eval(input("请输入需要执行的python代码:"))
+# __import__('os').system('dir')
+# __import__('os').system('ls')
+x = 10
+y = 20
+c = eval('x + y', {'x': 1, 'y': 2}, {'y': 3, 'z': 4})
+print('x: ' + str(x) + ' y: ' + str(y))
+print('c: ', c)
+
+
 
 ~~~
 ---

@@ -100,3 +100,26 @@ print(fn(10, 20))
 
 ~~~
 ---
+
+### 函数的参数传递和返回值传递都是传递的引用内存地址
+~~~python
+class User:
+    name=None
+
+    def __init__(self,name):
+        self.name=name
+
+def fn(user):
+    print("函数内部的参数变量地址是",id(user))
+    i=10
+    print("函数内部返回值变量地址是", id(i))
+    return i
+
+user=User("张三")
+
+print("函数外部的参数变量地址是", id(user))
+
+i=fn(user)
+print("函数外部返回值变量地址是", id(i))
+~~~
+---

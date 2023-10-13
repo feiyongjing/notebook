@@ -32,6 +32,7 @@ print("_".join(["Java","JavaScript","C","C++","Python"]))
 # %s 表示字符串
 # %d 表示整数
 # %f 表示float
+# %% 表示输出%
 
 name="胡图图"
 address="翻斗花园3栋201"

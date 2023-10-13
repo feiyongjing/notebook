@@ -45,8 +45,9 @@ lst = ["Java", "JavaScript", "C", "C++", "Python"]
 # append()函数添加一个元素到列表末尾
 lst.append("c#")
 
-# extend()函数将参数列表的元素添加到列表末尾
+# extend()函数将参数列表的元素添加到列表末尾，当然列表直接使用 += 运算符也是一样的结果
 lst.extend(["Shell", "Objective-C"])
+lst += ["Shell", "Objective-C"]
 
 # insert()函数添加元素到列表的指定索引位置，后面的元素全部向后移动一个索引位置
 lst.insert(0,"Ruby")

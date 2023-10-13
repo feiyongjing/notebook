@@ -41,31 +41,6 @@ uuidgen [网卡名称]
 # 如果连接了网线，则会显示"Link detected: yes"，否则会显示"Link detected: no"。如果系统中有多个网卡，您可以逐个执行上述命令，以确定哪个网卡连接了网线。
 ethtool [网卡名称] | grep Link
 
-# 修改网卡的网络配置文件永久生效，ifcfg-eth0中的eth0是网卡名称，如果需要修改其他网卡请自行修改
-vim /etc/sysconfig/network-scripts/ifcfg-eth0
-# 配置文件内容如下
-TYPE=Ethernet         # 类型为以太网
-PROXY_METHOD=none     # 代理方式:关闭状态
-BROWSER_ONLY=no       # 当开启代理时，是否仅浏览器使用代理
-BOOTPROTO=static      # 是否自动获取IP，可以选择static固定静态ip、dhcp表示每次关闭重新启动之后都会重新获得新的ip地址、none表示不指定IP
-DEFROUTE=yes                        # 是否设置默认路由
-IPV4_FAILURE_FATAL=no               # 是否开启IPV4致命错误检测
-IPV6INIT=yes                        # IPV6是否自动初始化
-IPV6_AUTOCONF=yes                   # IPV6是否自动配置
-IPV6_DEFROUTE=yes                   # IPV6是否可以为默认路由
-IPV6_FAILURE_FATAL=no               # 是否开启IPV6致命错误检测
-IPV6_ADDR_GEN_MODE=stable-privacy   # IPV6地址生成模型
-NAME=eth0             # 网卡物理设备名称
-UUID=cfa18864-f780-4ff1-8707-7e33baf9cd9f    # 网卡的UUID识别码，如果网卡文件不正常需要配置请使用uuidgen [网卡名称] 生成新的网卡uuid
-DEVICE=eth0           # 网卡设备名称
-ONBOOT=yes            # 系统启动时是否激活网卡
-IPADDR=192.168.0.131  # 设置静态ip地址
-NETMASK=255.255.255.0 # 子网掩码设置
-GATEWAY=192.168.0.1   # 网关地址设置
-DNS1=8.8.8.8          # 备用DNS域名解析服务器地址1设置，GOOGLE公司提供的DNS,适合国外以及访问国外网站的用户使用
-DNS2=114.114.114.114   # 备用DNS域名解析服务器地址2设置，是国内移动、电信和联通通用的DNS
-HWADDR=6c:3c:8c:5e:31:3c # MAC地址，也就是网卡物理地址设置
-
 # ip link show                           # 显示网络接口信息
 # ip link set eth0 up                   # 开启网卡
 # ip link set eth0 down                  # 关闭网卡
@@ -124,3 +99,61 @@ Address: 39.156.69.79
 Name:	baidu.com
 Address: 220.181.38.148
 ~~~
+
+
+# CentOs的网络配置文件说明
+~~~shell
+# 修改网卡的网络配置文件永久生效，ifcfg-eth0中的eth0是网卡名称，如果需要修改其他网卡请自行修改
+vim /etc/sysconfig/network-scripts/ifcfg-eth0
+# 配置文件内容如下
+TYPE=Ethernet         # 类型为以太网
+PROXY_METHOD=none     # 代理方式:关闭状态
+BROWSER_ONLY=no       # 当开启代理时，是否仅浏览器使用代理
+BOOTPROTO=static      # 是否自动获取IP，可以选择static固定静态ip、dhcp表示每次关闭重新启动之后都会重新获得新的ip地址、none表示不指定IP
+DEFROUTE=yes                        # 是否设置默认路由
+IPV4_FAILURE_FATAL=no               # 是否开启IPV4致命错误检测
+IPV6INIT=yes                        # IPV6是否自动初始化
+IPV6_AUTOCONF=yes                   # IPV6是否自动配置
+IPV6_DEFROUTE=yes                   # IPV6是否可以为默认路由
+IPV6_FAILURE_FATAL=no               # 是否开启IPV6致命错误检测
+IPV6_ADDR_GEN_MODE=stable-privacy   # IPV6地址生成模型
+NAME=eth0             # 网卡物理设备名称
+UUID=cfa18864-f780-4ff1-8707-7e33baf9cd9f    # 网卡的UUID识别码，如果网卡文件不正常需要配置请使用uuidgen [网卡名称] 生成新的网卡uuid
+DEVICE=eth0           # 网卡设备名称
+ONBOOT=yes            # 系统启动时是否激活网卡
+IPADDR=192.168.0.131  # 设置静态ip地址
+NETMASK=255.255.255.0 # 子网掩码设置
+GATEWAY=192.168.0.1   # 网关地址设置
+DNS1=8.8.8.8          # 备用DNS域名解析服务器地址1设置，GOOGLE公司提供的DNS,适合国外以及访问国外网站的用户使用
+DNS2=114.114.114.114   # 备用DNS域名解析服务器地址2设置，是国内移动、电信和联通通用的DNS
+HWADDR=6c:3c:8c:5e:31:3c # MAC地址，也就是网卡物理地址设置
+~~~
+---
+
+# Ubuntu 22.04.1 网络配置文件说明
+~~~shell
+# 修改网络配置文件并保存，注意可能文件名称不一致
+sudo vim /etc/netplan/01-network-manager-all.yaml
+
+# 网络配置文件如下
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    enp0s3:
+      dhcp4: no  # 不使用自动分配IPV4
+      dhcp6: no  # 不使用自动分配IPV4
+      addresses: [192.168.0.104/24]  # 设置静态ip地址和子网掩码
+      routes:                # 路由设置
+        - to: 0.0.0.0/0      # 目标网络地址，0.0.0.0/0表示全部目录地址都走这个路由
+          via: 192.168.0.1   # 网关地址，即路由器地址
+          metric: 100        # 表示路由的优先级，metric 值越小，优先级越高
+      nameservers:
+        addresses: [8.8.8.8, 113.113.113.113]
+
+# 应用新的网络配置
+sudo netplan apply
+
+~~~
+---

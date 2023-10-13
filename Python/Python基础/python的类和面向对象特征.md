@@ -23,10 +23,18 @@ class User:
     def say_hi(self):
         print(f"我的名称是：{self.name}")
 
+    # __new__ 是对象创建分配内存空间的方法，会返回创建对象的引用给 __init__ 方法
+    def __new__(cls, *args, **kwargs):
+        return super().__new__(cls)
+
     # __init__ 是类的构造函数，在构造函数中进行类的赋值，创建对象时会自动执行构造函数
     # 甚至类的成员定义可以不用写而是在构造函数中直接进行赋值就相当于进行了类成员的定义和赋值
     def __init__(self, age):
         self.age = age
+
+    # __del__ 是对象销毁前会执行的方法
+    def __del__(self):
+        print("对象销毁前需要做的事情")
 
     # __str__ 是类的字符串表示，默认不写的实现是返回对象的内存地址
     # 通过重写 __str__ 方法可以快速的查看对象的属性信息
@@ -62,6 +70,9 @@ print(user.age)
 
 print("str内置函数打印对象信息，其内部本质是调用对象的__str__方法", str(user))
 print("打印重写__str__方法的类对象信息", user.__str__())
+
+# del 关键字可以销毁一个对象
+del user
 
 user1 = User(24)
 user2 = User(28)
@@ -105,6 +116,25 @@ user.show()
 ~~~
 ---
 
+# 使用元类动态创建类
+~~~python
+# 定义一个简单的基类
+class BaseClass:
+    def greeting(self):
+        print("Hello from BaseClass")
+
+# 动态创建一个名为 "DerivedClass" 的类，继承自 BaseClass，内部有一个自定义的say_hi函数
+DerivedClass = type("DerivedClass", (BaseClass,), {
+    "say_hi": lambda self: print("Hi from DerivedClass")
+})
+
+# 创建 DerivedClass 的实例并调用其方法
+obj = DerivedClass()
+obj.greeting()  # 输出: Hello from BaseClass
+obj.say_hi()    # 输出: Hi from DerivedClass
+~~~
+---
+
 # 类成员和方法的封装
 ### 类中的成员和方法（除了默认的基础方法之外的方法）如果是以两个下划线开头则这些成员和方法是受保护的，无法在外部通过对象调用
 ~~~python
@@ -116,7 +146,7 @@ class User:
 
     # 类中的方法（除了默认的基础方法之外的方法）如果是以两个下划线开头则这些方法是受保护的，无法在外部通过对象调用，在外部调用运行会报错
     def __say_hi(self):
-        print(f"我的名称是：{self.name}")
+        print(f"我的年龄是：{self.__age}")
 
     def __init__(self, name,age):
         self.name=name
@@ -124,10 +154,14 @@ class User:
 
 user = User("张三", 18)
 
-# 受保护的方法调用运行会报错
+# 受保护的方法直接调用运行会报错
 user.__say_hi()
-# 受保护的成员修改不会报错但是修改不生效
+# 受保护的成员直接修改不会报错但是修改不生效
 user.__age=20
+
+# 但是以上的封装只是伪封装（对封装的属性和方法做了一些处理，即在封装的属性名和方法名前面添加_类名），依然可以通过 _类名__封装的属性或方法 调用封装属性或封装方法
+user._User__age=30
+user._User__say_hi()
 
 ~~~
 ---
@@ -177,7 +211,9 @@ class Tuo(Animal):
     def animalSound(self):
         print(f"{self.name}的叫声：咕咕")
 
-# 多继承，注意多继承出现同名的成员属性或成员方法时在括号在左边的生效，右边的无效
+# 多继承
+# 注意子类对象调用多个父类中同名属性或方法时是按照__mro__属性返回的元组顺序查找类，最终会执行第一个找到类中属性或方法
+# 一般是继承时在括号左边类的生效，右边的无效
 class SheepTuo(Sheep,Tuo):
     age = None
 
@@ -186,7 +222,7 @@ sheepTuo.animalSound()
 ~~~
 ---
 
-### 所有的类都继承与Object类
+### python3中所有的类都默认继承于object类, python2中没有声明继承object就不会继承object类
 ~~~python
 obj = object()
 print(type(obj))
@@ -236,7 +272,7 @@ print(User.__bases__)
 # class对象的__base__属性获取类所继承的主要父类，即声明继承时最左边的父类
 print(User.__base__)
 
-# class对象的__mro__属性返回一个元组存放类的继承链，内部包含类自己和全部的父类直到object类
+# class对象的__mro__属性返回一个元组存放类的继承链，内部包含类自己和全部的父类直到object类，子类对象调用多个父类中同名的方法时是按照__mro__属性返回的元组顺序查找方法所在的类找，最终会执行第一个找到类中方法
 print(User.__mro__)
 
 # class对象的__subclasses__方法返回一个元组存放当前类被那些类继承了
