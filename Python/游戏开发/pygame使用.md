@@ -218,11 +218,131 @@ if __name__ == '__main__':
 # 精灵和精灵组
 ### 上述各种素材的加载、位置绘制、刷新窗口位置比较麻烦，所以引进了 精灵类 和 精灵组类 简化操作
 ### 精灵类在存储了 加载的素材 和 素材在窗口中的位置（Rect矩形对象）并且提供了 update()函数直接刷新游戏窗口内素材的位置，以及 kill()函数从所有精灵组中移除
-### 精灵组类是用于管理一组精灵类，提供了 add() 函数向精灵组中添加精灵对象，sprites()函数查询精灵组中的精灵列表，draw()函数让精灵组中全部精灵内的素材都绘制到对应的Rect矩形对象位置，update()函数让精灵组中的全部精灵调用 update() 函数刷新游戏窗口内素材的位置，注意精灵组对象调用完 updata() 函数之后还是需要使用 pygame.display.update() 刷新游戏窗口更新游戏窗口内素材的位置
+### 精灵组类是用于管理一组精灵类，提供了 add() 函数向精灵组中添加精灵对象，sprites()函数查询精灵组中的精灵列表，update()函数让精灵组中的全部精灵调用 update() 函数刷新游戏窗口内素材的位置，draw()函数让精灵组中全部精灵内的素材都绘制到指定的窗口中，注意精灵组对象调用完 draw() 函数之后还是需要使用 pygame.display.update() 刷新游戏窗口更新游戏窗口内素材的位置
 
-## 自定义精灵类使用
+## 自定义精灵类使用和精灵组
 ### 精灵类是 pygame.sprite.Sprite 这个类，所有自定义精灵类需要继承这个类
-~~~
+~~~python
+import pygame
+import time
+
+class GameSprite(pygame.sprite.Sprite):
+
+    def __init__(self, image_name: str, speed=1):
+        '''
+        加载素材和初始化矩形对象、移动速度等自定义属性
+        '''
+        super().__init__()
+        self.image = pygame.image.load(image_name)
+        self.rect = self.image.get_rect()
+        self.speed = speed
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        '''
+        重写update函数，手动实现素材的移动
+        '''
+        self.rect.y += self.speed
+
+if __name__ == '__main__':
+    
+    pygame.init()
+
+    # 创建窗口
+    sereen = pygame.display.set_mode(size=(480, 700), flags=pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE)
+
+    # 创建精灵组，并创建精灵添加进精灵组
+    group = pygame.sprite.Group()
+
+    gameSprite = GameSprite()
+    group.add(gameSprite)
+
+    # 移动精灵的位置，并重新绘制精灵组中的精灵位置
+    group.update()
+    group.draw(screen)
+    pygame.display.update()
+
+    # 睡眠30秒
+    time.sleep(30)
+
+    # 从精灵组中移除精灵，并重新绘制精灵组中的精灵位置
+    gameSprite.kill()
+
+    group.update()
+    group.draw(screen)
+    pygame.display.update()
+
+    pygame.quit()
 
 ~~~
 ---
+
+# 检查精灵碰撞
+~~~python
+import pygame
+# groupcollide()函数的第一参数和第二参数都是精灵组，第三和第四参数是布尔值，第五参数是碰撞检测函数
+# 检查两个精灵组中是否有精灵产生碰撞了,默认不传碰撞检测函数就是按照精灵中的 Rect矩形对象判断是否碰撞，
+# 如果有第五参数碰撞检测函数，就按照碰撞检测函数检查碰撞，碰撞检测函数应该接受两个精灵作为值，并返回一个bool值来表示是否碰撞
+# 第三和第四参数的布尔值表示是否将产生碰撞的精灵从第一和第二参数的精灵组中移除
+pygame.sprite.groupcollide(bullet_group, enemy_group, True, True, collision)
+~~~
+---
+
+# 定时器事件
+~~~python
+import pygame
+
+if __name__ == '__main__':
+    
+    pygame.init()
+    # 设置定时器事件
+    # set_timer()函数的第一参数是自定义事件的ID，其实就是一个int数字
+    # 第二参数是每隔多少时间触发触发一次事件
+    pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
+
+    # 游戏循环正式开始
+    while True:
+        # 设置游戏每秒的帧率
+        clock.tick(60)
+
+        # pygame.event.get() 获取监听的全部事件，在其中找到指定的自定义事件
+        for event in pygame.event.get():
+            print(event)
+            if event.type == CREATE_ENEMY_EVENT:
+                # 捕获敌机创建事件
+                print("创建敌机")
+    
+    pygame.quit()
+
+~~~
+---
+
+# 键盘事件捕获
+~~~python
+import pygame
+
+if __name__ == '__main__':
+    
+    pygame.init()
+
+    # 游戏循环正式开始
+    while True:
+        # 键盘事件捕获方式一
+        # pygame.event.get() 获取监听的全部事件，在其中找到指定的键盘事件
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.K_DOWN and event.key == pygame.K_RIGHT:
+                print("判断按下了向右方向键，缺点是即使按着键盘也只会触发一次事件")
+
+        # 键盘事件捕获方式二
+        # 获取键盘字典列表，如果按下了某个键盘则这个键盘key的value是1，直到松开键盘变为0
+        keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[pygame.K_RIGHT]:
+            print("判断按下了向右方向键，不放手会一直触发")
+        elif keys_pressed[pygame.K_LEFT]:
+            print("判断按下了向左方向键，不放手会一直触发")
+        else:
+            print("判断按下了其他键，不放手会一直触发")
+
+    pygame.quit()
+
+~~~
