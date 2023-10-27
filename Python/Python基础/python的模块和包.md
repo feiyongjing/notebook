@@ -79,14 +79,17 @@ print(threading.__file__)
 ### 清华源参考：https://mirrors.tuna.tsinghua.edu.cn/help/pypi/
 ~~~shell
 
-# pip 安装 第三方包 如果速度比较慢请使用 清华源
-pip install [包名]
+# pip 安装 第三方包 只写报名就安装最新的版本，如果速度比较慢请使用 清华源
+pip install [包名==版本]
+
+# 查看已经安装的包
+pip list
 
 # pip 卸载包
 pip uninstall [包名]
 
 # 临时使用 清华源
-pip install -i https://pypi.tuna.tsinghua.edu.cn/simple [包名]
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple [包名==版本]
 
 # 升级 pip 到最新的版本 (>=10.0.0) 后进行设置长期默认使用 清华源
 python -m pip install --upgrade pip
