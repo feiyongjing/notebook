@@ -111,7 +111,7 @@ conda create --name jupyter-test jupyter python=3.9
 # 进入环境
 conda activate jupyter-test
 
-# 菜单汉化参考：https://zhuanlan.zhihu.com/p/549843517
+# 有些版本支持菜单汉化，菜单汉化参考：https://zhuanlan.zhihu.com/p/549843517
 # 添加用户环境变量 LANG  值是 zh_CN.UTF8
 
 # 去 https://anaconda.org 搜索需要的包和版本
