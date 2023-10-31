@@ -77,6 +77,9 @@ print(threading.__file__)
 # 安装使用第三方的包
 ### pip命令安装第三方包
 ### 清华源参考：https://mirrors.tuna.tsinghua.edu.cn/help/pypi/
+
+### pip 是 Python 2.x 版本的包管理器，而 pip3 是 Python 3.x 版本的包管理器
+### 如果您只安装了 Python 3.x，那么 pip 和 pip3 实际上是相同的，因为它们都是 Python 3.x 版本的包管理器
 ~~~shell
 
 # pip 安装 第三方包 只写报名就安装最新的版本，如果速度比较慢请使用 清华源
@@ -97,6 +100,12 @@ python -m pip install --upgrade pip
 python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
 # 设置长期默认使用 清华源
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 导出全部包
+pip freeze > [requirements.txt]
+
+# 卸载指定清单的包列表
+pip uninstall -r [requirements.txt] -y
 
 ~~~
 ---
