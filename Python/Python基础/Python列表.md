@@ -9,7 +9,7 @@ lst = ["Java", "JavaScript", "C", "C++", "Python"]
 print(lst[1])
 
 # 列表的截取
-# s[start:end]
+# s[start:end:step]
 # step表示步长，默认不写是1，正数代表从左向右截取列表，负数表示从右向左截取列表，并且数字表示每几个元素中取开头的元素
 # step如果是正数那么start的索引必须在end索引左边，step如果是负数数那么start的索引必须在end索引右边
 # 截取的列表包含start索引位置的元素但是不包含end索引位置元素

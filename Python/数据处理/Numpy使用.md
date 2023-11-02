@@ -156,3 +156,126 @@ print(score1)
 print(score2)
 ~~~
 ---
+
+
+### 方式四：随机数组生成 ndarray对象，一般有均匀分布数组和正态分布数组
+~~~python
+# pip install numpy
+import numpy as np
+
+# uniform函数生成均匀分布的数组
+# 第一二参数设置最大最小值
+# 第三参数是元组设置数组每个维度的元素数量
+score1 = np.random.uniform(0, 100, 100)
+
+# uniform函数生成正态分布的数组
+# 第一参数是平均值，第二参数是标准差，标准差越大则波动程度越大
+# 第三参数是元组设置数组每个维度的元素数量
+score2 = np.random.normal(10, 5, 100)
+
+print("均匀分布的数组", score1)
+print("均匀分布数组的平均值", score1.mean())
+print("正态分布的数组", score2)
+print("正态分布数组的平均值", score2.mean())
+~~~
+---
+
+# ndarray 对象索引获取元素和分割元素
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.random.normal(0, 1, (3, 4, 5))
+
+print(score1)
+
+# 和普通的数组索引类似，使用逗号分割不同的维度元素获取，由前到后指定不同维度元素索引
+print("ndarray索引获取元素", score1[1, 1, 1])
+
+# 和普通的数组分割类似，使用逗号分割不同的维度元素获取，由前到后指定不同维度元素索引
+print("ndarray索引分割获取元素", score1[1, 1:3, ])
+~~~
+---
+
+# ndarray 对象内部多维数组的形状修改（维度数量与每个维度的长度） 和 行与列的数据转换
+~~~python
+# pip install numpy
+import numpy as np
+
+data = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]]
+
+score1 = np.array(data)
+print("原数据是3行5列", score1)
+
+# reshape函数会重新设置多维数组每个维度的长度，并返回一个新的ndarray对象，但是内部数据错乱
+score2 = score1.reshape((5, 3))
+print("新的数据是5行3列，但是数据错乱", score2)
+
+# resize函数会重新设置多维数组每个维度的长度，但是注意内部数据错乱，并且没有创建新的ndarray对象而是修改原ndarray对象数据
+score1.resize((5, 3))
+print("修改原数据为5行3列，但是数据错乱", score1)
+
+# ndarray的T属性具有行变成列，列变成行的功能，返回一个新的ndarray对象
+score3 = score1.T
+print("新的数据是5行3列，并且数据不错乱", score3)
+~~~
+---
+
+# ndarray 对象内部元素类型转换、ndarray 对象序列化和反序列化、ndarray 对象内部元素去重
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.random.normal(10, 5, 500)
+
+print("原始数据", score1)
+
+# astype函数进行元素数据类型转换
+print("元素转换为int类型", score1.astype(int))
+
+# tobytes函数将ndarray对象序列化转换为二进制字符串
+score2 = score1.tobytes()
+print("ndarray序列化转换为二进制字符串", score2)
+
+# frombuffer函数二进制字符串反序列化转换为ndarray对象，但是注意需要明确声明内部元素的数据类型
+score3 = np.frombuffer(score2, dtype=float)
+print("二进制字符串反序列化转换为ndarray对象", score3)
+
+# unique函数对ndarray对象内部的元素去重
+# return_counts会返回去重后每个元素对应原数据出现的次数
+score4, count = b, count = np.unique(np.array([[1, 2, 3, 4], [3, 4, 5, 6]]), return_counts=True)
+print("ndarray对象去重数据和每个元素对应原数据出现的次数", score4, count)
+~~~
+---
+
+# ndarray 对象的逻辑运算，即条件过滤和条件赋值
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.random.normal(10, 5, (5, 10))
+
+print("原始数据1", score1)
+
+print("逻辑判断大于8的元素标记为True", score1 > 8)
+
+print("逻辑判断布尔索引过滤大于8的元素", score1[score1 > 8])
+
+# 逻辑判断布尔索引统一修改数据
+score1[score1 > 8] = 10
+print("大于8的元素都会变成10", score1)
+
+# all函数判断是否全部元素满足条件，any函数判断是否有部分元素满足条件
+print("判断第一维度前两个数组并且第二维度在前5个元素是否全部大于5", np.all(score1[:2, :5] > 5))
+print("判断第一维度前两个数组之外的数组并且第二维度在前5个元素之外的元素是否有小于5", np.any(score1[2:, 5:] < 5))
+
+# where函数表示三元运算，logical_and函数和logical_or分别代表条件与和条件或
+score2 = score1[:2, :5]
+print("原始数据2", score2)
+print("判断指定的部分数据是否大于8，如果满足则置为1，否则置为0", np.where(score2 > 8, 1, 0))
+print("判断指定的部分数据是否大于6并且小于11，如果满足则置为1，否则置为0",
+      np.where(np.logical_and(score2 > 6, score2 < 11), 1, 0))
+print("判断指定的部分数据是否小于6或者大于11，如果满足则置为1，否则置为0",
+      np.where(np.logical_or(score2 < 6, score2 > 11), 1, 0))
+~~~
+---
