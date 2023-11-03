@@ -279,3 +279,122 @@ print("判断指定的部分数据是否小于6或者大于11，如果满足则�
       np.where(np.logical_or(score2 < 6, score2 > 11), 1, 0))
 ~~~
 ---
+
+# ndarray 对象的统计运算，即获取最大最小平均值等
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.random.normal(10, 5, (5, 6))
+
+print("原始数据", score1)
+
+# max函数和min函数获取最大最小值
+print("获取全部元素中的最大值", score1.max())
+print("获取全部元素中的最小值", score1.min())
+print("获取全部元素中的最大值的索引，如果是多维数组会返回转化为一维数组之后的索引", score1.argmax())
+print("获取全部元素中的最小值的索引，如果是多维数组会返回转化为一维数组之后的索引", score1.argmin())
+print("获取全部元素的标准差", score1.std())
+print("获取全部元素的平均值", score1.mean())
+
+# axis参数设置统计区间，1是行，0是列
+print("按照行获取元素中的最大值", score1.max(axis=1))
+print("按照列获取元素中的最小值", score1.min(axis=0))
+print("按照行获取元素中的最大值的索引，即返回每行的最大值所在的索引", score1.argmax(axis=1))
+print("按照列获取元素中的最小值的索引，即返回每列的最小值所在的索引", score1.argmin(axis=0))
+print("按照行获取元素的标准差", score1.std(axis=1))
+print("按照列获取元素的平均值", score1.mean(axis=0))
+~~~
+---
+
+# ndarray 对象与数字的算术运算、ndarray 对象之间的算术运算
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.random.normal(10, 5, (5, 6))
+
+print("原始数据", score1)
+
+# ndarray 对象可以直接与数字通过加件乘除求余等算术运算符对 内部的全部元素进行操作
+print("原始数据全部加1", score1 + 1)
+
+# ndarray 对象之间可以通过加件乘除求余等算术运算符对 内部的全部元素进行操作
+# 但是需要满足 broadcast (广播机制)：两个 ndarray 对象维度中最低的维度（即包裹最终元素的维度）数组长度必须相等或者是其中一个ndarray 对象最低的维度数组长度为1
+score2 = np.array([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
+score3 = np.array([1, 2, 3, 4, 5])
+# score3 = np.array([1])
+print("ndarray 对象相加", score2 + score3)
+~~~
+---
+
+# 矩阵运算
+### numpy中矩阵的存储可以使用 存储二维数组的ndarray对象 或者是 matrix对象
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.mat([[1, 2, 3], [4, 5, 6]])
+score2 = np.mat([[1, 2], [3, 4], [5, 6]])
+print("matrix 对象", type(score1), score1)
+
+# 矩阵乘法规则
+# 必须是 m行 * n列 与 n行 * l列 的矩阵相乘得到 m行 * l列 的矩阵
+# 例如以上的 score1 * score2 的结果如下
+# [[1 * 1 + 2 * 3 + 3 * 5 , 1 * 2 + 2 * 4 + 3 * 6], [4 * 1 + 5 * 3 + 6 * 5 , 4 * 2 + 5 * 4 + 6 * 6]]
+# 矩阵对象可以直接使用算术运算符相乘
+print("矩阵相乘", score1 * score2)
+
+# 如果是存储二维数组的ndarray对象可以使用以下方式进行矩阵乘法运算，其中 data1和data2 是存储二维数组的ndarray对象
+# np.matmul(data1, data2)
+# np.dot(data1, data2)
+# data1 @ data2
+~~~
+---
+
+# ndarray 对象之间的数据拼接
+~~~python
+# pip install numpy
+import numpy as np
+
+score1 = np.array([[1, 2, 3], [7, 8, 9]])
+score2 = np.array([[4, 5, 6], [10,11,12]])
+
+# hstack函数水平拼接ndarray对象，使用元组传递需要拼接的ndarray对象，需要注意的是ndarray对象的维度必须相同
+print("水平拼接数据", np.hstack((score1, score2)))
+
+# vstack函数垂直拼接ndarray对象，使用元组传递需要拼接的ndarray对象，需要注意的是ndarray对象的维度必须相同，垂直拼接可能会增加维度（例如一维数组的垂直拼接）
+print("垂直拼接数据", np.vstack((score1, score2)))
+
+# concatenate函数使用axis设置水平拼接还是垂直拼接，1是水平拼接，0是垂直拼接
+print("水平拼接数据",np.concatenate((score1, score2), axis=1))
+~~~
+---
+
+# numpy 读取csv文件
+
+### 注意不建议使用 numpy 读取文件，原因是 numpy 是数据计算库，对于文件中出现数字之外类型（例如字符串）的处理不友好，有缺失值和替换值的处理有些问题
+### loadtxt函数的missing_values参数和filling_values参数在有些 numpy 版本中无法使用，
+### genfromtxt函数也可以读取文件但是同样有致命缺陷，那就是无法设置skiprows参数用于跳过开始的标题行
+### 综上所述不推荐使用 numpy 读取文件，而是使用 Pandas库 读取文件
+~~~python
+# pip install numpy
+import numpy as np
+
+# 第一参数fname指定需要读取的文件
+# delimiter参数设置分割符
+# encoding参数指定读取文件时的编码方式
+# skiprows参数用于跳过开始的标题行，设置几就跳过多少行
+# dtype参数指定读取数据的数据类型
+# comments参数指定注释字符，被注释的行将被忽略
+# usecols参数指定要读取的列，是一个元组
+# unpack参数如果为 True，将返回每列的数据作为单独的数组
+# missing_values 参数用于指定缺失值的字符串或字符串列表，当读取到这些字符串时，会将它们识别为缺失值
+# filling_values 参数用于指定非法值的替换值。当读取到无法转换为浮点数的值时，会将这些值替换为指定的值
+score = np.loadtxt("test.csv", delimiter=",", encoding='utf-8',
+                   skiprows=1, usecols=(0, 4),
+                   missing_values=['N/A', 'NA', '--', 'null'], filling_values=0)
+
+print(score)
+~~~
+---
