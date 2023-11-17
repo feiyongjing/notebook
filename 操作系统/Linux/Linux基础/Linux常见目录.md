@@ -28,7 +28,7 @@ root用户的常用命令存放目录：其中/sbin是存放重要的可执行�
 内核和Bootloader：/boot
 
 服务器数据：/var、/srv
-/var/run存放程序的pid，/var/log存放日志信息
+/var/run存放程序的pid，/var/log存放日志信息，/var/lib存放应用程序的持久数据，例如数据库文件、Web 服务器的文件等
 
 系统信息：/proc、/sys
 /proc中的文件目录是存在于内存中的，里面存放了系统核心、外部设备、网络状态等信息
