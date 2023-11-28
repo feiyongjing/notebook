@@ -5,7 +5,12 @@ vim ~/.vimrc   # 编辑vim配置文件，添加一下一些例子并保存
 # 设置系统下全部用户vim的配置或快捷键 /etc/vim/vimrc 建议不要修改它，可能影响其他的用户
 vim /etc/vim/vimrc
 
-set tabstop=4 # 设置tab键缩进4个空格，默认tab键是缩进8个空格
+# 设置tab键缩进4个空格，默认tab键是缩进8个空格
+set tabstop=4
+set shiftwidth=4
+set expandtab
+ 
+
 set nu # vim永久显示行号
 set ic # vim搜索时永久不区分大小写
 set shiftwidth=4 # 设置在可视模式（按v进入可视模式）下，使用=格式化选中代码块时缩进的空格数

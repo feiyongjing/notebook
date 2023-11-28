@@ -7,6 +7,7 @@ which [可执行命令]
 whereis [linux命令]
 
 # 查看linux命令的帮助信息或者是系统配置信息
+# 注意有些linux下默认没有完整的 man 手册，请使用 yum install man-pages 或 apt install manpages 安装完整的 man 手册
 man [查看的类型选项] [linux命令或者是系统配置文件的名称（不是配置文件的绝对路径）]
 # 显示的信息翻页查找与less命令查看文件的方式一致
 # 注意有些命令与系统配置文件的名称一致比如passwd，这时使用man 1 passwd查看命令帮助文档而man 5 passwd 查看系统配置文档

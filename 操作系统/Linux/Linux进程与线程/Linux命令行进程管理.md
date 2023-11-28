@@ -3,9 +3,11 @@
 ps aux
 pa ajx
 ps -le
+ps -Lf [pid]
 # ps aux 是使用的Unix系统的查看方式，但是在Linux中同样适用，a参数表示查看所有前台进程，x表示查看所有后台进程，u表示进程是那个用户产生的
 # ps ajx 显示与作业相关的数据
 # ps -le 是使用 Linux 标准命令格式，-l参数显示详细的信息，-e显示所有的进程
+# ps -Lf [pid] 是查看对应进程的线程，LWP 列显示线程号，NLWP列显示该进程一个有多少个线程（包含主线程在内）
 
 # ps aux查看进程显示的信息是USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND
 # USER: 进程拥有者
@@ -74,7 +76,7 @@ ps ax | grep "java"
 ps -ef | grep "java"
 # 其实显示的是进程启动命令中带有java字符串的进程信息，注意例如sh -c java oil-site-boot-encrypted.jar这种sh进程也会显示
 
-# 查看进程树
+# 查看进程树，centos 安装 yum -y install psmisc
 pstree
 # -p参数显示进程的PID
 # -u参数显示进程的所属用户
