@@ -116,6 +116,7 @@ int main(){
 ---
 
 ### 线程创建时设置线程在终止时自动进行资源回收
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <sys/types.h>
 #include <stdio.h>
@@ -215,6 +216,7 @@ int main(){
 
 # 线程安全互斥锁操作
 ## 常见的互斥锁初始化、回收互斥锁、阻塞加锁、非阻塞加锁、释放锁操作函数如下，使用man命令可以查看
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <pthread.h>
 
@@ -249,6 +251,7 @@ int main(){
 ---
 
 ### 使用互斥锁保证线程数据安全例子，代码如下
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <sys/types.h>
 #include <stdio.h>
@@ -336,6 +339,7 @@ int main(){
 ### 适用场景是读操作大于写操作的场景
 
 ## 读写锁常见操作函数如下，使用man命令可以查看
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <pthread.h>
 
@@ -379,6 +383,7 @@ int main(){
 ---
 
 ### 使用读写锁保证线程数据安全例子，代码如下
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <sys/types.h>
 #include <stdio.h>
@@ -458,9 +463,12 @@ int main(){
 ~~~
 ---
 
-# 线程同步问题
+# 线程同步问题的解决方案
+- 条件变量加互斥锁
+- 信号量
 
-## 线程同步函数如下
+## 线程同步方式：条件变量，常用函数如下
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <pthread.h>
 
@@ -496,7 +504,8 @@ int main(){
 ~~~
 ---
 
-###
+### 多线程使用条件变量实现线程同步，以下是生产者消费者模型例子代码
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
 ~~~c
 #include <sys/types.h>
 #include <stdio.h>
@@ -524,12 +533,13 @@ pthread_cond_t cond;
 void * producer(void * args){
     int n = *(int *) args;
     printf("当前进程的id是：%d，当前子线程的id是：%ld, 子线程运行接收的参数是%d\n", getpid(), pthread_self(), n);
+    struct Node* pNode = NULL;
     while(1){
-        struct Node* pNode = (struct Node*) malloc(sizeof(struct Node));
+        pNode = (struct Node*) malloc(sizeof(struct Node));
         pNode->data = rand();
-        pNode->next = head;
         // 添加互斥锁
         pthread_mutex_lock(&mutex);
+        pNode->next = head;
         head = pNode;
 
         printf("当前线程是生产者线程，线程号是%d，生产的链表头节点是：%d\n", n, pNode->data);
@@ -545,7 +555,7 @@ void * producer(void * args){
 void * consumer(void * args){
     int n = *(int *) args;
     printf("当前进程的id是：%d，当前子线程的id是：%ld, 子线程运行接收的参数是%d\n", getpid(), pthread_self(), n);
-    int a;
+    struct Node* pNode = NULL;
     while(1){
         // 添加互斥锁
         pthread_mutex_lock(&mutex);
@@ -554,7 +564,7 @@ void * consumer(void * args){
             pthread_cond_wait(&cond, &mutex);
         }
         int data= head->data;
-        struct Node* pNode = head->next;
+        pNode = head->next;
         free(head);
         head = pNode;
 
@@ -599,6 +609,144 @@ int main(){
     pthread_mutex_destroy(&mutex);
     // 回收条件变量
     pthread_cond_destroy(&cond);
+    return 0;
+}
+~~~
+---
+
+## 线程同步方式：信号量，常用函数如下
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
+~~~c
+#include <semaphore.h>
+
+    // sem_init 函数初始化信号量
+    // sem 参数是信号量的内存地址
+    // pshared 参数设置信号量是在 线程或进程中共享，0表示线程共享、1表示进程共享
+    // value 参数是正整数，表示信号量的初始值。即代表初始有多少个线程可以同时执行同步的代码块，当信号量初始值为1时其实就是互斥锁，当信号量的初始值大于一时需要小心同步代码块中是否有操作共享变量，如果有操作共享变量可能会导致数据错乱、线程大量重复申请内存空间、线程重复释放内存空间等问题
+    // 成功返回零，失败返回一个错误编号
+    int sem_init(sem_t *sem, int pshared, unsigned int value);
+
+    // sem_destroy 函数回收信号量
+    // sem 参数是信号量的内存地址
+    // 成功返回零，失败返回一个错误编号
+    int sem_destroy(sem_t *sem);
+
+    // sem_wait 函数执行会信号量减一，当信号量为零时会阻塞等待信号量
+    // sem 参数是信号量的内存地址
+    // 成功返回零，失败返回一个错误编号
+    int sem_wait(sem_t *sem);
+
+    // sem_trywait 函数执行会尝试信号量减一，该函数不会阻塞而是立即返回
+    // sem 参数是信号量的内存地址
+    // 成功返回零，失败返回-1
+    int sem_trywait(sem_t *sem);
+
+    // sem_post 函数执行会信号量加一
+    // sem 参数是信号量的内存地址
+    // 成功返回零，失败返回一个错误编号
+    int sem_post(sem_t *sem);
+~~~
+---
+
+### 多线程使用信号量实现线程同步，以下是生产者消费者模型例子代码
+- 注意需要在编译时需要添加 -l pthread 参数进行链接 pthread 库
+~~~c
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+
+// 生产者信号量
+sem_t producer_sem;
+
+// 消费者信号量
+sem_t consumer_sem;
+
+// 生产者线程回调函数
+void * producer(void * args){
+    int n = *(int *) args;
+    printf("当前进程的id是：%d，当前子线程的id是：%ld, 子线程运行接收的参数是%d\n", getpid(), pthread_self(), n);
+    struct Node* pNode = NULL;
+    while(1){
+        pNode = (struct Node*) malloc(sizeof(struct Node));
+        pNode->data = rand();
+        // 生产者信号量减一，当生产者信号量为零时会阻塞在这里
+        sem_wait(&producer_sem);
+        pNode->next = head;
+        head = pNode;
+
+        printf("当前线程是生产者线程，线程号是%d，生产的链表头节点是：%d\n", n, pNode->data);
+        // 消费者信号量加一
+        sem_post(&consumer_sem);
+    }
+}
+
+// 消费者线程回调函数
+void * consumer(void * args){
+    int n = *(int *) args;
+    printf("当前进程的id是：%d，当前子线程的id是：%ld, 子线程运行接收的参数是%d\n", getpid(), pthread_self(), n);
+    struct Node* pNode = NULL;
+    while(1){
+        // 消费者信号量减一，当消费者信号量为零时会阻塞在这里
+        sem_wait(&consumer_sem);
+        int data= head->data;
+        pNode = head;
+        head = head->next;
+
+        printf("当前线程是消费者线程，线程号是%d，消费了链表头节点：%d\n", n, data);
+        // 生产者信号量加一
+        sem_post(&producer_sem);
+        // 回收堆空间
+        free(pNode);
+        pNode = NULL;
+    }
+}
+
+int main(){
+    printf("当前进程的id是：%d，当前主线程的id是：%ld\n", getpid(), pthread_self());
+
+    // 生产者信号量初始化，注意这里初始化信号量的值为 1 表示互斥锁，如果大于1会出现线程间共享变量可能会导致数据错乱、线程大量申请堆内存空间、线程重复释放堆内存空间等问题
+    sem_init(&producer_sem, 0, 1);
+    // 消费者信号量初始化
+    sem_init(&consumer_sem, 0, 0);
+
+    int ret;
+    int i=0;
+    pthread_t thread[8];
+
+    for(i=0; i<8; i++){
+        if(i<4){
+            ret = pthread_create(&thread[i], NULL, producer, &i);
+        }else{
+            ret = pthread_create(&thread[i], NULL, consumer, &i);
+        }
+        if(ret != 0){
+            // 线程创建错误通过 strerror 函数查看
+            printf("线程创建错误：%s\n", strerror(ret));
+            return -1;
+        }
+    }
+
+    for(i=0;i<8;i++){
+        // 设置线程回收
+        pthread_join(thread[i], NULL);
+    }
+
+    // 回收生产者信号量
+    sem_destroy(&producer_sem);
+    // 回收消费者信号量
+    sem_destroy(&consumer_sem);
     return 0;
 }
 ~~~

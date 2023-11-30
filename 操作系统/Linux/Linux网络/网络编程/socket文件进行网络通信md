@@ -1,0 +1,65 @@
+### socker文件进行网络通信
+- socker文件进行网络的本质是内核会操作socker文件生成两块缓存区，一个是发送端缓冲区，另一个是接收端缓冲区。然后由一个文件描述符操纵这两个缓冲区。
+- 两台主机的分别有2块缓冲区，发送端缓冲区会和远程主机接收端的缓冲区建立连接，这样就形成了两条连接，这样其中任意一台主机都可以通过这两条连接进行发送和接收数据
+- 注意网络传输都是使用的大端字节序进行传输，大端字节序是低位的内存地址存放高位的字节，高位的内存地址存放低位的字节
+
+# socker文件操作函数
+~~~c
+#include <sys/types.h>          
+#include <sys/socket.h>
+
+    // 返回一个文件描述符
+    int socket(int domain, int type, int protocol);
+
+    // sockfd 参数是调用 socket 函数后得到的文件描述符
+    // addr 参数设置本机的 ip 和 port，addr 参数使用的结构体是按照地址族划分的，但是 addr 参数会被强制转换为 sockaddr 的结构体指针，sockaddr 结构体如下
+    // addrlen 参数设置 addr 参数占用的内存大小
+    int bind(int sockfd, const struct sockaddr *addr,
+             socklen_t addrlen);
+
+    // 注意一般都是直接使用 地址族直接对应的结构体，而不是使用 sockaddr 结构体
+    // IPv4 地址族对应的结构体是 sockaddr_in，IPv6 地址族对应的结构体是 sockaddr_in6，Unix 域套接字地址族对应的结构体是 sockaddr_un 等
+    // sa_family 属性表示的是地址族，有多种地址族不同的宏表示不同的地址族
+    // 例如 AF_INET 表示IPV4，AF_INET6 表示IPV6，Unix 域套接字的地址族等
+    // sa_data 属性表示的是地址族使用的地址，由于不同的地址族地址不一致但是长度被限制为14个字符之内
+    struct sockaddr {
+        sa_family_t sa_family;
+        char        sa_data[14];
+    }
+
+~~~
+---
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
+
+
+~~~c
+~~~
+---
