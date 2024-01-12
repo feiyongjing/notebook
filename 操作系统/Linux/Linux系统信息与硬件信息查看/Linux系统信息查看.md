@@ -28,4 +28,21 @@ date
 cal
 # -y参数显示当前年份全部月份日历
 
+# 显示当前用户的资源限制
+ulimit -a
+# 资源单位后面是改资源大小的修改参数，unlimited表示无限大
+# core file size（核心文件大小）：当进程崩溃时，系统可以生成一个核心文件，这个限制决定了核心文件的最大大小。
+# data seg size（数据段大小）：进程的最大数据段大小。
+# scheduling priority（调度优先级）：进程的调度优先级。
+# file size（文件大小）：进程能创建的最大文件大小。
+# pending signals（待处理信号）：进程可排队的最大信号数量。
+# max locked memory（最大锁定内存）：进程可锁定在内存中的最大字节数。
+# max memory size（最大内存大小）：进程的最大虚拟内存大小。
+# open files（打开文件）：进程可打开的最大文件数量。
+# pipe size（管道大小）：管道缓冲区的大小。
+# stack size（栈大小）：进程堆栈的最大大小。
+# cpu time（CPU时间）：进程可使用的最大CPU时间。
+# max user processes（最大用户进程数）：用户可运行的最大进程数。
+# virtual memory（虚拟内存）：进程的最大虚拟内存大小。
+
 ~~~

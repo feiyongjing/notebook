@@ -35,7 +35,7 @@
     // attr 参数指向一个pthread_attr_t结构体，该结构体的内容在线程创建时用于确定新线程的属性（例如设置线程在终止时自动进行资源回收）。如果attr为NULL，则使用默认属性创建线程
     // start_routine 参数是线程的启动运行函数
     // arg 参数是线程执行启动运行函数是传递的参数
-    // 创建成功返回值是0，创建失败需要使用 strerror 函数查看错误 
+    // 创建成功返回值是0，创建失败返回 errno，需要使用 strerror 函数查看错误 
     int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                         void *(*start_routine) (void *), void *arg);
 
@@ -48,23 +48,23 @@
     // pthread_join 函数进行线程资源的回收
     // thread 参数是需要回收线程的ID
     // retval 参数是二级指针，最终指向的是线程的退出状态
-    // 线程资源回收成功返回0，失败返回错误码
+    // 线程资源回收成功返回0，失败返回 errno
     // 注意在没有调用 pthread_detach 函数（或其他方式）设置指定线程在终止时自动进行资源回收 的情况下 pthread_join 会阻塞，但是一旦线程设置了终止时自动进行资源回收 pthread_join 将不会阻塞，而是立即返回错误（一般都是线程已经被回收）
     int pthread_join(pthread_t thread, void **retval);
 
     // pthread_detach 函数设置指定线程在终止时自动进行资源回收
     // 注意调用 pthread_detach 函数设置指定线程在终止时自动进行资源回收后，在调用 pthread_detach 函数进行手动回收线程资源会立即返回错误（一般都是线程已经被回收）
     // thread 参数是需要设置终止时自动进行资源回收的线程ID号
-    // 设置成功返回0，失败返回错误码
+    // 设置成功返回0，失败返回 errno
     int pthread_detach(pthread_t thread);
 
     // pthread_cancel 函数取消线程，但是不是立即取消，而是当该线程指向代码到取消点时取消线程，一般的系统函数内部都有取消点，也可以使用 pthread_testcancel 函数 手动设置取消点
     // thread 参数线程的ID
-    // 成功返回0，失败返回错误码
+    // 成功返回0，失败返回 errno
     int pthread_cancel(pthread_t thread);
 
     // pthread_testcancel 函数设置线程取消点，当调用pthread_cancel 指定取消的线程内部执行到 pthread_testcancel 函数后就会取消该线程
-    // 成功返回0，失败返回错误码
+    // 成功返回0，失败返回 errno
     void pthread_testcancel(void);
 ~~~
 ---
@@ -145,7 +145,7 @@ int main(){
 
 
     int n=100;
-    int ret = pthread_create(&thread, NULL, mythread, &n);
+    int ret = pthread_create(&thread, &attr, mythread, &n);
 
     if(ret != 0){
         // 线程创建错误通过 strerror 函数查看
@@ -224,28 +224,28 @@ int main(){
     // mutex 参数是互斥锁的内存地址
     // attr 参数是初始化互斥锁的属性，通常默认是 NULL
     // 或者使用宏变量直接进行初始化 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_mutex_init(pthread_mutex_t *restrict mutex,
                            const pthread_mutexattr_t *restrict attr);
 
     // pthread_mutex_destroy 函数回收互斥锁
     // mutex 参数是互斥锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_mutex_destroy(pthread_mutex_t * mutex);
 
     // pthread_mutex_lock 函数阻塞加互斥锁
     // mutex 参数是互斥锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_mutex_lock(pthread_mutex_t * mutex);
 
     // pthread_mutex_trylock 函数非阻塞加互斥锁
     // mutex 参数是互斥锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_mutex_trylock(pthread_mutex_t * mutex);
 
     // pthread_mutex_unlock 函数释放互斥锁
     // mutex 参数是互斥锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_mutex_unlock(pthread_mutex_t * mutex);
 ~~~
 ---
@@ -346,38 +346,38 @@ int main(){
     // pthread_rwlock_init 函数初始化读写锁
     // rwlock 参数是读写锁的内存地址
     // attr 参数是初始化读写锁的属性，通常默认是 NULL
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_init(pthread_rwlock_t *restrict rwlock,
                            const pthread_rwlockattr_t *restrict attr);
 
     // pthread_rwlock_destroy 函数回收读写锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_destroy(pthread_rwlock_t * rwlock);
 
     // pthread_rwlock_rdlock 函数阻塞加读锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_rdlock(pthread_rwlock_t * rwlock);
 
     // pthread_rwlock_wrlock 函数阻塞加写锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_wrlock(pthread_rwlock_t * rwlock);
 
     // pthread_rwlock_tryrdlock 函数阻塞加读锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_tryrdlock(pthread_rwlock_t * rwlock);
 
     // pthread_rwlock_trywrlock 函数阻塞加写锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_trywrlock(pthread_rwlock_t * rwlock);
 
     // pthread_rwlock_unlock 函数释放读写锁
     // rwlock 参数是读写锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_rwlock_unlock(pthread_rwlock_t * rwlock);
 ~~~
 ---
@@ -476,30 +476,30 @@ int main(){
     // cond 参数是条件变量的内存地址
     // attr 参数是初始化互斥锁的属性，通常默认是 NULL
     // 或者使用宏变量直接进行初始化 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_cond_init(pthread_cond_t *restrict cond,
               const pthread_condattr_t *restrict attr);
     
     // pthread_cond_destroy 函数回收条件变量
     // cond 参数是条件变量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_cond_destroy(pthread_cond_t *cond);
 
     // pthread_cond_wait 函数阻塞当前线程并且等待其他线程唤醒，等待的过程中会释放互斥锁，唤醒需要持有互斥锁线程发送条件变量进行唤醒，当前线程被唤醒后将继续持有锁
     // cond 参数是条件变量的内存地址
     // mutex 参数是互斥锁的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_cond_wait(pthread_cond_t *restrict cond,
               pthread_mutex_t *restrict mutex);
 
     // pthread_cond_signal 函数唤醒一个阻塞在条件变量上的线程
     // cond 参数是条件变量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_cond_signal(pthread_cond_t *cond);
 
     // pthread_cond_broadcast 函数唤醒其他所有阻塞在条件变量上的线程
     // cond 参数是条件变量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int pthread_cond_broadcast(pthread_cond_t *cond);
 ~~~
 ---
@@ -623,17 +623,17 @@ int main(){
     // sem 参数是信号量的内存地址
     // pshared 参数设置信号量是在 线程或进程中共享，0表示线程共享、1表示进程共享
     // value 参数是正整数，表示信号量的初始值。即代表初始有多少个线程可以同时执行同步的代码块，当信号量初始值为1时其实就是互斥锁，当信号量的初始值大于一时需要小心同步代码块中是否有操作共享变量，如果有操作共享变量可能会导致数据错乱、线程大量重复申请内存空间、线程重复释放内存空间等问题
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int sem_init(sem_t *sem, int pshared, unsigned int value);
 
     // sem_destroy 函数回收信号量
     // sem 参数是信号量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int sem_destroy(sem_t *sem);
 
     // sem_wait 函数执行会信号量减一，当信号量为零时会阻塞等待信号量
     // sem 参数是信号量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int sem_wait(sem_t *sem);
 
     // sem_trywait 函数执行会尝试信号量减一，该函数不会阻塞而是立即返回
@@ -643,7 +643,7 @@ int main(){
 
     // sem_post 函数执行会信号量加一
     // sem 参数是信号量的内存地址
-    // 成功返回零，失败返回一个错误编号
+    // 成功返回零，失败返回 errno
     int sem_post(sem_t *sem);
 ~~~
 ---

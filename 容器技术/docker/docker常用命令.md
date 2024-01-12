@@ -94,5 +94,10 @@ docker logs -ft --tail number 容器id
 
 # 查看容器进程信息
 docker top 容器id                                                            
+~~~
 
+# 其他
+~~~shell
+# 获取容器/镜像的元数据，包含镜像的启动命令，启动命令注意查看Cmd和Entrypoint指令
+docker inspect [镜像或容器ID]
 ~~~

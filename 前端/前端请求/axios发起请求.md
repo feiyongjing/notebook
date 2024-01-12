@@ -1,4 +1,4 @@
-~~~
+~~~js
 // 到bootcnd获取链接引入axios
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.6/axios.js"></script>
 

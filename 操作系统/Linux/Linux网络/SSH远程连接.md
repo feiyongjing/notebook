@@ -29,7 +29,7 @@ sftp 用户名@服务端IP
 ---
  
 
-# 服务端配置文件介绍
+# 服务端配置文件介绍，详情请参考 man 5 sshd_config
 ~~~
 Port 22 # SSH服务的端口号，一般都是注释的，默认就是22
 ListenAddress 0.0.0.0 # 设置sshd服务器绑定的IP地址,即只开启绑定IP的ssh远程服务，0.0.0.0是默认sshd服务器所有的网卡IP都绑定
@@ -71,5 +71,45 @@ ssh-keygen -t rsa
 ~~~
 ---
  
+# OpenSSH 版本升级
+### 参考 https://blog.csdn.net/liu_chen_yang/article/details/134717718
+### 源码地址 https://github.com/openssh/openssh-portable
+### 注意参考中是直接执行 ./configure 命令配置，而 openssh-portable 源码在执行 ./configure 命令配置之前需要执行 autoreconf 命令，如下
+~~~shell
+
+# git clone https://github.com/openssh/openssh-portable # or https://anongit.mindrot.org/openssh.git
+# 或者是下载指定版本的源码包解压缩
+cd openssh-portable
+
+# openssh-portable 源码安装OpenSSH时在 ./configure 命令执行前需要执行 autoreconf 命令
+autoreconf
+
+# 注意这是 ./configure 命令
+CCFLAGS="-I/usr/local/include" \
+LDFLAGS="-L/usr/local/lib64" \
+./configure \
+--sysconfdir=/etc/ssh \
+--with-zlib \
+--with-pam \
+--with-ssl-dir=/usr/local/openssl
+
+make -j 4 
+make install
+
+# 设置开局启动守护进程
+systemctl enable sshd
+
+# 有些版本的 Openssh 启动后systemctl 不会收到通知
+# 编辑service 将 Type=notify 改为 Type=simple，表示执行systemctl 执行和sshd 服务相关的命令就立刻收到通知表示成功而不是等待成功
+vim /usr/lib/systemd/system/sshd.service
+# 重载所有修改过的配置文件
+systemctl daemon-reload
+
+# 重启 sshd 
+systemctl restart sshd
+
+# 查看 sshd 状态
+systemctl status sshd
+~~~
 
  
