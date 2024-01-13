@@ -10,7 +10,7 @@ telnet [ip] [端口]
 
 # netcat测试TCP或UDP连接，apt install netcat 或 yum install nc 安装
 nc [ip] [端口]
-# 默认是TCP协议，-u 参数表示使用UTP协议，-t 参数表示使用Telnet协议
+# 默认是TCP协议，-u 参数表示使用UTP协议，-t 参数表示使用Telnet协议，-U 参数表示使用unix文件协议通信（后面必须接socket本地文件路径）
 # -v 参数进入交互式的输入发送消息和输出接收消息
 # -l 参数监听指定端口，一般用于服务端
 # -k 参数用于服务端监听多个客户端连接，在一个客户端端口连接后服务端不会退出程序而是继续监听连接

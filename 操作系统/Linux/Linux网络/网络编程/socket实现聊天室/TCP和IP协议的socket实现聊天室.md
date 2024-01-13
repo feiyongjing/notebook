@@ -334,7 +334,7 @@ int main(){
         int cfd = accept(sfd, (struct sockaddr *)args->client_ip_port, &c_len);
         if(cfd == -1){
             perror("获取客户端连接失败\n");
-            break;
+            continue;
         }
 
         args->cfd = cfd;

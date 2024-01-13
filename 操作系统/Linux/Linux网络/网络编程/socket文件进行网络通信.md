@@ -57,6 +57,8 @@
 
 
     // 使用 man 7 unix 命令查看 unix 本地协议族对应的结构体 sockaddr_un
+    #include <sys/socket.h>
+    #include <sys/un.h>
     #define UNIX_PATH_MAX    108
     struct sockaddr_un {
         sa_family_t sun_family;               /* unix 本地协议族使用 AF_UNIX */
