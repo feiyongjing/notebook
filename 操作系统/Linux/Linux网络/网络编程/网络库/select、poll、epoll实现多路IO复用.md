@@ -18,6 +18,10 @@
 int select(int nfds, fd_set *readfds, fd_set *writefds,
             fd_set *exceptfds, struct timeval *timeout);
 
+struct timeval {
+    time_t      tv_sec;         /* 秒 */
+    suseconds_t tv_usec;        /* 微秒 */
+};
 
 // 从文件描述符集合中移除指定的文件描述符
 void FD_CLR(int fd, fd_set *set);
