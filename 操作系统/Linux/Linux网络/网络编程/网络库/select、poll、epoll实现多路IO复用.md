@@ -84,7 +84,7 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
 typedef union epoll_data {
     void        *ptr;         /* 一个自定义的结构体数据，通常该结构体中存在监控的文件描述符、监控事件、以及事件发生时的回调函数（该回调函数在 epoll_wait 监听事件获取到后，进行手动调用）。如下有例子 xx_events 自定义结构体 */
-    int          fd;          /* 委托内核监控的文件描述符 */
+    int          fd;          /* 内核监控到发生事件的文件描述符 */
     uint32_t     u32;
     uint64_t     u64;
 } epoll_data_t;
