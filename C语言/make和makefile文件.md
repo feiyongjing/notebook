@@ -2,8 +2,7 @@
 
 ### make命令是用来解析并执行makefile文件
 
-# makefile例子
- 
+# makefile详细解释
 ~~~
 目标:依赖
 （注意这行开头是tab，必须是tab而不是空格）命令
@@ -12,6 +11,8 @@ makefile基本三元素
 目标：要生成的目标文件
 依赖：目标文件由哪些文件生成
 命令：通过执行该命令由依赖文件生成目标文件
+
+makefile 中使用#作为注释符号
 
 简单的例子
 main.o: test1.c test2.c test3.c
@@ -45,10 +46,10 @@ main.o: test1.c test2.c test3.c
   2、$< 表示依赖列表的第一个依赖
   3、$^ 表示依赖全部的依赖列表，注意依赖列表是一个字符串，依赖是以空格隔开，并且会去除重复的依赖
   
-规则匹配：用于简化重复的依赖和目标生成
+规则匹配：用于简化重复的依赖和目标生成，但是这无法被make识别为第一个目标，并且注意
   %表示字符串，即依赖和目标的名称是一样的
 %.o:%.c
-    $(CC) -c $@ $^
+    $(CC) -o $@ $^
 
 makefile常见函数
   1、wildcard 函数用于获取指定类型的文件
@@ -56,7 +57,7 @@ makefile常见函数
 wildcard 函数获取当前目录指定后缀的文件列并赋值给变量
   src=$(wildcard *.c) 
 patsubst 函数替换src变量列表中后缀为 .c 的文件替换为 .o 文件
-  obj=$(patsubst %c, %o, $(src))
+  obj=$(patsubst %.c, %.o, $(src))
 
 清理生成的目标：本质还是添加一个新的目标，例如clean目标
 .PHONY指定目标不进行依赖与目标的生成检查，该目标只执行命令
@@ -71,5 +72,25 @@ clean:
     
 运行 make clean 或者是 make -f [指定的makefile文件] clean 执行clean目标
 
+~~~
+
+### makefile的例子
+~~~makefile
+src=$(wildcard *.c)
+target=$(patsubst %.c, %.o, $(src))
+
+include_path=/usr/include/mysql
+lib_path=/usr/lib64/mysql
+lib_name=mysqlclient
+
+all: $(target)
+
+# 这是规则被make识别为第一个目标
+%.o: %.c
+  $(CC) $^ -o $@ -I$(include_path) -L$(lib_path) -l$(lib_name)
+
+.PHONY:clean
+clean:
+  -rm -f $(target)
 ~~~
  
