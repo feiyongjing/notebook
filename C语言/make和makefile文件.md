@@ -89,6 +89,10 @@ all: $(target)
 %.o: %.c
   $(CC) $^ -o $@ -I$(include_path) -L$(lib_path) -l$(lib_name)
 
+# -I参数指定需要的头文件目录
+# -L参数指定需要的库文件目录
+# -l参数指定需要的库名称
+
 .PHONY:clean
 clean:
   -rm -f $(target)

@@ -195,3 +195,14 @@ echo $?
 kubectl rollout restart deployment/[deployment-name]
 ~~~
  
+22. 常见资源简写和版本查看
+~~~shell
+kubectl api-resources
+# 列出 Kubernetes API 中所有可用的资源类型。命令的输出包含以下几列：
+# `NAME`：资源类型的名称，例如 `pods`、`services`、`deployments` 等
+# `SHORTNAMES`：资源类型的简写，例如 `po`（pods）、`svc`（services）、`deploy`（deployments）等
+# `APIGROUP`：资源所属的 API 组。API 组是 Kubernetes API 的一个子集，例如 `apps`、`batch`、`extensions` 等
+# `NAMESPACED`：这个列表示资源是否是命名空间级别的。如果是，那么你在创建、查看或删除这种资源时需要指定命名空间
+# `KIND`：这是资源对象的种类，例如 `Pod`、`Service`、`Deployment` 等
+# `VERBS`：这个列列出了你可以对这种资源执行的操作，例如 `get`、`list`、`create`、`delete` 等
+~~~

@@ -107,18 +107,38 @@ unsigned int mysql_field_count(MYSQL *mysql);
 unsigned int mysql_num_fields(MYSQL_RES *result);
 
 // 对于结果集，返回所有MYSQL_FIELD结构的数组，即表格的字段信息
-MYSQL_FIELD *mysql_fetch_fields(MYSQL_RES *result);
-MYSQL_FIELD *mysql_fetch_field(MYSQL_RES *result);
+// 返回一个MYSQL_FIELD结构体数组，通过调用MYSQL_FIELD结构体的name属性可以获取到结果集表格的名称
+MYSQL_FIELD * mysql_fetch_fields(MYSQL_RES *result);
+MYSQL_FIELD * mysql_fetch_field(MYSQL_RES *result);
 
+// 获取mysql连接使用的字符集（MY_CHARSET_INFO结构体的name属性是字符集名称）
+void mysql_get_character_set_info(MYSQL *mysql, MY_CHARSET_INFO *cs);
+// 设置mysql连接使用的字符集
+int mysql_set_character_set(MYSQL *mysql, char *csname);
 
 // 释放结果集合内存
 void        STDCALL mysql_free_result(MYSQL_RES *result);
 
 // 关闭连接
 void        STDCALL mysql_close(MYSQL *sock);
+
+// 以下几个API是预处理sql，对于多次执行的语句，预处理执行是一种有效的方式。首先对语句进行解析，为执行作好准备。接下来，在以后使用初始化函数返回的语句句柄执行一次或多次。对于多次执行的语句，预处理执行比直接执行快，主要原因在于，仅对查询执行一次解析操作。在直接执行的情况下，每次执行语句时，均将进行查询。此外，由于每次执行预处理语句时仅需发送参数的数据，从而减少了网络通信量。预处理语句的另一个优点是，它采用了二进制协议，从而使得客户端和服务器之间的数据传输更有效率。
+// 创建MYSQL_STMT句柄，准备开始进行预处理sql字符串
+MYSQL_STMT *mysql_stmt_init(MYSQL *mysql);
+// 为执行操作准备SQL字符串，其中？是占位符(参数标记符)
+int mysql_stmt_prepare(MYSQL_STMT *stmt, const char *query, unsigned long length);
+// 返回预处理SQL语句中的参数数目
+unsigned long mysql_stmt_param_count(MYSQL_STMT *stmt);
+// 将内存中的数据与预处理SQL语句中的参数标记符关联起来
+my_bool mysql_stmt_bind_param(MYSQL_STMT *stmt, MYSQL_BIND *bind);
+// 执行预处理语句
+int mysql_stmt_execute(MYSQL_STMT *stmt);
+// 关闭预处理语句。此外，mysql_stmt_close()还会取消由“stmt”指向的语句句柄分配
+my_bool mysql_stmt_close(MYSQL_STMT *);
+
 ~~~
 
-# 一个连接mysql的客户端
+# 连接数据库，执行sql获取结果集例子
 ### 编译命令如下
 ~~~shell
 gcc mysql-test.c -o mysql-test.o -I/usr/include/mysql -L/usr/lib64/mysql -lmysqlclient
@@ -127,3 +147,211 @@ gcc mysql-test.c -o mysql-test.o -I/usr/include/mysql -L/usr/lib64/mysql -lmysql
 # -l参数指定需要的库名称
 ~~~
 
+# 示例代码如下
+~~~c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "mysql.h"
+
+int main(){
+    int i=0;
+    // 初始化
+    MYSQL * mysql = mysql_init(NULL);
+    if(mysql==NULL){
+        printf("内存不足导致mysql初始化失败\n");
+        return -1;
+    }
+    printf("mysql init ok\n");
+
+    // 连接数据库
+    MYSQL* conn = mysql_real_connect(mysql, "192.168.0.119", "root", "cloudgrow.cn", "wz_shoe", 30306, NULL, 0);
+    if(conn==NULL){
+        printf("wz_shoe数据库连接失败\n");
+        return -1;
+    }
+    printf("wz_shoe数据库连接成功\n");
+
+    // 执行sql
+    char sSql[255] = "select * from test;";
+    int ret = mysql_query(conn, sSql);
+    if(ret!=0){
+        printf("wz_shoe数据库test表格查询失败\n");
+        return -1;
+    }
+    printf("wz_shoe数据库test表格查询成功\n");
+
+    // 方式一：获取查询sql执行后的结果列数
+    // unsigned int num = mysql_field_count(conn);
+
+    // 获取sql执行的结果集
+    MYSQL_RES* results = mysql_store_result(conn);
+    if(results==0){
+        printf("wz_shoe数据库test表格查询结果获取失败\n", mysql_error(conn));
+        return -1;
+    }
+    printf("wz_shoe数据库test表格查询结果集\n");
+
+    // 方式二：获取查询结果集列数
+    unsigned int num =  mysql_num_fields(results);
+
+    // 解析sql执行的结果集表头
+    MYSQL_FIELD* fields = mysql_fetch_fields(results);
+    if(fields == NULL){
+        printf("wz_shoe数据库test表格查询结果的表格头信息获取失败\n", mysql_error(conn));
+        return -1;
+    }
+    for(i=0;i<num;i++){
+        printf("%s\t", fields[i].name);
+    }
+    printf("\n");
+
+    // 解析sql执行的结果集
+    MYSQL_ROW row = NULL;
+    while((row = mysql_fetch_row(results))){
+        for(i=0;i<num;i++){
+            printf("%s\t", row[i]);
+        }
+        printf("\n");
+    }
+
+    // 回收结果集占用的内存
+    mysql_free_result(results);
+
+    // 关闭mysql连接
+    mysql_close(conn);
+    return 0;
+}
+~~~
+---
+
+# 一个连接mysql的客户端例子
+### 编译命令如下
+~~~shell
+gcc mysql-client.c -o mysql-client.o -I/usr/include/mysql -L/usr/lib64/mysql -lmysqlclient
+# -I参数指定需要的头文件目录
+# -L参数指定需要的库文件目录
+# -l参数指定需要的库名称
+~~~
+
+### 连接mysql的客户端，示例代码如下
+~~~c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "mysql.h"
+
+int main(){
+    int i=0;
+    // 初始化
+    MYSQL * mysql = mysql_init(NULL);
+    if(mysql==NULL){
+        printf("内存不足导致mysql初始化失败\n");
+        return -1;
+    }
+    printf("mysql init ok\n");
+
+    // 连接数据库
+    MYSQL* conn = mysql_real_connect(mysql, "192.168.0.119", "root", "cloudgrow.cn", "wz_shoe", 30306, NULL, 0);
+    if(conn==NULL){
+        printf("wz_shoe数据库连接失败\n");
+        return -1;
+    }
+    printf("wz_shoe数据库连接成功\n");
+
+    MY_CHARSET_INFO cs;
+    mysql_get_character_set_info(mysql, &cs);
+    printf("mysql连接默认使用的字符集是：%s\n", cs.name);
+    // 修改连接mysql使用的字符集
+    mysql_set_character_set(conn, "utf8");
+
+    mysql_get_character_set_info(mysql, &cs);
+    printf("mysql连接修改字符集后使用的字符集是：%s\n", cs.name);
+    char sSql[1024];
+    char* p;
+
+    while(1){
+        // 打印mysql命令行标志
+        write(STDOUT_FILENO, "mysql> ", strlen("mysql> "));
+
+        // 读取输入的sql
+        memset(sSql, 0x00, sizeof(sSql));
+        read(STDIN_FILENO, sSql, sizeof(sSql));
+        // 去除sql末尾的分号
+        p = strrchr(sSql, ';');
+        if(p!=NULL){
+            *p = '\0';
+        }
+
+        // 处理开头的回车
+        if(sSql[0]=='\n'){
+            continue;
+        }
+
+        // 处理sql开头的空格
+        for(i=0;i<sizeof(sSql);i++){
+            if(sSql[i]!=' '){
+                break;
+            }
+        }
+        memmove(sSql, sSql+i, sizeof(sSql)-i+1);
+
+        if(strncasecmp(sSql, "exit", 4) == 0 || strncasecmp(sSql, "quit", 4) == 0){
+            mysql_close(conn);
+            exit(0);
+        }
+
+        int ret = mysql_query(conn, sSql);
+        if(ret!=0){
+            printf("%s\n", mysql_error(conn));
+            continue;
+        }
+
+        if(strncasecmp(sSql, "select", 6) != 0){
+            // 非查询语句返回数据变更行数
+            printf("Query OK, %ld row affected (0.02 sec)\n", mysql_affected_rows(conn));
+            continue;
+        }
+
+        // 获取sql执行的结果集
+        MYSQL_RES* results = mysql_store_result(conn);
+        if(results==0){
+            printf("%s\n", mysql_error(conn));
+            continue;
+        }
+
+        // 获取查询结果集列数
+        unsigned int num =  mysql_num_fields(results);
+
+        // 解析sql执行的结果集表头
+        MYSQL_FIELD* fields = mysql_fetch_fields(results);
+        if(fields == NULL){
+            printf("%s\n", mysql_error(conn));
+            mysql_free_result(results);
+            continue;
+        }
+        for(i=0;i<num;i++){
+            printf("%s\t", fields[i].name);
+        }
+        printf("\n");
+
+        // 解析sql执行的结果集
+        MYSQL_ROW row = NULL;
+        while((row = mysql_fetch_row(results))){
+            for(i=0;i<num;i++){
+                printf("%s\t", row[i]);
+            }
+            printf("\n");
+        }
+
+        // 回收结果集占用的内存
+        mysql_free_result(results);
+    }
+
+    mysql_close(conn);
+    return 0;
+}
+~~~
