@@ -15,7 +15,7 @@
 1. 首先内核需要打开 CONFIG_AUDIT 、CONFIG_AUDITSYSCAL配置
 2. audit功能默认是关闭的，可以通过cmdline中加上“audit= 1”开启审计日志会被写到/var/log/messages中（auditd守护进程没有运行时）
 3. 用户空间配置使用audit，首先需要安装audit并配置：
-    - 安装：sudo yum install audit*.* -y
+    - 安装：sudo yum install audit*.* -y  或者是  sudo apt install auditd
     - 开启audit服务（守护进程auditd）：service auditd start
     - 查看是否开启：service auditd status 或者是 auditctl -s ,开启了autid服务后，所有的审计日志会记录在/var/log/audit/audit.log文件中。
 
