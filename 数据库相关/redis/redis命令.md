@@ -4,6 +4,7 @@
 redis-cli              
 # 连接远程的Redis 命令结果通常是显示中如果是1表示成功，0表示失败，注意有一些是例外的需要其他的命令进行检查                                     
 redis-cli -h host -p port -a password  
+# 如果在登录时不指定密码，则登录后使用命令无权限，需要使用 auth myPassword 验证密码获得权限
 ~~~
 
 # Redis keys 命令

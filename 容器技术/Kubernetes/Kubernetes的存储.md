@@ -100,7 +100,7 @@ kubectl patch deployment 'deployment控制器的名称' --patch '{"spec": {"temp
 # Secret类型
 ### Secret类型存储解决了密码、token、密钥等敏感数据的配置问题，而不需要把这些敏感数据暴露到镜像或者Pod spec中。Secret可以以Volume或者环境变量的方式使用
 
-## Secret有三种类型
+## Secret有常见类型，参考：https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets
 - Service Account 类型用来访问Kubernetes API ，由Kubernetes自动创建，并且会自动挂载到Pod的 /run/secrets/kubernetes.io/serviceaccount 目录中
 - Opaque：base64编码格式的Secret，用来存储密码、密钥等。注意Opaque类型不提供配置信息的安全保证。
 - kubernetes.io/dockerconfigjson：用来存储私有docker仓库的认证信息

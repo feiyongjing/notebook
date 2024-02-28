@@ -56,6 +56,7 @@ Kubernetes 'Service' 定义了一种抽象：一个Pod的逻辑分组，一种�
 ## svc的类型
 - ClusterIP：默认类型，自动分配一个仅ClusterIP内部可以访问的虚拟IP，使用场景是用于管理集群服务，只提供一个虚拟IP地址加端口可以在内部访问服务
   - 可以通过编辑etcd中的资源清单升级为NodePort类型
+  - 如果设置直接 clusterIP: None 那么就是ClusterIP类型的无头服务，无头服务是专用于Pod之间通信的svc，pod之间可以通过 "Pod名称.无头svc名称.名称空间名称.Service的DNS后缀(默认是svc.cluster.local):svc服务提供端口号" 来访问另一个pod提供的服务通信，例如 nacos集群使用StatefulSet部署，那么集群其他pod可以使用 nacos-0.nacos-headless.nacos.svc.cluster.local:8848 来访问nocos-0的Pod
 - NodePort: 在ClusterIP的基础上为Service在每个Node节点上绑定一个端口，可以通过Node节点IP加绑定的端口在外部访问该服务 
   - NodePort对外提供服务的端口是配置清单中的  spec.ports[0].nodePort  属性，注意可能是数组的其他元素，该端口必定是30000之上的端口
   - 通过设置ClusterIP内部的端口映射到物理网卡的端口，在外部可以通过物理网卡的端口访问服务
@@ -68,25 +69,22 @@ Kubernetes 'Service' 定义了一种抽象：一个Pod的逻辑分组，一种�
  
 # Ingress详解
 
-Ingress 也是为了解决在集群之外，访问集群内部Service服务的问题
+Ingress 是 Kubernetes 中的一个抽象资源，它提供了定义了一系列路由转发规则（或反向代理规则），可以帮助管理员在 Kubernetes 集群中管理多个服务的访问入口，方便用户访问。Ingress资源对象只是一个规范化的API对象，用于定义流量路由规则和 TLS 设置等信息。它本身不会直接处理或转发流量，而是需要配合一个 Ingress 控制器来实现。
 
-实际上，将service的type设置为nodePort或LoadBalancer，也能实现将集群内部的服务暴露给外部访问。但是它们都有对应的缺点，
+Ingress 需要配合 Ingress Controller 使用，需要注意了，不同的 Ingress Controller 可能支持的功能和配置方式不同，需要根据实际情况进行选择和配置。
+「Ingress Controller」Ingress 控制器是一个独立的组件，它会监听 Kubernetes API 中的 Ingress 资源变化，并根据定义的路由规则配置负载均衡器、反向代理或其他网络代理，从而实现外部流量的转发。因此 Ingress 控制器视为 Ingress 资源的实际执行者。
 
-nodePort和LoadBalancer实现将集群内部的服务暴露给外部访问的缺点
+
+实际上，将service的type设置为nodePort或LoadBalancer，也能实现将集群内部的服务暴露给外部访问。但是它们都有对应的缺点
+### nodePort和LoadBalancer实现将集群内部的服务暴露给外部访问的缺点
 
 - 如果只是单独的直接通过Node节点IP加绑定的物理网卡端口在外部访问服务，则只能单点访问，无法分布式部署
 - 如果需要实现分布式部署则需要考虑使用额外的负载均衡，目前有两种负载均衡方案，
   - 第一种是将NodePort类型的svc替换为LoadBalancer类型的svc，LoadBalancer类型的svc的缺点是每一个LoadBalancer类型的svc都会在k8s集群外部自动创建一个LoadBalancer的负载均衡器，实际上是成本比较高，并且只能在云平台使用
   - 第二种是在k8s集群内部创建一个负载均衡器的Pod，并且创建一个与该Pod匹配的NodePort类型的svc暴露Node节点IP加绑定的物理网卡端口访问负载均衡服务，而负载均衡服务负责进行服务转发和代理到不同的Pod集群的svc上，缺点是当添加或者减少Pod集群服务需要修改负载均衡转发代理规则然后手动重启负载均衡服务
 
-Ingress，是K8s的一个资源对象，定义了一系列路由转发规则（或反向代理规则），它规定了外部进来的HTTP/HTTPS请求应该被转发到哪个Service上。
-
-简单的说，Ingress就是一段nginx服务的反向代理配置，它能根据请求中不同的Host和URL路径，将请求转发到不同的Service的Pod上。
-
-Ingress与手动部署反向代理服务器的思路是一样的。如果反向代理服务器使用的是Nginx程序，Ingress Controller 会将 Ingress 规则变化生成一段Nginx的配置，然后将这个配置写到Ingress Controller管理下的Nginx Pod中，然后自动重启加载路由规则。
+### Ingress与手动部署反向代理服务器的思路是一样的。如果反向代理服务器使用的是Nginx程序，Ingress Controller 会将 Ingress 规则变化生成一段Nginx的配置，然后将这个配置写到Ingress Controller管理下的Nginx Pod中，然后自动重启加载路由规则。
 
 架构图：https://img2020.cnblogs.com/blog/1395193/202009/1395193-20200923212820372-429939181.png
-
-必须具有 ingress 控制器【例如 ingress-nginx，即ingress-nginx的镜像】才能满足 Ingress 的要求。仅创建 Ingress 资源无效。
 
 参考：https://cloud.tencent.com/developer/article/1718482  获取ingress-nginx的镜像和创建Ingress资源

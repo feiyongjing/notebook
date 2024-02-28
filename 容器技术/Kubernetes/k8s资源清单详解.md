@@ -313,7 +313,7 @@ metadata:
   name: frontend                 # 资源的名称，这里是svc的名称
   namespace: default             # 资源在哪个命名空间下创建
 spec: 
-  type: ClusterIP                # svc的类型，默认是ClusterIP类型
+  type: ClusterIP                # svc的类型，默认是ClusterIP类型，如果是无头服务就不需要设置type，默认是ClusterIP类型，并且需要设置clusterIP: None
   selector:                      # 标签匹配器
     app: myappv1                 # 匹配POD的标签，标签key是app值是myappv1的标签
     release: stabel              # 匹配POD的标签，标签key是release值是stabel的标签
@@ -323,8 +323,10 @@ spec:
     targetPort: 80               # 映射的容器内部端口
 ~~~
  
-# Ingress资源清单（包含deployment控制器和SVC资源清单）
-  架构图：https://img2020.cnblogs.com/blog/1395193/202009/1395193-20200923212820372-429939181.png
+# Ingress资源清单（包含deployment控制器和SVC资源清单），注意需要提前安装ingress-controller，也就是ingress-controller
+# k8s官网ingress和ingress-controller资料参考：https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress-controllers/
+# nginx ingress github官网参考：https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme
+# nginx ingress 官网安装参考：https://kubernetes.github.io/ingress-nginx/deploy/
 
 ~~~yaml
 apiVersion: v1                        # svc的创建，svc匹配标签key是app，value是my-app1的Pod
