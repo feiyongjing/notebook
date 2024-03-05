@@ -67,22 +67,6 @@ systemd-analyze blame
 systemd-analyze critical-chain [服务名称]
 # 例如mysql 查看 systemd-analyze critical-chain mysqld.service
 
-# 显示主机信息
-hostnamectl
-
-# 设置主机名称，需要root权限
-hostnamectl set-hostname [新的主机名称]
-
-# 查看当前时区设置
-timedatectl
-
-# 显示所有可用的时区
-timedatectl list-timezones                                                                                   
-
-# 设置当前时区，需要root权限
-timedatectl set-timezone Asia/Shanghai
-timedatectl set-time YYYY-MM-DD
-timedatectl set-time HH:MM:SS
 
 # Systemd 可以管理所有系统资源。不同的资源统称为 Unit（单位）
 # Unit 一共分成12种。如下

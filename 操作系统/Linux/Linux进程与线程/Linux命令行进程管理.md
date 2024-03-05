@@ -81,6 +81,18 @@ pstree
 # -p参数显示进程的PID
 # -u参数显示进程的所属用户
 
+# 查看指定pid进程的启动命令
+cat /proc/<PID>/cmdline           
+
+# 查看指定pid进程启动的目录
+readlink /proc/[pid]/cwd                                    
+
+# 查看指定pid进程启动时的完整环境变量
+cat /proc/[pid]/environ | tr '\0' '\n' | sed 's/^[^=]*=//' 
+
+# 查看指定pid进程打开的文件
+lsof -p [pid]                                                   
+
 # 根据PID杀死进程，注意如果杀死父进程那么子进程也会一并杀死
 kill
 # -s参数指定要发送的信号编号，可以是信号名称或者信号编号

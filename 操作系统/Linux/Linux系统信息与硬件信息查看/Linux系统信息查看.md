@@ -20,9 +20,25 @@ uname
 file /bin/ls
 # 只要参数是一个非系统内置命令就可以查看到
 
+# 显示主机信息
+hostnamectl
+
+# 设置主机名称，需要root权限
+hostnamectl set-hostname [新的主机名称]
 
 # 查看当前时间
 date
+
+# 查看当前时区设置
+timedatectl
+
+# 显示所有可用的时区
+timedatectl list-timezones                                                                                   
+
+# 设置当前时区，需要root权限
+timedatectl set-timezone Asia/Shanghai
+timedatectl set-time YYYY-MM-DD
+timedatectl set-time HH:MM:SS
 
 # 查看当前年份当前月份日历
 cal
