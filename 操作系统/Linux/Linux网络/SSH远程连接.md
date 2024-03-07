@@ -36,6 +36,7 @@ ListenAddress 0.0.0.0 # 设置sshd服务器绑定的IP地址,即只开启绑定I
 HostKey /etc/ssh/xxx  # 指定ssh私钥存放的位置
 SyslogFacility AUTHPRIV # 记录日志，默认等级是INFO
 PermitRootLogin yes # 是否允许远程登陆root用户
+DenyUsers root test # 禁止指定的用户列表登录
 PubkeyAuthentication yes # 是否使用公钥验证
 AuthorizedKeysFile      .ssh/authorized_keys  # 指定公钥保存针对用户家目录的相对位置
 PasswordAuthentication yes # 是否允许使用密码登录

@@ -30,6 +30,10 @@ systemctl list-unit-files | grep enabled
 # 系统的运行级别是3，就检查/etc/rc3.d/ 目录下的软连接文件（指向真实的程序），其中软链接文件开头是S的文件是开机启动的服务程序，开头是K的文件是关机时执行的程序
 sudo ls /etc/rc3.d/ -l 
 # 查看系统的运行级别 runlevel 如果是其他的系统运行级别就检查其他的 /etc/rc[n].d/ 目录下的软连接文件（指向真实的程序）
+# 检查有没有可疑路径的程序，或者是程序的大小不太对劲，即被黑客替换了程序并且伪装成正常的程序
+
+# 检查arp缓存，是否有ip地址与mac地址不匹配，防止中间人攻击
+arp
 
 # 检查是否有非法的定时任务，检查 /etc/crontab 和 /etc/cron.daily/目录、/etc/cron.hourly/目录、/etc/cron.monthly/目录、/etc/cron.weekly/ 目录下文件中是否有定时任务
 cat /etc/crontab
