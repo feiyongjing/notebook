@@ -20,10 +20,7 @@ nc [ip] [端口]
 # 例如服务端 nc -l 9311 >> test.txt 和 客户端 nc 127.0.0.1 9311 < test1.txt 是一对，客户端将test1.txt 传输给服务端，然后服务端将文件重定向存储到test.txt
 
 # 查看互联网默认的网络端口分配，文件描述了一些端口约定的服务和协议
-vim /etc/services
-
-# 查看网卡ip地址
-ip addr show                          
+vim /etc/services                        
 
 # 查看网卡ip地址
 ifconfig
@@ -56,21 +53,22 @@ uuidgen [网卡名称]
 # 如果连接了网线，则会显示"Link detected: yes"，否则会显示"Link detected: no"。如果系统中有多个网卡，您可以逐个执行上述命令，以确定哪个网卡连接了网线。
 ethtool [网卡名称] | grep Link
 
-# ip link show                           # 显示网络接口信息
-# ip link set eth0 up                   # 开启网卡
-# ip link set eth0 down                  # 关闭网卡
-# ip link set eth0 promisc on            # 开启网卡的混合模式
-# ip link set eth0 promisc offi          # 关闭网卡的混个模式
-# ip link set eth0 txqueuelen 1200       # 设置网卡队列长度
-# ip link set eth0 mtu 1400              # 设置网卡最大传输单元
-# ip addr add 192.168.0.1/24 dev eth0    # 设置eth0网卡IP地址192.168.0.1
-# ip addr del 192.168.0.1/24 dev eth0    # 删除eth0网卡IP地址
 
-# ip route list                                            # 查看路由信息
-# ip route add 192.168.4.0/24  via  192.168.0.254 dev eth0 # 设置192.168.4.0网段的网关为192.168.0.254,数据走eth0接口
-# ip route add default via  192.168.0.254  dev eth0        # 设置默认网关为192.168.0.254
-# ip route del 192.168.4.0/24                              # 删除192.168.4.0网段的网关
-# ip route del default                                     # 删除默认路由
+ip [a 或者 l 或者 addr show 或者 link list]  # 查看网卡ip地址信息
+ip link set [网卡名称] up                    # 开启网卡
+ip link set [网卡名称] down                  # 关闭网卡
+ip link set [网卡名称] promisc on            # 开启网卡的混合模式
+ip link set [网卡名称] promisc offi          # 关闭网卡的混个模式
+ip link set [网卡名称] txqueuelen 1200       # 设置网卡队列长度
+ip link set [网卡名称] mtu 1400              # 设置网卡最大传输单元
+ip addr add 192.168.0.1/24 dev eth0    # 设置eth0网卡IP地址192.168.0.1
+ip addr del 192.168.0.1/24 dev eth0    # 删除eth0网卡IP地址 
+
+ip route list                                            # 查看路由信息
+ip route add 192.168.4.0/24  via  192.168.0.254 dev eth0 # 设置192.168.4.0网段的网关为192.168.0.254,数据走eth0接口
+ip route add default via  192.168.0.254  dev eth0        # 设置默认网关为192.168.0.254
+ip route del 192.168.4.0/24                              # 删除192.168.4.0网段的网关
+ip route del default                                     # 删除默认路由 
 
 # dns配置文件 /etc/resolv.conf
 vim /etc/resolv.conf

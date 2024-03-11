@@ -3,8 +3,10 @@
 # 查看docker版本
 docker version      
 
-# 显示docker的系统信息，包括镜像和容器数量
+# 显示docker的系统信息，包括镜像和容器数量，以及docker镜像和容器的存储目录
 docker info             
+# docker info | grep "Root" 查看镜像和容器的存储目录
+# docker 守护进程的默认配置文件是 /etc/docker/daemon.json 可能不存在需要手动创建配置自定义的设置
 
 # 指定命令的帮助文档
 docker [命令] --help  
@@ -47,14 +49,17 @@ docker load -i [文件名称]
 
 ## 容器命令
 ~~~shell
-# 启动容器，-it和sh表示进入容器
-docker run [-it] 容器启动参数 镜像的名字和版本 [sh]
+# 启动容器，-it表示进入交互式命令行
+docker run [-it] [容器启动参数] [镜像的名字和版本] [命令]
 # --name 为容器指定⼀个「名字」
 # --restart=always 遇到错误⾃动重启
+# --link [另一个容器的名称] 会自动添加另一个容器的DNS记录到启动的容器中，即可以直接在启动的容器中通过另一个容器的名称和端口去访问该容器的服务，注意这个连接是单向的，另一个容器不具备该能力
+# --network [网络名称] 在指定的网络下运行容器（注意一个容器可以指定拥有多个网络环境），如果不设置默认是在 docker0 的网桥下运行容器。非默认docker0网桥网络下的容器之间是可以直接通过容器的名称和端口号进行通信访问服务（甚至可以访问没有开启端口映射到宿主机的容器服务），不需要手动添加 --link 参数
 # -d 和 -id 分别指后台运行和交互式运行
 # -p [本地端⼝:容器端⼝] 容器与物理机的端口映射
 # -v [本地⽂件:容器⽂件] 容器与物理机的数据卷挂载
 # -e NAME=VALUE 设置容器内部的环境变量
+# 最后的命令会替换DockerFile指定的容器启动命令
 
 # 查看Docker当前运行的容器
 docker ps [args]                                                                          
@@ -67,8 +72,9 @@ docker rm -f 容器id或容器名字
 # 强制删除所有的容器
 docker rm -f $( docker ps -aq)                                        
 
-# 进入容器里面
-docker exec -it 容器id bash   
+# 进入交互式命令行执行命令
+docker exec -it 容器id [命令]   
+# 例如 docker exec -it 容器id bash 会进入容器的终端
 
 # 在容器内部执行会退出容器
 exit 
@@ -85,19 +91,40 @@ docker stop 容器id
 # 强制停止当前容器
 docker kill 容器id                                                              
 
-~~~
+# 查看容器进程信息
+docker top 容器id 
+docker status 容器id 
 
-## 日志
-~~~shell
-# 查看指定容器的日志，-ft 是显示日志，--tail number是显示的日志条数
+# 查看指定容器的日志，-ft 是显示日志，--tail number是显示的日志条数，并且持续查看
 docker logs -ft --tail number 容器id                              
 
-# 查看容器进程信息
-docker top 容器id                                                            
+# 获取容器/镜像的元数据，包含镜像的启动命令、容器的网络配置、容器的环境变量等，启动命令注意查看Cmd和Entrypoint指令
+docker inspect [镜像或容器ID] 
 ~~~
 
-# 其他
+
+# 网络
 ~~~shell
-# 获取容器/镜像的元数据，包含镜像的启动命令，启动命令注意查看Cmd和Entrypoint指令
-docker inspect [镜像或容器ID]
+# 查看docker的网络列表
+docker network ls
+
+# 创建docker网络，非默认docker0网桥网络下的容器之间是可以直接通过容器的名称和端口号进行通信访问服务，不需要手动添加 --link 参数
+docker network create [参数] [自定义的网络名称]
+# -d 参数设置管理网络的驱动程序，默认不设置是 bridge （网桥模式）
+
+# 使指定容器连接到指定的docker网络中，注意一个容器可以连接多个docker网络
+docker network connect [网络名称] [容器名称或id]
+
+# 使指定容器断开与指定的ocker网络的连接
+docker network [参数] disconnect [网络名称] [容器名称或id]
+# -f 参数表示强制断开连接
+
+# 删除所有未使用的网络
+docker network prune 
+
+# 删除一个或者多个网络
+docker network rm [多个空格隔开的网络名称或ID]
+
+# 查看网络详细信息
+docker network inspect [docker的networkID]
 ~~~
