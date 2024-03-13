@@ -118,6 +118,9 @@ systemctl [参数] [服务名称]
 
 # 每一个 Unit 都有一个配置文件，告诉 Systemd 怎么启动这个 Unit 
 # Systemd 默认从目录/etc/systemd/system/或者是/etc/systemd/system/multi-user.target.wants/读取配置文件。但是，里面存放的大部分文件都是符号链接，指向目录/usr/lib/systemd/system/，真正的配置文件存放在那个目录。
+systemctl cat docker  # 查看服务的Unit 配置文件内容和配置文件目录
+
+
 # 而systemctl enable命令用于在上面两个目录之间，建立符号链接关系。所有下面第一条命令等同与第二和第三条命令的组合
 systemctl enable mysqld.service   # 不加后缀名sysystemctl会默认后缀名为.service
 ln -s '/usr/lib/systemd/system/mysqld.service' '/etc/systemd/system/multi-user.target.wants/mysql.service'
