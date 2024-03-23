@@ -33,6 +33,11 @@ spec:
   - image: k8s.gcr.io/coredns:1.3.1  # 创建容器使用的镜像,在yml中表示数组的-符号前对于上一行来说两个空格可以加，也可以不加
     imagePullPolicy: IfNotPresent    # 镜像的下载策略，可以不写使用默认
     name: coredns1                   # 创建出的容器的名字
+    command: ["/bin/bash"]           # command 指定容器启动时运行的命令，对应于DockerFile 的 ENTRYPOINT 指令
+    args: ["myarg1", "myarg2"]       # args 指定传递给命令的参数，对应于DockerFile 的 CMD 指令
+    securityContext:                 # 定义安全上下文
+      runAsGroup: 0                  # 设置容器启动命令使用的用户组ID
+      runAsUser: 0                   # 设置容器启动命令使用的用户ID
     readinessProde:                  # 容器的就绪探针
       httpGet:                       # 就绪探针探测方式选择httt的get请求
         prod: 80                     # 就绪探针访问的端口
@@ -425,6 +430,10 @@ spec:                                     # 期望
           - backend:
               serviceName: my-service-2
               servicePort: 8081
+  tls:
+    - hosts:
+        - xxx.com                         # tls证书的域名
+      secretName: xxx-ssl                 # tls证书创建的 secret 资源
 ~~~
  
 # Ingress-Nginx实现BasicAuth认证
