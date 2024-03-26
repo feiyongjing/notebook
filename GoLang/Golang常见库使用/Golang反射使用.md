@@ -14,10 +14,21 @@ type User struct {
 	Node *User
 }
 
+func (u User) GetNode() *User {
+	fmt.Println("反射调用GetNode方法")
+	return u.Node
+}
+
+func (u *User) SetNode(node *User) {
+	fmt.Println("反射调用SetNode方法")
+	u.Node = node
+}
+
 func main() {
 
 	user := User{Id: 1, Name: "张三", Age: 18}
 	user1 := User{Id: 2, Name: "李四", Age: 20, Node: &user}
+	user2 := User{Id: 3, Name: "王五", Age: 24, Node: &user}
 
 	inspectStruct(user1)
 
@@ -29,6 +40,15 @@ func main() {
 	fmt.Printf("%+v\n", user1)
 	reflect.ValueOf(&user1).Elem().Addr().Elem().FieldByName("Name").SetString("xxxx")
 	fmt.Printf("%+v\n", user1)
+	reflect.ValueOf(&user1).Elem().Addr().Elem().FieldByName("Node").Set(reflect.ValueOf(&user2))
+	fmt.Printf("%+v, %+v\n", user1, user1.Node)
+
+	// 不使用指针value 可以调用不包含结构体指针的结构体函数
+	res := reflect.ValueOf(&user1).Elem().MethodByName("GetNode").Call([]reflect.Value{})
+	fmt.Printf("%+v\n", res[0])
+	// 必须指针value 调用包含结构体指针的结构体函数
+	reflect.ValueOf(&user1).MethodByName("SetNode").Call([]reflect.Value{reflect.ValueOf(&user2)})
+	fmt.Printf("%+v, %p\n", user1, &user2)
 }
 
 func inspectStruct(u interface{}) {
@@ -43,6 +63,7 @@ func inspectStruct(u interface{}) {
 	v := reflect.ValueOf(u)  // 获取反射值的对象
 	numField := v.NumField() // 获取结构体对象中的属性数量
 
+	// 获取结构体字段的类型和值
 	for i := 0; i < numField; i++ {
 		field := v.Field(i) // 获取结构体中第i个字段
 		ft := field.Type()  // 获取非指针类型字段的类型
@@ -74,5 +95,15 @@ func inspectStruct(u interface{}) {
 
 		}
 	}
+
+	// 获取结构体的方法
+	// 如果reflect.TypeOf() 的参数不是指针类型，参数为指针的方法【不】包含在内
+	// 如果reflect.TypeOf() 的参数是指针类型，参数为指针的方法包含在内
+	for i := 0; i < t.NumMethod(); i++ {
+		m := t.Method(i)
+		//res := m.Call([]reflect.Value{})
+		fmt.Printf("反射调用的函数名是：%s， 函数声明是：%v，函数调用结果是：\n", m.Name, m.Type)
+	}
+
 }
 ~~~
