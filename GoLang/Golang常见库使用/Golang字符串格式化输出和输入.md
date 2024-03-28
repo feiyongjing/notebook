@@ -1,4 +1,4 @@
-### 字符串格式化
+### 字符串格式化输出和输入
 ~~~go
 package main
 
@@ -55,5 +55,15 @@ func main() {
 	str := "策马浪迹天涯 唤来风雨相伴自潇洒"
 	bytes := []byte(str)
 	fmt.Printf("指针的地址是：%p\n", bytes)
+
+	// 读取标准输入
+	var s1, s2 string
+	fmt.Println("读取输入的一行字符并且打印，请输入你的字符串：")
+	fmt.Scanln(&s1)
+	fmt.Printf("你输入的字符串是：%s\n", s1)
+
+	fmt.Println("读取输入的一行字符格式化字符串提前内容并且打印，例如输入name:xxx，会抓取xxx打印，请输入你的字符串：")
+	fmt.Scanf("name:%s", &s2)
+	fmt.Printf("从你输入的字符串提前name是：%s\n", s2)
 }
 ~~~

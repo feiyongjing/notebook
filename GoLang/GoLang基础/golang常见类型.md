@@ -1,17 +1,23 @@
-### 常见类型
+## 常见类型
+### 基本数据类型，没有赋值都是有默认的值
 - bool 布尔型的值只可以是常量 true 或者 false。一个简单的例子：var b bool = true
 - int、uint、int8、uint8、int16、uint16、int32、uint32、int64、uint64 例如 var i int = 100
 - float32、float64、complex、complex64、complex128
+- byte 字符型
 - string 例子：var b string = "true"
+
+### 派生类型，没有值默认是nil，即null
+- struct结构体类型
 - 固定长度数组 例子 var arr [5]int= [5]int{1, 2, 3, 4, 5} 或 arr1 := [...]int{1, 2, 3, 4, 5}
-- 切片（可变长度数组） 例子 s := new ([]int) 注意返回的是切片的指针
+- slice切片（可变长度数组） 例子 s := new ([]int) 注意返回的是切片的指针
 - map集合类型 例子 m := make(map[KeyType]ValueType, 10)
-- 指针类型 例子 var a *int
-- 接口类型 例子 var a interface{}
+- pointer指针类型 例子 var a *int
+- interface接口类型 例子 var a interface{}
+- 函数类型
 - chan管道类型 例子 ch := make(chan int, 10)
 
 
-### golang中基本数据类型变量：包含数组、结构体，没有赋值都是有默认的值。而引用类型：接口、指针、切片（可变长度数组）没有值默认是nil，即null
+### 注意值类型都有对应的指针类型，值类型包含基本数据类型、struct结构体、数组，而值类型的数据在被当成参数传递函数时是进行了值的拷贝，在函数内部修改是无法影响到函数外部的值的
 
 ## 常量
 ~~~go
@@ -40,7 +46,7 @@ func main() {
 }
 ~~~
 
-## 结构体
+## struct结构体
 ~~~go
 package main
 
@@ -65,7 +71,7 @@ func main() {
 }
 ~~~
 
-## 指针
+## pointer指针
 ~~~go
 package main
 
@@ -85,7 +91,7 @@ func f1(a *int) {
 }
 ~~~
 
-## 切片（可变长度数组）
+## slice切片（可变长度数组）
 ~~~go
 package main
 
@@ -159,7 +165,30 @@ func main() {
 }
 ~~~
 
-## chan 管道类型
+## 函数类型
+~~~go
+package main
+
+import "fmt"
+
+func Sum(a int, b int) int {
+	return a + b
+}
+
+func F1(myFunc func(int, int) int, a int, b int) {
+	fmt.Printf("传递函数对象和参数进行函数回调，回调结果是：%d\n", myFunc(a, b))
+}
+
+func main() {
+	// 函数名就是代表该函数对象
+	F1(Sum, 1, 2)
+
+	// 匿名函数直接声明并调用
+	func(a int, b int) { fmt.Printf("匿名函数直接声明并调用：%d\n", a*b) }(3, 7)
+}
+~~~
+
+## channel 管道类型
 ~~~go
 package main
 
@@ -180,5 +209,24 @@ func main() {
 }
 ~~~
 
+## 类型转换，go中没有隐式的类型转换，只能手动转换类型
+~~~go
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main() {
+	var a int8 = 13
+	var b int32 = int32(a)
+	var c byte = byte(b)
+	var d string = fmt.Sprintf("%v", c)
+	e, _ := strconv.Atoi(d)
+	f, _ := strconv.ParseInt(d, 10, 64)
+	fmt.Printf("a=%v,b=%v,c=%v,d=%q,e=%v,f=%v\n", a, b, c, d, e, f)
+}
+~~~
 
 
