@@ -56,7 +56,8 @@ func NewUser(name string, age int) *User {
 	//return user
 }
 
-// 函数名前面的括号是设置必须是指定的结构体对象才能调用的对象函数
+// 函数名前面的括号是设置设置那些类型的对象可以调用该函数
+// 注意如果是修改修改调用者对象本身的成员请一定要指定为该调用者类型指针才能修改
 func (u *User) GetName() string {
 	return u.Name
 }

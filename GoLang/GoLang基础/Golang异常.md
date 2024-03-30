@@ -21,6 +21,7 @@ func main() {
 	r, err := Sum(-1, -4)
 	// 判断是否出现错误
 	if err != nil {
+		// 类型断言判断错误类型是否是自定义的错误
 		_, ok := err.(cusError)
 		if ok {
 			fmt.Println(err)
@@ -32,6 +33,9 @@ func main() {
 
 func Sum(a int, b int) (r int, err error) {
 	if a < 0 && b < 0 {
+		// 默认的内置错误抛出方式1： errors.New("错误消息")
+		// 默认的内置错误抛出方式2： panic("错误消息")
+		// 抛出自定义的错误
 		err = cusError{
 			Code:    2233,
 			Message: "求和结果不能是负数",

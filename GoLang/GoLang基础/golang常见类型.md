@@ -12,12 +12,13 @@
 - slice切片（可变长度数组） 例子 s := new ([]int) 注意返回的是切片的指针
 - map集合类型 例子 m := make(map[KeyType]ValueType, 10)
 - pointer指针类型 例子 var a *int
-- interface接口类型 例子 var a interface{}
+- interface接口类型，interface 类型默认是指针类型，interface{}是空接口没有任何函数，所有的类型都实现了空接口
 - 函数类型
 - chan管道类型 例子 ch := make(chan int, 10)
 
-
-### 注意值类型都有对应的指针类型，值类型包含基本数据类型、struct结构体、数组，而值类型的数据在被当成参数传递函数时是进行了值的拷贝，在函数内部修改是无法影响到函数外部的值的
+### 值类型和引用类型
+- 值类型包含基本数据类型、struct结构体、数组，值类型一般都是使用new内置函数进行创建的。注意值类型都有对应的指针类型，而值类型的数据在被当成参数传递函数时是进行了值的拷贝，在函数内部修改是无法影响到函数外部的值的
+- 引用类型包含 slice切片、map集合、pointer指针、interface接口、函数、chan管道，引用类型一般都是使用make内置函数进行创建的
 
 ## 常量
 ~~~go
@@ -27,11 +28,13 @@ import (
 	"fmt"
 )
 
+// 首字母大写的全局变量只要被其他地方引用了所在的包，那么就可以直接使用改全局变量
 const (
 	A = 100    // 对于直接赋值的常量来说是有自动类型推断的
 	B = "哈哈" 
 )
 
+// 首字母小写的全局变量只在当前包中有效
 const (
 	a uint8= iota * 10   // iota 关键字用于常量中表示该常量是默认类型的默认值，后续的常量会使用当前常量的表达式但是iota表示的数会加1，如果有些常量不需要请使用 _ 表示不需要变量占位
 	b
@@ -40,6 +43,7 @@ const (
     e  
 )
 
+// 函数或代码块中的局部变量只在该作用域中有效
 func main() {
 	fmt.Println(A, B)
     fmt.Println(a, b, d, e)
@@ -56,6 +60,7 @@ import "fmt"
 type user struct {
 	name string
 	age  int
+	int64  // 这是匿名字段，只设置字段类型，注意匿名字段的类型不能与其他字段的类型一致
 }
 
 func main() {
@@ -63,11 +68,13 @@ func main() {
 	u := user{name: "哈哈哈", age: 18}
 	fmt.Println(u.name,u.age)
 	
-    // 结构体对象创建方式2
+    // 结构体对象创建方式2：内置的new函数会申请一个指定类型大小的内存空间，返回所内存空间的指针
 	u1 := new(user)
 	u1.name="嘻嘻嘻"
 	u1.age=20
-	fmt.Println(u1.name, u1.age)
+	u1.int64=80  // 直接通过匿名字段的类型可以设置匿名字段的值
+	fmt.Println(u1.name, u1.age, u1.int64)
+
 }
 ~~~
 
@@ -209,7 +216,7 @@ func main() {
 }
 ~~~
 
-## 类型转换，go中没有隐式的类型转换，只能手动转换类型
+## 类型转换，go中没有隐式的类型转换，只能手动进行类型断言判断，从而转换类型
 ~~~go
 package main
 
@@ -219,12 +226,24 @@ import (
 )
 
 func main() {
+
+	// 如果是一些确定的类型，可以通过对应的函数进行转换
 	var a int8 = 13
 	var b int32 = int32(a)
 	var c byte = byte(b)
 	var d string = fmt.Sprintf("%v", c)
 	e, _ := strconv.Atoi(d)
 	f, _ := strconv.ParseInt(d, 10, 64)
+
+	// 如果是不确定的类型请进行类型断言转换类型
+	var i interface{} = "hello"
+	s, ok := i.(string)
+	if ok {
+		fmt.Println("string类型断言成功，并且转换赋值给了新的变量：%v\n", s)
+	} else {
+		fmt.Println("string类型断言失败")
+	}
+
 	fmt.Printf("a=%v,b=%v,c=%v,d=%q,e=%v,f=%v\n", a, b, c, d, e, f)
 }
 ~~~
