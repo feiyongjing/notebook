@@ -198,7 +198,7 @@ func main() {
 
 func F1() {
 
-	file, err := os.Open("go.mod")
+	file, err := os.Open("go.mod")   // Open是只读方式打开文件，如果需要读写方式打开文件请使用OpenFile
 
 	if err != nil {
 		log.Fatal("文件打开失败，打印问题并退出程序")
