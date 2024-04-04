@@ -111,7 +111,6 @@ setbit key offset value
 ~~~
 
 # redis 哈希  相当于JAVA的HashMap, key表示Map对象名字，field表示Map的键，value表示Map的值
-
 ~~~shell
 # 向哈希表 key 中添加一个字段 field ，值设为 value
 Hset key field value                                
@@ -155,7 +154,6 @@ Hincrbyfloat key field increment
 ~~~
 
 # Redis List 命令
-
 ~~~shell
 # 添加一个或多个值插入到列表头部，列表不存在创建列表进行添加
 Lpush key value1 value2                            
@@ -217,7 +215,6 @@ Lrem key number value
 ~~~
 
 # Redis Set 命令
-
 ~~~shell
 # 向集合添加一个或多个元素
 Sadd key value1 value2                        
