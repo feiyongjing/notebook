@@ -53,14 +53,16 @@ func main() {
 
 func inspectStruct(u interface{}) {
 
-	t := reflect.TypeOf(u) // 获取反射值的类型
+	t := reflect.TypeOf(u) // reflect.TypeOf获取变量的类型
 	fmt.Println(t)
 
 	//获取结构体中指定的字段
 	name, _ := t.FieldByName("Name")
 	fmt.Printf("%+v\n", name)
 
-	v := reflect.ValueOf(u)  // 获取反射值的对象
+	v := reflect.ValueOf(u)      // reflect.ValueOf获取变量的值
+	user := v.Interface().(User) // reflect.Value需要先将Value转换为interface{}再通过类型转换为自定义的结构体User
+	fmt.Printf("%+v\n", user)
 	numField := v.NumField() // 获取结构体对象中的属性数量
 
 	// 获取结构体字段的类型和值
@@ -90,7 +92,7 @@ func inspectStruct(u interface{}) {
 			fmt.Printf("field:%d type:%s value:%+v kind:%s\n", i, ftPName, e, ftPKind)
 
 		default:
-			field.Interface() // 转换为interface{} 类型
+			field.Interface() // 转换为interface{} 类型，如果是需要进一步转换为自定义的结构体则需要使用类型断言进行进一步的转换
 			fmt.Printf("field:%d type:%s unhandled kind:%s value:%d\n", i, ftName, ftKind, field.Int())
 
 		}

@@ -207,10 +207,10 @@ func main() {
 	ch := make(chan int, 10)
 
 	// 创建只写管道，管道内部传输的数据类型是int，缓冲区大小是10个字节
-	ch1 := make(chan <-int, 10)
+	ch1 := make(chan<- int, 10)
 
 	// 创建只读管道，管道内部传输的数据类型是int，缓冲区大小是10个字节
-	ch2 := make(chan int, 10)
+	ch2 := make(<-chan int, 10)
 
 	fmt.Println(ch, ch1, ch2)
 }
