@@ -82,7 +82,7 @@ func main() {
 ### 协程带来的问题
 - 和线程一样，存在多个协程向共享变量写数据时存在数据错乱，解决方案是使用锁或者channel管道解决
 
-### 互斥锁解决协程共享变量问题
+## 互斥锁解决协程共享变量问题
 - 缺点是主线程睡眠一段时间之后不确定协程是否执行完毕然后释放锁，并且主线程的睡眠时间不确定，必须多处加锁和解锁
 ~~~go
 package main
@@ -127,4 +127,242 @@ func main() {
 }
 ~~~
 
+## 协程同步：互斥锁实现生产者消费者有序生产消费，并且在主线程中通过sync.WaitGroup等待所有协程完成任务
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func producer(intChan chan int, mutex sync.Mutex, count *int, waitGroup *sync.WaitGroup) {
+	for i := 1; i <= 10; i++ {
+		for true {
+			if *count == 0 && mutex.TryLock() {
+				break
+			}
+		}
+		intChan <- i
+		fmt.Printf("生产者生产了：%d\n", i)
+		*count = 1
+
+		mutex.Unlock()
+	}
+	close(intChan)
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func consumer(intChan chan int, mutex sync.Mutex, count *int, waitGroup *sync.WaitGroup) {
+	for value := range intChan { // 遍历管道，当管道关闭之后会自动退出遍历
+		for true {
+			if *count == 1 && mutex.TryLock() {
+				break
+			}
+		}
+		fmt.Printf("消费者消费了：%d\n", value)
+		*count = 0
+		mutex.Unlock()
+
+	}
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func main() {
+	mutex := sync.Mutex{}
+
+	waitGroup := sync.WaitGroup{}
+
+	intChan := make(chan int, 10)
+	count := 0
+
+	waitGroup.Add(2) // 设置需要等待的协程数计数器
+
+	go producer(intChan, mutex, &count, &waitGroup)
+	go consumer(intChan, mutex, &count, &waitGroup)
+
+	waitGroup.Wait() // 阻塞等待的协程数计数器归零
+
+	fmt.Println("主程序执行完毕")
+}
+~~~
+
+## 协程同步：管道实现生产者消费者有序生产消费，并且在主线程中通过sync.WaitGroup等待所有协程完成任务
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func producer(intChan chan int, syncChan chan int, waitGroup *sync.WaitGroup) {
+	for i := 1; i <= 10; i++ {
+		intChan <- i
+		fmt.Printf("生产者生产了：%d\n", i)
+		<-syncChan
+	}
+	close(intChan)
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func consumer(intChan chan int, syncChan chan int, waitGroup *sync.WaitGroup) {
+	for value := range intChan { // 遍历管道，当管道关闭之后会自动退出遍历
+		fmt.Printf("消费者消费了：%d\n", value)
+		syncChan <- 1
+	}
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func main() {
+	waitGroup := sync.WaitGroup{}
+
+	intChan := make(chan int, 10)  // 存放生产消费数据的管道，如果容量设置为1就不需要在设置生产消费同步的管道了
+	syncChan := make(chan int, 1)  // 生产消费同步管道，即生产一个然后消费一个的模式交替执行
+
+	waitGroup.Add(2) // 设置需要等待的协程数计数器
+
+	go producer(intChan, syncChan, &waitGroup)
+	go consumer(intChan, syncChan, &waitGroup)
+
+	waitGroup.Wait() // 阻塞等待的协程数计数器归零
+
+	fmt.Println("主程序执行完毕")
+}
+~~~
+
+## 协程同步：sync.Cond实现生产者消费者有序生产消费，并且在主线程中通过sync.WaitGroup等待所有协程完成任务
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func producer(intChan chan int, cond *sync.Cond, waitGroup *sync.WaitGroup) {
+	for i := 1; i <= 10; i++ {
+		cond.L.Lock()
+		intChan <- i
+		fmt.Printf("生产者生产了：%d\n", i)
+		cond.Wait() 
+		cond.L.Unlock()
+	}
+	close(intChan)
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func consumer(intChan chan int, cond *sync.Cond, waitGroup *sync.WaitGroup) {
+	for value := range intChan { // 遍历管道，当管道关闭之后会自动退出遍历
+		cond.L.Lock()
+		fmt.Printf("消费者消费了：%d\n", value)
+		cond.L.Unlock()
+		cond.Signal()  // 唤醒一个其他协程因为 cond.Wait() 调用造成等待
+	}
+	defer waitGroup.Done() // 协程数计数器减一，即协程任务完成
+}
+
+func main() {
+	mu := &sync.Mutex{}
+	cond := sync.NewCond(mu)
+
+	waitGroup := sync.WaitGroup{}
+
+	intChan := make(chan int, 10)
+
+	waitGroup.Add(2) // 设置需要等待的协程数计数器
+
+	go producer(intChan, cond, &waitGroup)
+	go consumer(intChan, cond, &waitGroup)
+
+	waitGroup.Wait() // 阻塞等待的协程数计数器归零
+
+	fmt.Println("主程序执行完毕")
+}
+~~~
+
+## 协程读写分离：sync.RWMutex读写锁操作map，并且在主线程中通过sync.WaitGroup等待所有协程完成任务
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+var m map[string]string
+
+func readMap(a int, mu *sync.RWMutex, wg *sync.WaitGroup) {
+	mu.RLock() // 读锁被占用的情况下会阻止写，不会阻止读，多个协程可以同时获得读锁
+	for i := 0; i < 10; i++ {
+        s, ok := m[string(i)]
+        if ok {
+		    fmt.Printf("%d号读协程读取到：%s\n", a, s)
+        }
+	}
+	mu.RUnlock()
+	defer wg.Done()
+}
+
+func writeMap(a int, mu *sync.RWMutex, wg *sync.WaitGroup) {
+	mu.Lock() // 写锁会阻止其他协程对写锁和读锁的获取
+	for i := 0; i < a; i++ {
+		m[string(i)] = string(int('A') + i)
+	}
+	mu.Unlock()
+	defer wg.Done()
+}
+
+func main() {
+	mu := sync.RWMutex{}
+	wg := sync.WaitGroup{}
+
+	go writeMap(10, &mu, &wg) // 写操作
+
+	for i := 0; i < 10; i++ { // 10个协程并发读
+		wg.Add(1)
+		go readMap(i, &mu, &wg)
+	}
+	wg.Wait()
+}
+~~~
+
+## 协程安全map：sync.Map的功能和map除了协程安全之外没有区别，API使用方面有些不同
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	var m sync.Map
+	// 1. 写入
+	m.Store("qcrao", 18)
+	m.Store("stefno", 20)
+
+	// 2. 读取
+	age, _ := m.Load("qcrao")
+	fmt.Println(age.(int))
+
+	// 3. 遍历
+	m.Range(func(key, value interface{}) bool {
+		name := key.(string)
+		age := value.(int)
+		fmt.Println(name, age)
+		return true
+	})
+
+	// 4. 删除
+	m.Delete("qcrao")
+	age, ok := m.Load("qcrao")
+	fmt.Println(age, ok)
+
+	// 5. 读取或写入
+	m.LoadOrStore("stefno", 100)
+	age, _ = m.Load("stefno")
+	fmt.Println(age)
+}
+~~~
 
