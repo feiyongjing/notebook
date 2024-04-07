@@ -366,3 +366,99 @@ func main() {
 }
 ~~~
 
+## sync.Pool临时缓存对象
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"sync/atomic"
+)
+
+// 用来统计实例真正创建的次数
+var numCalcsCreated int32
+
+// 创建实例的函数
+func createBuffer() interface{} {
+	// 这里要注意下，非常重要的一点。这里必须使用原子加，不然有并发问题；
+	atomic.AddInt32(&numCalcsCreated, 1)
+	buffer := make([]byte, 1024)
+	return &buffer
+}
+
+func main() {
+	// sync.Pool中用于缓存临时对象，但是缓存对象在不确定的时间会被自动被回收掉
+	// 创建sync.Pool，New设置Poll中存储对象的创建函数
+	// 取出缓存对象时，如果有缓存对象就直接取出
+	// 如果没有缓存的对象，即缓存对象在不确定的时间被回收掉了会通过New设置创建出一个新的对象
+	// 注意Pool本身是线程安全的，但是New属性函数创建函数对象不是线程安全的
+	bufferPool := &sync.Pool{
+		New: createBuffer,
+	}
+
+	// 多协程并发测试
+	numWorkers := 1024 * 1024
+	wg := sync.WaitGroup{}
+	wg.Add(numWorkers)
+
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			defer wg.Done()
+			// 向Pool中获取一个缓存的对象，如果没有就通过New属性函数创建一个返回
+			buffer := bufferPool.Get()
+			_ = buffer.(*[]byte)
+			// 向Pool中放入一个缓存的对象
+			defer bufferPool.Put(buffer)
+		}()
+	}
+	wg.Wait()
+	fmt.Printf("Pool中的缓存对象创建了 %d 次\n", numCalcsCreated)
+}
+~~~
+
+## 通过sync.Once实现单例模式
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+type User struct {
+	Name string
+	Age  int
+}
+
+var (
+	singletonUser *User
+	once          sync.Once
+)
+
+func GetSingletonUser() *User {
+	// sync.Once的Do函数设置传入的函数参数在多协程中只保证执行一次
+	once.Do(func() {
+		fmt.Println("单例User对象初始化只执行一次")
+		singletonUser = &User{}
+	})
+	return singletonUser
+}
+
+func main() {
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			s := GetSingletonUser()
+			fmt.Printf("单例User对象的指针地址: %p\n", s)
+		}()
+	}
+
+	wg.Wait()
+}
+~~~
+
+
