@@ -461,4 +461,84 @@ func main() {
 }
 ~~~
 
+# 协程原子操作
+- sync/atomic提供了5种类型的原子操作和1个Value类型
+## 5种原子操作
+~~~go
+package main
 
+import (
+	"fmt"
+	"sync/atomic"
+)
+
+func main() {
+	var newValue1 int32 = 200
+	var dst1 int32 = 100
+	// atomic.SwapXXX函数，XXX表示一些常见的类型
+	// 这些函数可以协程安全（原子操作）的修改指定类型的指针，使其指向新的值，并且函数返回原来的值
+	oldValue1 := atomic.SwapInt32(&dst1, newValue1)
+	// 打印结果
+	fmt.Println("old value: ", oldValue1, " new value:", dst1)
+
+	var dst2 int32 = 100
+	var oldValue2 int32 = 100
+	var newValue2 int32 = 200
+	// atomic.CompareAndSwapXXX函数，XXX表示一些常见的类型
+	// 这些函数可以协程安全（原子操作）的先比较指针指向值和指定的old值是否相等，如果相等，则指针指向new值,并且返回true。如果不相等则直接返回false
+	swapped := atomic.CompareAndSwapInt32(&dst2, oldValue2, newValue2)
+	// 打印结果
+	fmt.Printf("old value: %d, swapped value: %d, swapped success: %v\n", oldValue2, dst2, swapped)
+
+	var a int32 = 100
+	var b int32 = 200
+	// atomic.AddXXX函数，XXX表示一些常见的类型
+	// 这些函数可以协程安全（原子操作）的将指针指向值和指定的值进行相加，返回相加的结果
+	sum := atomic.AddInt32(&a, b)
+	fmt.Printf("a value: %d, b value: %d, sum result: %v\n", a, b, sum)
+
+	var res1 int32 = 100
+	// atomic.LoadXXX函数，XXX表示一些常见的类型
+	// 这些函数可以协程安全（原子操作）的获取指针指向的值
+	result1 := atomic.LoadInt32(&res1)
+	fmt.Println("result=", result1)
+
+	var val1 int32 = 100
+	var newValue int32 = 200
+	// atomic.StoreXXX函数，XXX表示一些常见的类型
+	// 这些函数可以协程安全（原子操作）的修改指针指向的值使其指向指定的值
+	atomic.StoreInt32(&val1, newValue)
+	fmt.Println("result=", val1)
+}
+~~~
+
+## Vlaue类型设置任意类型的原子操作
+~~~go
+package main
+
+import (
+	"fmt"
+	"sync/atomic"
+)
+
+func loadConfig() map[string]string {
+	m := make(map[string]string)
+	m["张三"] = "十八岁"
+	return m
+}
+
+func main() {
+	// config变量用来存放该服务的配置信息
+	config := atomic.Value{}
+	// Store(）函数设置任意类型的值
+	config.Store(loadConfig())
+
+	// Load() 函数获取值，返回的是一个interface{}类型，所以要先强制转换一下
+	m := config.Load().(map[string]string)
+
+	// CompareAndSwap 函数可以比较值是否相等，相等再进行修改，并且返回true，否则返回false
+	// Swap 函数可以修改值并且返回旧的值
+	
+	fmt.Printf("原子操作指定的值：%v", m)
+}
+~~~

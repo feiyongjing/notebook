@@ -101,7 +101,7 @@ func main() {
 	//testlabel:
 	//	for {
 	//		select {
-	//		case value := <-ch:
+	//		case value := <-ch: // 这里如果管道没有数据或者已经关闭会立刻退出执行default
 	//			fmt.Printf("%+v\n", value)
 	//		default:
 	//			// 这里要退出循环只能使用标签，或者是在方法中可以使用return

@@ -326,6 +326,7 @@ spec:
   - name: http                   # 端口映射名称
     port: 80                     # 指定svc的端口
     targetPort: 80               # 映射的容器内部端口
+    nodePort: 8080               # 节点端口              
 ~~~
  
 # Ingress资源清单（包含deployment控制器和SVC资源清单），注意需要提前安装ingress-controller，也就是ingress-controller
