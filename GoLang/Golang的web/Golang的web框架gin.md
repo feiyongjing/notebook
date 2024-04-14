@@ -5,7 +5,6 @@
 ---
 
 # gin使用
-
 ### 第一步：依赖引入
 ~~~shell
 # 引入方式一
@@ -19,6 +18,7 @@ go get github.com/gin-gonic/gin@v1.9.1
 ~~~
 
 ### 第二步：使用gin进行搭建web服务
+- 如果需要将路由写在项目不同目录下的文件中请参考：https://zhuanlan.zhihu.com/p/165633941
 ~~~go
 package main
 
@@ -42,7 +42,7 @@ type Result struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-func main1() {
+func main() {
 	//1.创建路由
 	// gin.Default()函数使用的是 Logger 和 Recovery 中间件
 	// Logger 中间件将日志写入 gin.DefaultWriter，默认是输出到标准输出，也就是gin.DefaultWriter = os.Stdout
@@ -96,7 +96,7 @@ func main1() {
 		v5.GET("/getMethodRedirect", getMethodRedirect)
 		v5.POST("/postMethodRedirect", postMethodRedirect)
 		v5.GET("/selfRedirect1", func(c *gin.Context) {
-			c.Request.URL.Path = "/selfRedirect2"
+			c.Request.URL.Path = "/v5/selfRedirect2"
 			router.HandleContext(c)
 		})
 		v5.GET("/selfRedirect2", selfRedirect2)
@@ -126,7 +126,7 @@ func getPathParam(context *gin.Context) {
 
 func getQuery(context *gin.Context) {
 	// Query()函数获取路径后面的key-value参数，如果没有传递也可以使用DefaultQuery()函数设置默认值
-	context.DefaultQuery("name", "哈哈")
+	// name := context.DefaultQuery("name", "哈哈")
 	name := context.Query("name")
 	context.String(http.StatusOK, "你是"+name)
 }
@@ -137,7 +137,7 @@ func someXML(c *gin.Context) {
 }
 
 func someYAML(c *gin.Context) {
-	// YAML()函数设置返回yaml格式的数据
+	// YAML()函数设置返回yaml格式的数据，注意在浏览器中会直接下载这个yaml文件
 	c.YAML(http.StatusOK, gin.H{"message": "hey", "status": http.StatusOK})
 }
 
@@ -182,7 +182,7 @@ func getPostFormBind(context *gin.Context) {
 	// binding.YAML 是当请求的Content-Type是application/x-yaml时使用，用于绑定请求body
 	// binding.TOML 是当请求的Content-Type是application/toml时使用，用于绑定请求body，TOML是一种用于配置文件的数据序列化语言，类似于YAML和JSON，但它旨在更明确、更易于阅读和写入
 	// binding.MsgPack 是当请求的Content-Type是application/msgpack时使用，用于绑定请求body，MessagePack 是一个高效的二进制序列化格式，类似于JSON，但更小、更快、更节省空间
-	// 注意上述不同的类型绑定需要在结构体字段中添加不同的标记和binding:"required"
+	// 注意上述不同的类型绑定需要在结构体字段中添加不同的标记
 	// 例如 binding.Header绑定需要添加header标记、binding.Query绑定需要添加query标记、
 	// binding.Form绑定需要添加form标记、binding.JSON绑定需要添加json标记、binding.Uri绑定需要添加url标记等以此类推
 	// context.ShouldBindWith(&user, binding.Form)
@@ -200,8 +200,9 @@ func getPostFormBind(context *gin.Context) {
 		} else {
 			context.JSON(401, gin.H{"msg": "用户名或密码错误"})
 		}
+		return
 	}
-	context.String(http.StatusOK, fmt.Sprintf("登录成功"))
+	context.String(http.StatusOK, fmt.Sprintf("非法错误"))
 }
 
 func uploadFile(context *gin.Context) {
@@ -212,7 +213,7 @@ func uploadFile(context *gin.Context) {
 	}
 	// SaveUploadedFile()函数用于将文件保持到指定的目录中
 	context.SaveUploadedFile(file, file.Filename)
-	context.String(http.StatusOK, file.Filename)
+	context.String(http.StatusOK, file.Filename+"文件上传成功")
 }
 
 func uploadFiles(context *gin.Context) {
