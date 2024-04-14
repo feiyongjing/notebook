@@ -5,12 +5,12 @@ go mod init [项目名称]
 
 # 下载依赖包缓存的本地，是下载到GOPATH变量路径下的pkg/mod，通过go env 查看GOPATH
 # 注意download只会下载当前的包，而不会下载它所依赖的包
-go mod download [依赖包和版本]
+go mod download [依赖包路径@版本]
 
 # 下载依赖包缓存的本地，是下载到GOPATH变量路径下的pkg/mod，通过go env 查看GOPATH
 # 注意 go get 下载依赖包时会修改go.mod文件的
 # 与go mod download不同的是它会下载传递性依赖包
-go get [参数] [依赖包和版本]
+go get [参数] [依赖包路径@版本]
 # -u 参数更新升级go.mod中的依赖
 
 # 根据项目源码实际使用到的包去下载项目缺失的依赖（传递性依赖也会下载），去除项目不使用的依赖
