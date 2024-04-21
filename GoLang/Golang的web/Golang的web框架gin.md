@@ -269,6 +269,103 @@ func selfRedirect2(c *gin.Context) {
 ~~~
 ---
 
+## 请求参数合法验证
+~~~go
+package main
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"reflect"
+)
+
+type UserInfo struct {
+	Username string `json:"username" binding:"required" msg:"用户名不能为空"` //  通过结构体字段的binding标记进行验证字段的合法性
+	Password string `json:"password" binding:"min=3,max=6" msg:"密码长度不能小于3大于6"`
+	Email    string `json:"email" binding:"email" msg:"邮箱地址格式不正确"`
+}
+
+// 获取异常错误，并且获取结构体中的对应的异常报错信息返回
+func GetValidMsg(err error, obj any) string {
+	// 使用的时候，需要传obj的指针
+	getObj := reflect.TypeOf(obj)
+	// 将err接口断言为具体类型
+	if errs, ok := err.(validator.ValidationErrors); ok {
+		// 断言成功
+		for _, e := range errs {
+			// 循环每一个错误信息
+			// 根据报错字段名，获取结构体的具体字段
+			if f, exits := getObj.Elem().FieldByName(e.Field()); exits {
+				msg := f.Tag.Get("msg")
+				return msg
+			}
+		}
+	}
+
+	return err.Error()
+}
+
+func getUser(c *gin.Context) {
+	var userInfo UserInfo
+	// 请求的参数绑定到对应的结构体，如果有绑定出错就返回错误信息
+	err := c.ShouldBindJSON(&userInfo)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(200, gin.H{"msg": GetValidMsg(err, &userInfo)})
+		return
+	}
+	c.JSON(200, userInfo)
+}
+
+func main() {
+	router := gin.Default()
+
+	router.POST("/getUser", getUser)
+	router.Run(":8000")
+}
+~~~
+
+### 常见的请求参数验证器
+~~~
+// 字段不能为空，并且不能没有这个字段
+required： 必填字段，如：binding:"required"  
+
+// 针对字符串字段的验证
+min 最小长度，如：binding:"min=5"
+max 最大长度，如：binding:"max=10"
+len 长度，如：binding:"len=6"
+contains=fengfeng  // 包含fengfeng的字符串
+excludes // 不包含
+startswith  // 字符串前缀
+endswith  // 字符串后缀
+
+// 针对数字字段的验证
+eq 等于，如：binding:"eq=3"
+ne 不等于，如：binding:"ne=12"
+gt 大于，如：binding:"gt=10"
+gte 大于等于，如：binding:"gte=10"
+lt 小于，如：binding:"lt=10"
+lte 小于等于，如：binding:"lte=10"
+
+// 针对同级字段的
+eqfield 等于其他字段的值，如：PassWord string `binding:"eqfield=Password"`
+nefield 不等于其他字段的值
+
+// 忽略这个字段的验证
+- 忽略字段，如：binding:"-"
+
+// 常量验证，只能是指定的常量，例如如下的red 或green
+oneof=red green 
+
+// 数组
+dive  // dive后面的验证就是针对数组中的每一个元素
+
+// 日期验证  1月2号下午3点4分5秒在2006年
+datetime=2006-01-02
+~~~
+
+
 ## 高级用法
 1. 自定义拦截器
 2. 日志输出到文件
@@ -370,5 +467,4 @@ func main() {
     router.Run(":8080")
 }
 ~~~
-
 

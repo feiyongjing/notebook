@@ -318,7 +318,7 @@ metadata:
   name: frontend                 # 资源的名称，这里是svc的名称
   namespace: default             # 资源在哪个命名空间下创建
 spec: 
-  type: ClusterIP                # svc的类型，默认是ClusterIP类型，如果是无头服务就不需要设置type，默认是ClusterIP类型，并且需要设置clusterIP: None
+  type: ClusterIP                # svc的类型，默认是ClusterIP类型，如果是无头服务就不需要设置type，默认是ClusterIP类型，并且需要设置clusterIP: None，无头服务，无头服务可以跨名称空间访问
   selector:                      # 标签匹配器
     app: myappv1                 # 匹配POD的标签，标签key是app值是myappv1的标签
     release: stabel              # 匹配POD的标签，标签key是release值是stabel的标签
