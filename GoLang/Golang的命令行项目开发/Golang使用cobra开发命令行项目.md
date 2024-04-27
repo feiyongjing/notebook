@@ -95,6 +95,7 @@ serveCmd.Flags().BoolP("s1","s",false,"s1 or s args help")
 使用 cobra-cli add showtime 创建并且修改后的cmd/Showtime文件如下
 执行 go build -o myapp.exe .\main.go 打包出来myapp.exe文件，注意myapp就是cmd/root.go文件所设置的根命令
 执行 .\myapp.exe showtime 就可以显示当前的系统时间了
+go run .\main.go showtime 
 ~~~go
 package cmd
 
@@ -128,6 +129,7 @@ func init() {
 使用 cobra-cli add parse -p showtimeCmd 创建并且修改后的cmd/Parse文件如下
 执行 go build -o myapp.exe .\main.go 打包出来myapp.exe文件，注意myapp就是cmd/root.go文件所设置的根命令
 执行 .\myapp.exe showtime parse --format="2006-01-02 15:04:05" 就可以显示当前的系统时间格式化后的字符串了
+或者直接执行 go run .\main.go showtime parse --format="2006-01-02 15:04:05" 运行
 ~~~go
 package cmd
 
