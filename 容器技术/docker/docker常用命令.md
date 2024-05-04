@@ -105,7 +105,7 @@ docker inspect [镜像或容器ID]
 
 # 网络
 ~~~shell
-# 查看docker的网络列表
+# 查看docker的网络列表，有三种类型的网络：bridge、host、none
 docker network ls
 
 # 创建docker网络，非默认docker0网桥网络下的容器之间是可以直接通过容器的名称和端口号进行通信访问服务，不需要手动添加 --link 参数
