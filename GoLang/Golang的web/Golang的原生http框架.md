@@ -1,4 +1,5 @@
-### 使用默认的路由处理器处理路由
+## 使用默认的路由处理器处理路由
+### - 注意原生的http框架不分辨请求方式，只要有路由就无论是GET还是POST都能响应
 ~~~go
 package main
 
@@ -86,6 +87,109 @@ func (*MyV2Handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 }
 ~~~
 
+
+### 获取请求参数、返回响应结果、重定向设置
+~~~go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"net/http"
+	"time"
+)
+
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func main() {
+	// 使用自定义的路由处理器
+	route := http.NewServeMux()
+	route.HandleFunc("/v1", hello)
+
+	route.HandleFunc("/v2/login1", getGetForm)
+	route.HandleFunc("/v2/login2", getPostForm)
+
+	route.HandleFunc("/v3/methodRedirect", methodRedirect)
+
+	// 配置监听8080端口，读取、写入和空闲超时，以及请求头的最大大小
+	server := &http.Server{
+		Addr:           ":8080",
+		Handler:        route,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		IdleTimeout:    15 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	server.ListenAndServe()
+
+	// http.ListenAndServe(":8080", route)
+}
+
+func hello(res http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(res, "v1 hello world")
+}
+
+func getGetForm(res http.ResponseWriter, req *http.Request) {
+	// ParseForm方法会将GET请求中的url路径参数到填充请求的form，后续通过FormValue函数获取参数
+	// 同时对于POST、PUT和PATCH请求，url路径参数到填充请求的form，表单类型的请求体参数会填充到postform中，后续通过PostFormValue函数获取参数
+	req.ParseForm()
+	user := User{
+		Username: req.FormValue("username"),
+		Password: req.FormValue("password"),
+	}
+
+	userJsonStr, _ := json.Marshal(user)
+
+	// 设置响应文本解析格式，默认是文本
+	res.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(res, string(userJsonStr))
+}
+
+func getPostForm(res http.ResponseWriter, req *http.Request) {
+	// ParseForm方法会将GET请求中的url路径参数到填充请求的form，后续通过FormValue函数获取参数
+	// 同时对于POST、PUT和PATCH请求，url路径参数到填充请求的form，表单类型请求体参数会填充到postform中，后续通过PostFormValue函数获取参数
+	req.ParseForm()
+
+	var user User
+	contentType := req.Header.Get("Content-Type")
+	if contentType == "application/x-www-form-urlencoded" {
+		user = User{
+			Username: req.PostFormValue("username"),
+			Password: req.PostFormValue("password"),
+		}
+	} else if contentType == "application/json" {
+		// 处理json类型的请求数据
+		body, _ := ioutil.ReadAll(req.Body)
+		user = User{}
+		json.Unmarshal(body, &user)
+	} else {
+		// 从url路径中获取参数
+		user = User{
+			Username: req.FormValue("username"),
+			Password: req.FormValue("password"),
+		}
+	}
+
+	userJsonStr, _ := json.Marshal(user)
+
+	// 设置响应文本解析格式，默认是文本
+	res.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(res, string(userJsonStr))
+}
+
+func methodRedirect(res http.ResponseWriter, req *http.Request) {
+	// 重定向链接和响应码设置，注意顺序
+	res.Header().Set("Location", "http://www.baidu.com/")
+	res.WriteHeader(302)
+}
+~~~
+---
+
 ### go http server的详细配置如下
 ~~~go
 type Server struct {
@@ -117,7 +221,6 @@ type Server struct {
     TLSNextProto map[string]func(*Server, *tls.Conn, Handler) // 用于管理HTTP/2或更高版本的协议升级和处理
 }
 ~~~
-
 
 
 

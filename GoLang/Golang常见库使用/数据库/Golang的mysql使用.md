@@ -139,9 +139,13 @@ func TestTransaction() {
 	}
 
 	// 执行sql
-
-    // 执行sql出错就调用conn.Rollback进行回滚事务
-	conn.Rollback()
+    r, err := conn.Exec("insert into person(username, sex, email)values(?, ?, ?)", "stu001", "man", "stu01@qq.com")
+    if err != nil {
+        fmt.Println("exec failed, ", err)
+        // 执行sql出错就调用conn.Rollback进行回滚事务
+        conn.Rollback()
+        return
+    }
 	
     // 事务中的所有sql执行成功就调用conn.Commit提交事务
 	conn.Commit()

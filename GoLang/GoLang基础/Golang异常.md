@@ -65,7 +65,7 @@ recover 只在defer延迟函数中有效，在其他函数中使用会返回nil�
 
 
 ## panic 解释
-panic 是Go的一种异常机制，可以通过 panic 函数主动抛出异常
+panic 是Go的一种异常机制，可以通过 panic 函数主动抛出异常，但是panic会终止程序
 
 
 ### 延迟函数执行的顺序：后进先出
