@@ -1,3 +1,5 @@
+# Linux磁盘LVM分区及扩容操作参考：https://blog.csdn.net/Ruishine/article/details/117133185
+
 # 参考  
 https://blog.csdn.net/qq_34291570/article/details/126800373
 
