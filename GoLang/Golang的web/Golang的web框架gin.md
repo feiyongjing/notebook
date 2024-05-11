@@ -52,6 +52,9 @@ func main() {
 	// 为 multipart forms 设置较低的内存限制 (默认是 32 MiB)，限制上传文件大小为8M
 	router.MaxMultipartMemory = 8 << 20
 
+	// 添加中间件拦截器（可以添加多个）,拦截器可以用于判断登录、鉴权、日志等功能
+	router.Use(printLog)
+
 	//2.绑定Restful路由规则，当前请求的路由匹配时会执行对应的函数
 	router.GET("/getHello", getHello)
 
@@ -105,6 +108,16 @@ func main() {
 
 	//3.监听端口，默认本机8080
 	router.Run(":8080")
+}
+
+func printLog(context *gin.Context) {
+	fmt.Printf("请求的路由路径是：%s\n",context.FullPath())
+
+	// 终止处理，并且直接返回响应
+	// context.Abort()
+
+	// 继续执行下面的中间件拦截器或者是路由回调函数处理
+	context.Next()
 }
 
 func getHello(context *gin.Context) {

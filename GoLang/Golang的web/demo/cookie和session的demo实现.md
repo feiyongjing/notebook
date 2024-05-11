@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -43,18 +44,65 @@ var session map[string]User = make(map[string]User)
 // 自定义的cookie名称
 var myCookie string = "myCookie"
 
-func main() {
+// 默认不检查登录的路由路径
+var pathSet map[string]void = make(map[string]void)
 
+// 定义空的结构体，在go中空的结构体是不占用内存空间的
+type void struct{}
+
+func init() {
+	var member void
+	pathSet["/v1/register"] = member
+	pathSet["/v1/login"] = member
+}
+
+func main() {
 	router := gin.Default()
+
+	// 添加中间件拦截器（可以添加多个）,拦截器可以用于判断登录、鉴权、日志等功能
+	router.Use(loginCheck)
+
 	v1 := router.Group("/v1")
 	{
 		v1.POST("/register", register)
 		v1.POST("/login", login)
-		v1.POST("/logout", logout)
-		v1.POST("/userInfo", getUserInfo)
+	}
+
+	v2 := router.Group("/v2")
+	{
+		v2.POST("/logout", logout)
+		v2.POST("/userInfo", getUserInfo)
 	}
 
 	router.Run(":8080")
+}
+
+// 统一判断是否登录
+func loginCheck(context *gin.Context) {
+	res := Result{}
+	fullPath := context.FullPath()
+
+	fmt.Println(fullPath)
+	_, ok := pathSet[fullPath]
+	if ok {
+		// 继续执行下面的中间件拦截器或者是路由回调函数处理
+		context.Next()
+	} else {
+		cookie, err := context.Cookie(myCookie)
+		if err == nil {
+			_, ok := session[cookie]
+			if ok {
+				return
+			} else {
+				res = Ok("用户未登录，请先进行登录", nil)
+			}
+		} else {
+			res = Ok("用户未登录，请先进行登录", nil)
+		}
+		context.JSON(http.StatusOK, res)
+		// 终止处理，并且直接返回响应
+		context.Abort()
+	}
 }
 
 func register(context *gin.Context) {
@@ -95,35 +143,16 @@ func login(context *gin.Context) {
 }
 
 func logout(context *gin.Context) {
-	res := Result{}
-	cookie, err := context.Cookie(myCookie)
-	if err == nil {
-		_, ok := session[cookie]
-		if ok {
-			delete(session, cookie)
-			res = Ok("退出登录成功", nil)
-		} else {
-			res = Ok("用户未登录，非法退出登录", nil)
-		}
-	} else {
-		res = Ok("用户未登录，非法退出登录", nil)
-	}
+	cookie, _ := context.Cookie(myCookie)
+	delete(session, cookie)
+	res := Ok("退出登录成功", nil)
 	context.JSON(http.StatusOK, res)
 }
 
 func getUserInfo(context *gin.Context) {
-	res := Result{}
-	cookie, err := context.Cookie(myCookie)
-	if err == nil {
-		user, ok := session[cookie]
-		if ok {
-			res = Ok("", User{Username: user.Username, Age: user.Age})
-		} else {
-			res = Ok("用户未登录，请先进行登录", nil)
-		}
-	} else {
-		res = Ok("用户未登录，请先进行登录", nil)
-	}
+	cookie, _ := context.Cookie(myCookie)
+	user := session[cookie]
+	res := Ok("", User{Username: user.Username, Age: user.Age})
 	context.JSON(http.StatusOK, res)
 }
 ~~~
