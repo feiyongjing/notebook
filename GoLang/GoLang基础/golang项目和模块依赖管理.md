@@ -5,13 +5,16 @@ go mod init [项目名称]
 
 # 下载依赖包缓存的本地，是下载到GOPATH变量路径下的pkg/mod，通过go env 查看GOPATH
 # 注意download只会下载当前的包，而不会下载它所依赖的包
+# 在 https://pkg.go.dev/ 搜索查找需要依赖
 go mod download [依赖包路径@版本]
 
 # 下载依赖包缓存的本地，是下载到GOPATH变量路径下的pkg/mod，通过go env 查看GOPATH
 # 注意 go get 下载依赖包时会修改go.mod文件的
 # 与go mod download不同的是它会下载传递性依赖包
+# go get 是对 go mod 项目，添加，更新，删除 go.mod 文件的依赖项(仅源码)。不执行编译。侧重应用依赖项管理
 go get [参数] [依赖包路径@版本]
 # -u 参数更新升级go.mod中的依赖
+# -a 参数标示下载好后直接做 go install
 
 # 根据项目源码实际使用到的包去下载项目缺失的依赖（传递性依赖也会下载），去除项目不使用的依赖
 go mod tidy
@@ -23,6 +26,7 @@ go mod edit [-require | -exclude | -replace | -retract]=[库版本或当前项�
 go mod why [依赖包和版本]
 
 # 下载插件
+# go install 会在操作系统会在 GOPATH 中安装 Go 生态的第三方命令行应用。不更改项目 go.mod 文件。侧重可执行文件的编译和安装
 go install [插件地址和版本]
 
 # 清除项目在本地缓存依赖包，即清除GOPATH变量路径下的pkg/mod下的依赖包
