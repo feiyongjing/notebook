@@ -1,121 +1,78 @@
-~~~HTML
+### html标签元素的官方文档推荐看mdn
+~~~
+DOCTYPE: 文档类型声明
+html:    html标签表示内部标签按照html解析
+head:    html头部标签
+meta     html元数据标签
+titel：  网页标签
+body:    html主体标签
 
-<!-- 文档头标签 -->
-<head></head>   
+h1~h6：  标题标签
+p:       段落标签
+br:      换行标签
 
-<!-- 文档元数据 -->
-<meta>
+span:    行标签
+div:     块标签
 
-<!-- css样式代码 -->
-<style></style>
+a:       链接标签
+img：    图片标签
+audio：  音频标签
+vidio:   视频标签
 
-<!-- js代码
-     如果有src属性就是引入外部的js文件代码
- -->
-<script src="../js/hello.js"></script>
+ul:      无序列表标签
+ol:      有序列表标签
+li:      列表行标签
+dl:      自定义列表标签
+dt:      自定义列表标题标签
+dd:      自定义列表段落标签
 
-<!-- 引入外部链接资源，
-     rel属性设置链接方式与html文档之间的关系，stylesheet表示是样式表
-     href属性设置外部资源的路径
- -->
-<link rel="stylesheet" href="../css/selectorType.css">
-
-<!-- 文档体标签 -->
-<body></body>   
-
-<!-- 换行标签 -->
-<br />
-
-<!-- 段落标签 -->
-<p></p>
-
-<!-- 块标签 -->
-<div></div>
-
-<!-- 行标签 -->
-<span></span>
-
-<!-- 链接标签：href设置链接 -->
-<a href="../img/OIP-C.jfif">a标签点击文字跳转指定页面</a>
-
-<!-- 图片链接：src设置图片链接，width和heighe设置图片宽高 -->
-<img src="../img/OIP-C.jfif" alt="图片的路径不对" width="300px" height="180px" title="花">
-
-<!-- 音频标签audio，支持mp3、ogg(移动端)、wav
-     autoplay是自动播放，controls是显示视频的进度条和暂停等功能，
-     loop是循环播放，muted是默认静音
--->
-<audio src="音频路径" autoplay controls loop muted> 音频显示失败时显示这行文字 </audio>
-
-<!-- 视频标签video，支持mp4、ogg(移动端)、webM(高清格式)
-    autoplay是自动播放，width属性值表示宽度，heigth属性值表示高度
-    controls是显示视频的进度条和暂停等功能，loop是循环播放
-    muted是默认静音，poster属性值设置视频播放之前显示的图片
--->
-<video src="视频路径" autoplay width="1000" heigth="800" controls loop muted poster="图片路径"> 视频显示失败时显示这行文字 </video>
+table:   表格标签
+caption: 表格标题标签
+thead:   表格头部标签
+tbody:   表格主体标签
+tfoot:   表格尾部标签
+tr:      表格行标签
+th:      表格头部单元格标签
+td:      表格主体单元格标签
 
 
-<ul>
-    <li>无序列表ul+li</li>
-    <li>无序列表ul和li的属性type表示列表元素前的图案，属性值有disc、circle、square分别代表黑色实心圆、空心圆、实心矩形</li>
-    <li>xxxx</li>
-<ul>
-
-<ol>
-    <li>有序列表ol+li</li>
-    <li>有序列表ol和li的属性type表示列表元素前的有序模板，属性值有A、a、1、I分别表示大写字母模板、小写字母模板、数字模板、罗马数字模板。start属性表示按照type属性模板的第几个开始，reversed属性无需设置属性值表示模板按照倒序排列
-    </li>
-    <li>有序列表ol+li</li>
-</ol>
-
-<dl>
-    <dd>无序列表dl+dd</dd>
-    <dd>xxxx</dd>
-    <dd>xxxx</dd>
-</dl>
-
-
-<table> 
-    <caption>表格标题1</caption>
-    <thead> <!-- 表格头 -->
-        <tr>
-            <th></th>
-            <th>中文</th>
-            <th>英语</th>
-        </tr>
-    </thead>
-    <tbody> <!-- 表格数据 -->
-        <tr>
-            <th></th> <!-- tbody中的tr+th用于显示每行的表头，用于制造双表头的 -->
-            <td>红色</td>
-            <!-- td中colspan属性表示表格占据的宽度,即与左边的表格合并，rowspan属性表示表格占据的高度即与下方的表格合并，正常的表格的宽高colspan和rowspan都是1 -->
-            <td>red</td>
-        </tr>
-        <tr>
-            <th></th>
-            <td>绿色</td>
-            <td>green</td>
-        </tr>
-    </tbody>
-    <tfoot> <!-- 表格尾 -->
-        <tr>
-            <th>词汇数</th> <!-- tfoot中的tr+th用于显示每行的表头，用于制造双表头的 -->
-            <td>2</td>
-            <td>2</td>
-        </tr>
-    </tfoot>
-</table>
-
-<!-- form表单标签 -->
-<!-- input输入标签，type设置各式各样的输入 -->
-<!-- button按钮标签 -->
-<form action="服务器的地址" class="formEvent" method="post">
-    <input type="text" class="formOninput" name="参数名称1">
-    <input type="text" class="formOnSelect" name="参数名称2">
-    <input type="text" class="formOnChange" name="参数名称3">
-    <button class="formReset">重置输入框的内容</button>
-    <button>提交表单</button>
-</form>
-
+b:       字体加粗标签
+strong:  字体加粗标签
+i:       字体倾斜标签
+em：     字体倾斜标签
+u：      字体下滑线标签
+del:     字体删除线标签
+s：      字体删除线标签
+sup:     字体上标标签，例如2的3次方
+sub:     字体下标签，例如氧气的化学表示
 
 ~~~
+
+## 块级元素和行内元素、行内块元素
+- 块级元素：h1~h6、p、div、ul、ol、li、dd、dt、dl
+- 行内元素：strong、b、em、i、del、s、ins、u、span、a、img、input、select、textarea、br
+
+### 块级元素的特点
+- 比较霸道，自己独占一行。
+- 高度，宽度、外边距以及内边距都可以控制。
+- 宽度默认是容器（父级宽度）的100%。
+- 是一个容器及盒子，里面可以放行内或者块级元素。
+- 注意：文字类的元素内不能使用块级元素，p 标签主要用于存放文字，因此 p 里面不能放块级元素，特别是不能放 div 。同理 h1~h6 等都是文字类块级标签，里面也不能放其他块级元素
+
+### 行内元素的特点
+- 相邻行内元素在一行上，一行可以显示多个
+- 高、宽直接设置是无效的。
+- 默认宽度就是它本身内容的宽度。
+- 行内元素只能容纳文本或其他行内元素，不能容纳块级元素
+- 注意：链接里面不能再放链接，特殊情况链接 a 里面可以放块级元素，但是给 a 转换一下块级模式最安全
+
+### 行内块元素
+在行内元素中有几个特殊的标签：img、input、td，它们同时具有块元素和行内元素的特点。有些资料称它们为行内块元素它们的特点如下
+- 和相邻行内元素（行内块）在一行上，但是他们之间会有空白缝隙。一行可以显示多个（行内元素特点）。
+- 默认宽度就是它本身内容的宽度（行内元素特点）。
+- 高度，行高、外边距以及内边距都可以控制（块级元素特点）
+
+### 块级元素和行内元素的转换
+- 转换为块元素：display:block;
+- 转换为行内元素：display:inline;
+- 转换为行内块元素：display: inline-block;
