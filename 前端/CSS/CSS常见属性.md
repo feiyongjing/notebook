@@ -1,5 +1,47 @@
 # 常见属性
 ~~~
+href                设置a标签超链接地址
+target              设置a标签超链接跳转方式或者form标签提交表单跳转方式
+download            设置a标签超链接资源下载
+
+src                 设置img标签图片地址
+alt                 设置img标签图片无法显示提示文字
+
+colspan             设置td标签单元格占据的宽度,即与左边的几个单元格合并，正常的表格的宽colspan是1
+rowspan             设置td标签单元格占据的高度,即与下边的几个单元格合并，正常的表格的高rowspan是1
+
+action              设置form标签提交表单的网址url
+method              设置form标签提交表单请求方法
+
+name                设置input标签、textarea多行文本输入框标签、select下拉框标签输入参数的名称
+type                设置input标签输入的参数类型，有如下参数类型
+                        text: 单行文本输入框
+                        password: 密码输入框
+                        email: 邮箱输入框，自动校验邮箱是否携带@合法
+                        tel: 电话输入框，自动校验电话是否合法
+                        color：颜色选择器
+                        number: 数值输入框
+                        datatime: 日期时间选择
+                        datatime-local: 本地日期时间选择
+                        week: 周选择
+                        month：月选择
+                        radio: 单选
+                        checkbox: 多选
+                        hidden：输入框隐藏
+                        submit: input会变成提交按钮
+                        reset: 重置按钮
+                        file: 文件上传
+placeholder         设置input标签输入框内的提示信息
+value               设置input标签输入默认值，或提交到后台的值，如果是submit,reset的类型时，value就是按钮的名称
+checked             设置input标签输入单选框或者多选框的选项被默认选中
+required            设置input标签、textarea多行文本输入框标签、select下拉框标签输入参数必须填写，注意在单选框中表示必须选择一个，而多选框表示必须选择指定的项，所以有校验参数的选项都必须和required一起使用，否则可以提交空字符
+disabled            设置input标签、textarea多行文本输入框标签、select下拉框标签禁用输入和修改
+maxlength           设置input标签输入最大长度
+pattern             设置input标签的正则表达式限制，但是前提是输入不为空，即一般和required一起使用
+
+cols                设置textarea多行文本输入框标签文本框的宽是多少字符
+rows                设置textarea多行文本输入框标签文本框的高是多少字符
+
 font-size           设置字体大小，不同浏览器的默认字体大小不同，所以建议手动设置字体大小，例子 .test {font-size: 30px}
 font-weight         设置字体粗细
 font-style          设置字体样式是否是斜体
@@ -47,6 +89,7 @@ background          设置背景的多个属性，包含上述的background-colo
 
 display             设置标签元素显示方式：inline表示行内元素，block表示块元素，inline-block表示行内块元素，none表示隐藏该元素（元素不占位）
 visibility          设置标签元素是否显示，默认是show显示，设置为hidden表示隐藏，但是实际还是会占据页面该元素的位置
+hidden              设置标签元素隐藏
 
 overflow            设置超出元素标签的内容部分如何处理，另外设置hidden值忽略超出的部分可以解决子元素的外边距设置导致当前元素发送的移动
 
