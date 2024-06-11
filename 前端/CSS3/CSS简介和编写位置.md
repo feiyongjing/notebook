@@ -92,3 +92,155 @@ p{
 - 内部样式和外部样式是同样的优先级，但是会按照html的解析顺序生效，即后面设置的样式会覆盖前面设置的样式
 - 同一种样式是按照html的解析顺序生效（例如两个内部样式冲突），即后面设置的样式会覆盖前面设置的样式
 
+### CSS页面编写
+~~~html
+<style>
+    .test{
+        font-size: 0px;
+    }
+
+    .test1-1 {
+        font-size: 20px;
+        width: 200px;
+        height: 80px;
+        background-color: yellowgreen;
+        display: inline-block;
+    }
+
+    .test1-2 {
+        font-size: 20px;
+        width: 540px;
+        height: 80px;
+        background-color: yellowgreen;
+        display: inline-block;
+        margin: 0px 10px;
+    }
+
+    .test1-3 {
+        font-size: 20px;
+        width: 200px;
+        height: 80px;
+        background-color: yellowgreen;
+        display: inline-block;
+    }
+
+    .test2 {
+        font-size: 20px;
+        width: 960px;
+        height: 30px;
+        background-color: red;
+        margin-top: 10px;
+    }
+
+    .test3-1 {
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .test3-1-1 {
+        font-size: 20px;
+        width: 370px;
+        height: 200px;
+        background-color: violet;
+    }
+
+    .test3-1-2 {
+        font-size: 20px;
+        width: 180px;
+        height: 200px;
+        background-color: violet;
+        display: inline-block;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .test3-1-3 {
+        font-size: 20px;
+        width: 180px;
+        height: 200px;
+        background-color: violet;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .test3-2 {
+        display: inline-block;
+        margin: 0px 10px;
+        margin-top: 10px;
+    }
+
+    .test3-2-1 {
+        font-size: 20px;
+        width: 370px;
+        height: 200px;
+        background-color: green;
+    }
+
+    .test3-2-2 {
+        font-size: 20px;
+        width: 180px;
+        height: 200px;
+        background-color: green;
+        display: inline-block;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .test3-2-3 {
+        font-size: 20px;
+        width: 180px;
+        height: 200px;
+        background-color: green;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .test3-3 {
+        display: inline-block;
+    }
+
+    .test3-3-x {
+        font-size: 20px;
+        width: 200px;
+        height: 130px;
+        background-color: palegreen;
+        margin-top: 10px;
+    }
+
+    .test4 {
+        font-size: 20px;
+        width: 960px;
+        height: 60px;
+        background-color: slateblue;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="test">
+    <div class="test1">
+        <div class="test1-1"></div>
+        <div class="test1-2"></div>
+        <div class="test1-3"></div>
+    </div>
+    <div class="test2"></div>
+    <div class="test3">
+        <div class="test3-1">
+            <div class="test3-1-1"></div>
+            <div class="test3-1-2"></div>
+            <div class="test3-1-3"></div>
+        </div>
+        <div class="test3-2">
+            <div class="test3-2-1"></div>
+            <div class="test3-2-2"></div>
+            <div class="test3-2-3"></div>
+        </div>
+        <div class="test3-3">
+            <div class="test3-3-x"></div>
+            <div class="test3-3-x"></div>
+            <div class="test3-3-x"></div>
+        </div>
+    </div>
+    <div class="test4"></div>
+</div>
+~~~
+
