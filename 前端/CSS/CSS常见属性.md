@@ -55,6 +55,9 @@ text-indent         设置文本缩进
 text-align          设置文本水平对齐方式
 line-height         设置文本的行高，主要是用于设置多行文字的行间距，一般都是设置字体大小的1.5到2倍之间
 vertical-align      设置文本的垂直对齐方式，但是注意是根据父元素的文本来进行的垂直定位，另外块级元素（行内块元素可以使用）无法使用vertical-align（如果需要设置垂直对齐方式请手动设置外边距实现，当然手动设置外边距可能会导致父元素位置移动，添加visibility属性可以解决）
+text-shadow         设置文本的阴影：参考box-shadow使用，不过没有外延距离和内阴影
+white-space         设置文本换行，nowrap表示不换行，pre-line表示按照标签宽度进行自动换行
+text-overflow       设置文本溢出标签处理方式，clip表示直接截掉超出的文本，ellipsis表示超出的部分变为三个点省略，注意如果需要生效前提需要设置overflow属性和white-space属性为nowrap不换行
 
 background-color    设置背景颜色，一般是设置文本或者div块的背景颜色
 
@@ -86,6 +89,9 @@ background-image    设置背景图片
 background-repeat   设置背景图片的平铺方式，默认是即水平平铺也垂直平铺
 background-position 设置背景图片的起始位置
 background          设置背景的多个属性，包含上述的background-color、background-image、background-repeat、background-position
+background-origin   设置背景图片平铺的起始点位置，border-box、padding-box、content-box分别代表边框左上角、内边距左上角、内容区左上角，默认是padding-box
+background-clip     设置背景图片平铺后的裁切位置，border-box、padding-box、content-box分别代表边框位置、内边距位置、内容区裁切，默认是border-box
+background-size     设置背景图片宽高占背景的宽高大小
 
 display             设置标签元素显示方式：inline表示行内元素，block表示块元素，inline-block表示行内块元素，none表示隐藏该元素（元素不占位）
 visibility          设置标签元素是否显示，默认是show显示，设置为hidden表示隐藏，但是实际还是会占据页面该元素的位置
@@ -102,6 +108,38 @@ right               设置按照定位方式从右到左的定位距离，注意
 bottom              设置按照定位方式从下到上的定位距离，注意无法与top同时使用
 top                 设置按照定位方式从上到下的定位距离，注意无法与bottom同时使用
 z-index             设置定位块的覆盖优先级，兄弟元素之间该属性数值大的块会覆盖小的块
+
+transform           设置2D和3D的位移（类似于定位）、缩放、旋转，该属性对行内元素不生效（但是对行内块生效）
+transform-origin    设置2D和3D的缩放、旋转的原点
+
+resize              设置标签宽高在标签右下角可以拖动伸缩，horizontal、vertical、both值分别代表可以在水平方向、垂直方向、水平和垂直方向调整宽高，注意必须与overflow属性一起使用（overflow的属性值可以随意设置，但是必须要有）
+box-sizing          设置盒子模型方式，默认是content-box值表示width和height设置标签内容宽高，而border-box表示width和height设置标签总宽高（包含边框、内边距，如果设置了这些会默认挤压内容宽高变小，这种也叫怪异盒子模型）;
+box-shadow          设置标签的阴影：默认是box-shadow: none没有阴影
+opacity             设置标签的透明度，默认是1表示完全不透明，而0表示完全透明
+
+transition-property           设置需要过渡的属性
+transition-duration           设置过渡消耗时长
+transition-timing-function    设置过渡时的变化方式，默认是 ease，即过渡的速度由慢到快再到慢
+transition-delay              设置触发事件时过渡的延迟时间，即多少秒后执行过渡效果，默认是0s不延迟
+transition                    设置过渡的多个属性
+
+animation-name                设置自定义的动画名称
+animation-duration            设置动画的周期时间
+animation-delay               设置动画开始的延时时间
+animation-timing-function     设置动画执行的速率
+animation-iteration-count     设置动画的循环次数，默认是1次，infinite是无限次
+animation-direction           设置动画播放的方向，默认是normal是向前播放，alternate表示在偶数次向前播放在奇数次反向播放
+animation-play-state          设置动画是否播放，running代表运行动画效果，paused代表暂停动画效果
+animation-fill-mode           设置动画停止时的帧，backwards、forwards分别表示第一帧和最后一帧
+animation                     设置动画的多个属性
+
+column-count        设置报纸排版段落列数
+column-width        设置报纸排版每个段落的宽度，如果父元素宽度放不下就按照这个宽度放下最大的段落列数
+column-gap          设置报纸排版段落之间纵向的宽度间距
+column-rule-color   设置报纸排版段落的分割线颜色
+column-rule-style   设置报纸排版段落的分割线线条条类型
+column-rule-width   设置报纸排版段落的分割线的宽度
+column-rule         设置报纸排版段落的分割线多个属性，包含分割线颜色、线条类型、宽度
 ~~~
 
 ## 颜色设置
@@ -126,6 +164,10 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
 - em：em是当前元素或者是祖先元素设置的font-size属性大小的倍数
 - rem：rem是当前根元素设置的font-size属性大小的倍数
 - 百分比：百分比的长度是相对与父元素的相同属性值的百分比（但是一些百分比并不是相对于父元素的属性）
+- vw：vw表示长度的是窗口的宽度的百分之一，窗口宽度发送变化实际使用vw表示的长度也发生对应的变化
+- vh：vh表示长度的是窗口的高度的百分之一，窗口长度发送变化实际使用vh表示的长度也发生对应的变化
+- vmax：vmax表示长度的是窗口的宽度与窗口的高度更长一方的百分之一，窗口长度或宽度发送变化实际使用vmax表示的长度也发生对应的变化
+- vmin：vmin表示长度的是窗口的宽度与窗口的高度更短一方的百分之一，窗口长度或宽度发送变化实际使用vmin表示的长度也发生对应的变化
 
 ## css属性继承
 - css中和盒子相关的属性都无法继承，例如外边距、边框、内边距、背景、内容宽高等
@@ -137,6 +179,9 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
   - 解决方案1：直接设置行内块元素的字体为0px(在行内块需要字体时不适用)
   - 解决方案2：不使用行内块元素，而是使用块元素（但是其他的元素会被挤到下一行）
   - 解决方案3：使用vertical-align设置文本的垂直对齐方式，top、middle、bottom、baseline分别表示向上对齐、居中对齐、向下对齐、默认字体基线对齐，只要不是默认的baseline基线对齐就行，注意这样会导致后面的文本垂直方向会发生变化
+
+## 字体和字体图标
+- 去 https://www.iconfont.cn/ 找字体和字体图标
 
 # css字体属性设置
 ~~~html
@@ -410,11 +455,27 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
         background-position: left bottom;
     }
 
-    /* background设置背景的多个属性，包含上述的background-color、background-image、background-repeat、background-position*/
+    /* background设置背景的多个属性
+       模板是 background: 背景颜色 图片地址 平铺方式 图片起始位置 / 图片大小伸缩 图片原点 裁切方式
+       并且如果需要设置多张图片可以继续在后面添加逗号分割
+    */
     .test4 {
         width: 500px;
         height: 500px;
         background: mediumaquamarine url(../img/KFC.jfif) right center no-repeat;
+    }
+
+    /* background-size设置图片宽高占背景的大小 
+       可以直接写px像素大小，auto表示根据另外的宽或者高自适应
+       写百分比表示占据背景宽或者高的百分比
+       写cover表示背景图片在不变型情况下的充满整个背景，可能图片会有裁剪
+       写contain表示背景图片在不变型情况下尽可能的充满整个背景，图片可能不会占用整个背景，会留下一些空白
+    */
+    .test5 {
+        width: 400px; 
+        height: 300px; 
+        background-image: url(../img/KFC.jfif); 
+        background-size: 300px auto; 
     }
 </style>
 
@@ -422,6 +483,162 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
 <div class="test2">背景宽500px高500px设置图片不平铺</div>
 <div class="test3">背景宽500px高500px设置图片不平铺且在左下</div>
 <div class="test4">背景宽500px高500px设置图片不平铺且在右中</div>
+<div class="test5">设置图片宽高占背景的大小</div>
+~~~
+
+# css背景图片颜色线性渐变设置
+~~~html
+<style>
+    * {
+        font-size: 0px;
+    }
+
+    .test {
+        width: 300px;
+        height: 200px;
+        display: inline-block;
+        margin: 0px 10px;
+    }
+
+    .test1 {
+        /* linear-gradient设置背景图片为线性渐变颜色图片，可以传入多个颜色参数进行渐变 */
+        background-image: linear-gradient(red, yellow, green);
+    }
+
+    .test2 {
+        /* 第一个参数可以设置颜色渐变线的方向（默认是向下渐变），例如 to right top 表示向右上角开始渐变 */
+        background-image: linear-gradient(to right top, red, yellow, green);
+    }
+
+    .test3 {
+        /* 第一个参数也可以设置颜色渐变线方向角度 */
+        background-image: linear-gradient(20deg, red, yellow, green);
+    }
+
+    .test4 {
+        /* 可以在颜色的后面添加长度，表示在颜色渐变的方向线的该长度必定是指定的颜色（例如纯红色）
+           注意颜色渐变方向线开始到第一个指定刻度颜色这段和最后一个指定刻度颜色到颜色渐变方向线结束位置段都是纯的颜色（第一或者最后刻度的纯色）
+         */
+        background-image: linear-gradient(red 50px, yellow 100px, green 150px);
+    }
+
+    .test5 {
+        font-size: 40px;
+        font-weight: bolder;
+        text-align: center;
+        vertical-align: top;
+        line-height: 200px;
+        color: transparent;
+        background-image: linear-gradient(red, yellow, green);
+        -webkit-background-clip: text;
+    }
+</style>
+
+<div>
+    <div class="test test1 "></div>
+    <div class="test test2"></div>
+    <div class="test test3 "></div>
+    <div class="test test4"></div>
+    <div class="test test5 ">三彩渐变的文字</div>
+</div>
+~~~
+
+# css背景图片颜色径向渐变设置
+~~~html
+<style>
+    .test {
+        width: 300px;
+        height: 200px;
+        display: inline-block;
+        margin: 0px 10px;
+    }
+
+    .test1 {
+        /* linear-gradient设置背景图片为径向渐变颜色图片，可以传入多个颜色参数进行渐变 */
+        background-image: radial-gradient(red, yellow, green);
+    }
+
+    .test2 {
+        /* at参数可以设置径向渐变的中心点位，例如 at right top 表示向右上角是中心点位 */
+        background-image: radial-gradient(at right top, red, yellow, green);
+    }
+
+    .test3 {
+        /* at参数也可以设置px像素来改变径向渐变的中心点位 */
+        background-image: radial-gradient(at 100px 100px, red, yellow, green);
+    }
+
+    .test4 {
+        /* circle参数可以设置径向渐变是一个正圆
+           可以在颜色的后面添加长度，表示在颜色渐变的半径线的该长度必定是指定的颜色（例如纯红色）
+           注意颜色渐变半径线开始到第一个指定刻度颜色这段和最后一个指定刻度颜色到颜色渐变半径线结束位置段都是纯的颜色（第一或者最后刻度的纯色）
+         */
+        background-image: radial-gradient(circle,red 50px, yellow 100px, green 150px);
+    }
+
+    .test5 {
+        /* 也可以直接设置径向渐变水平半径和垂直半径
+         */
+        background-image: radial-gradient(100px 50px ,red, yellow, green);
+    }
+
+    .test6 {
+        /* 设置径向渐变水平半径和垂直半径和径向渐变的中心点位的综合写法 */
+        background-image: radial-gradient(100px 50px at 100px 100px, red, yellow, green);
+    }
+</style>
+
+<div>
+    <div class="test test1"></div>
+    <div class="test test2"></div>
+    <div class="test test3 "></div>
+    <div class="test test4"></div>
+    <div class="test test5"></div>
+    <div class="test test6"></div>
+</div>
+~~~
+
+# css背景图片纯色区域重复渐变设置
+~~~html
+<style>
+    * {
+        font-size: 0px;
+    }
+
+    .test {
+        width: 300px;
+        height: 200px;
+        display: inline-block;
+        margin: 0px 10px;
+    }
+
+    .test1 {
+        /* 线性渐变的纯色区域重复渐变 */
+        background-image: repeating-radial-gradient(100px 50px at 100px 100px, red 50px, yellow 100px, green 150px);
+    }
+
+    .test2 {
+        /* 径向渐变的纯色区域重复渐变 */
+        background-image: repeating-linear-gradient(red 50px, yellow 100px, green 150px);
+    }
+
+    .test3 {
+        font-size: 40px;
+        font-weight: bolder;
+        text-align: center;
+        vertical-align: top;
+        line-height: 200px;
+        color: transparent;
+        background-image: repeating-linear-gradient(30deg, red 100px, yellow 150px, green 200px);
+        -webkit-background-clip: text;
+    }
+</style>
+
+<div>
+    <div class="test test1"></div>
+    <div class="test test2"></div>
+    <div class="test test3">三彩渐变的文字</div>
+</div>
 ~~~
 
 # css块级元素、行内元素、行内块元素转换
@@ -620,7 +837,7 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
         width: 100px;
         height: 250px;
         background-color:rgb(75, 245, 129);
-        /* 设置相对定位，会覆盖元素，并且多个定位也是后面的元素覆盖前面的元素，子元素的左上角针对之前子元素的相对位置，
+        /* 设置相对定位，会覆盖元素，并且多个定位也是后面的元素覆盖前面的元素，子元素的左上角针对父元素的相对位置，
         left设置从左到右的位置，right设置从右到左的位置,bottom设置从下到上的位置，top设置从上到下的位置 */
         position: relative;
         left: 100px;
@@ -758,10 +975,412 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
 </div>
 ~~~
 
-# css
+# css设置2D位移
 ~~~html
 <style>
+    .test {
+        width: 300px;
+        height: 300px;
+        border: 3px red solid;
+        background-color: aquamarine;
+        position: relative;
+        display: inline-block;
+    }
+
+    .test1 {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        /* 设置2D水平位移，正数像素表示向右移动，负数像素表示向左移动  */
+        /* transform: translateX(50px); */
+        /* 设置2D垂直位移，正数像素表示向下移动，负数像素表示向上移动 */
+        /* transform: translateY(100px); */
+        /* 同时设置2D水平位移和2D垂直位移可以像上述那样，但是注意要同时设置translateX和translateY并且使用空格分隔
+           或者直接使用translate设置
+           注意如果translate只写一个值表示的是水平位移，垂直方向不会动
+           百分比表示的长度是当前元素宽高的百分比
+         */
+        transform: translate(-50%, -50%);
+        background-color: pink;
+    }
+
+    .test2 {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        /* 设置2D左右缩放，正常默认是1，0表示看不见，0~1表示缩小，大于1表示扩大，如果是负数就会左右颠倒，当然如果大于-1就会左右颠倒并且扩大  */
+        /* transform: scaleX(1.5); */
+        /* 设置2D上下缩放，正常默认是1，0表示看不见，0~1表示缩小，大于1表示扩大，如果是负数就会上下颠倒，当然如果大于-1就会上下颠倒并且扩大  */
+        /* transform: scaleY(1.5); */
+        /* 同时设置2D左右缩放和2D上下缩放可以像上述那样，但是注意要同时设置scaleX和scaleY并且使用空格分隔
+           或者直接使用scale设置
+           注意如果scale只写一个值表示的是同时左右缩放和上下缩放，并且缩放可以实现缩小文字到比浏览器的最小文字还要小
+         */
+        transform: translate(-50%, -50%) scale(-2);
+        background-color: pink;
+    }
+
+    .test3 {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        /* 设置2D旋转，默认是按照元素的正中心原点进行的旋转，正数角度表示顺时针旋转，如果是负数角度表示逆时针旋转  */
+        /* transform: rotateZ(30deg); */
+        /* 当然写rotate(30deg) 传递一个值默认也是表示的2D旋转 */
+        /* 注意当位移与旋转同时编写时请将位移写在旋转前面，否则旋转写在前面，先发生旋转导致原点变化，
+           同时水平方向和垂直方向角度发生变化，后面的位移位置也会发生变化 */
+        transform: translate(-50%, -50%) rotateZ(30deg);
+        background-color: pink;
+    }
+
+    /* 原点默认是当前元素的左上角，位移对行内元素不生效 */
+    .test4 {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        /* transform-origin设置原点 */
+        /* transform-origin: right bottom; */
+        /* 可以写具体的像素值和百分比，只写一个像素值或者百分比同时表示的水平和垂直方向，而写一个方向值就表示另外一个方向是中心值 */
+        /* 注意修改原点会影响缩放和旋转，会根据原点进行缩放和旋转 */
+        transform-origin: left top;
+        transform: translate(-50%, -50%) scale(1.5) rotateZ(-30deg);
+        background-color: pink;
+    }
 </style>
+
+<div class="test">
+    <div class="test1">靠定位和位移实现垂直水平居中</div>
+</div>
+<div class="test">
+    <div class="test2">水平缩放和垂直缩放都是负数就颠倒两次</div>
+</div>
+<div class="test">
+    <div class="test3">顺时针旋转30度</div>
+</div>
+<div class="test">
+    <div class="test4">顺时针旋转30度</div>
+</div>
+~~~
+
+# css设置元素阴影、透明、圆角
+~~~html
+<style>
+    .test1 {
+        margin: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: mediumspringgreen;
+        /* box-shadow设置标签的阴影：默认是box-shadow: none没有阴影
+           第一个值设置水平方向阴影，正数向右移动，负数向左移动
+           第二个值设置垂直方向阴影，正数向下移动，负数向上移动
+           第三个值是可选项，设置阴影模糊距离，距离越大阴影越大也越模糊
+           第四个值是可选项，设置阴影的外延距离，即阴影的四周比标签的四周大多少
+           第五个值是可选项，设置阴影颜色，默认是黑色
+           第六个值是可选项，设置内外阴影，默认不写是外阴影，inset表示内阴影
+         */
+        box-shadow: 20px 20px 10px red;
+    }
+
+    .test2 {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        /* opacity设置标签的透明度，默认是1表示完全不透明，而0表示完全透明 */
+        opacity: 0.3;
+    }
+
+    .test3 {
+        text-align: center;
+        font-size: 18px;
+        width: 200px;
+        height: 200px;
+        background-color: rgb(241, 198, 105);
+        /* 圆角设置，可以设置1到4个值，直接设置圆角半径px像素或者使用百分比表示占用宽高作为圆角半径
+           设置一个值：4个角的圆角都是这个值
+           设置两个值：第一给值是左上角和右下角的圆角值，第二个值是右上角和左下角的圆角值
+           设置三个值：第一给值是左上角的圆角值，第二个值是右上角和左下角的圆角值，第三个值是右下角的圆角值
+           设置四个值：第一给值是左上角的圆角值，第二个值是右上角的圆角值，第三个值是右下角的圆角值，第四个值是左下角的圆角值
+        */
+        border-radius: 20px;
+    }
+
+    .test4 {
+        text-align: center;
+        font-size: 18px;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(235, 77, 77, 0.97);
+        border-radius: 100%;
+    }
+</style>
+
+<div class="test1">阴影设置</div>
+<div class="test2">透明设置</div>
+<div class="test3">20px的圆角</div>
+<div class="test4">圆角100%的圆</div>
+~~~
+
+# css设置怪异盒子模型
+~~~html
+<style>
+    .test1 {
+        border: 3px violet solid;
+        padding: 25px;
+        width: 100px;
+        height: 100px;
+        background-color: mediumspringgreen;
+        display: inline-block;
+        /* 设置盒子模型方式，
+           默认是content-box值表示width和height设置标签内容宽高，
+           而border-box表示width和height设置标签总宽高（包含边框、内边距，如果设置了这些会默认挤压内容宽高变小，这种也叫怪异盒子模型）
+        */
+        box-sizing: border-box
+    }
+
+    .test2 {
+        border: 3px violet solid;
+        padding: 25px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        display: inline-block;
+    }
+</style>
+
+<div class="test1">标准盒子模型</div>
+<div class="test2">怪异盒子模型</div>
+~~~
+
+# css设置过渡：过渡是指触发一个事件发生随着时间改变其CSS属性，并且按照一定方式显示变化过程
+~~~html
+<style>
+    .test1 {
+        width: 100px;
+        height: 100px;
+        background-color: pink;
+        /* 过渡是指触发一个事件发生随着时间改变其CSS属性，并且按照一定方式显示变化过程 */
+        /* transition-property设置哪些属性需要过渡属性，需要使用逗号分隔
+           可以过渡的CSS属性只要能用数字表示的属性，其他属性无法过渡
+           可以使用all来表示所有能过渡的属性
+         */
+        /* transition-property: width, height, background-color; */
+
+        /* transition-duration设置过渡消耗时长
+           注意可以按照transition-property设置的属性过渡先后顺序分别给这些CSS属性的设置过渡时间，但是需要使用逗号分隔否则过渡不生效
+           只设置一个时间表示所有属性的过渡消耗时长一致
+        */
+        /* transition-duration: 1s, 5s, 5s; */
+
+        /* transition-timing-function设置过渡时的变化方式，
+           默认是 ease，即速度由慢到快再到慢，
+           常用的还有 linear表示线性变化速度均匀、ease-in表示先慢后快、ease-out表示先快后慢、steps(n)表示n个分刻度过渡（不够柔和）
+        */
+        /* transition-timing-function: linear; */
+
+        /* transition-delay设置触发事件时过渡的延迟时间，即多少秒后执行过渡效果，默认是0s不延迟 */
+        /* transition-delay: 1s; */
+
+        /* 上述过渡属性的复合写法，默认第一个时间是transition-duration，第二个时间是transition-delay 
+           如果需要设置不同属性的过渡时间请手动设置transition-duration属性
+        */
+        transition: all 1s linear 0s;
+    }
+
+    /* 悬浮过渡的最终样式 */
+    .test1:hover {
+        width: 300px;
+        height: 300px;
+        background-color: red;
+    }
+</style>
+
+<div class="test1"></div>
+~~~
+
+# css设置过渡动画效果
+~~~html
+<style>
+    .test {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        background-color: red;
+        /* 设置动画：
+           第一个值name是自定义的动画名称，
+           第二个值duration是动画的周期时间，
+           第三个值动画执行的速率timing-function可以设置ease(逐渐变慢默认是这个)、linear（匀速）、ease-in（加速）、
+           ease-out（减速）、ease-in-out（先加速后减速），
+           第四个值delay是设置动画开始的延时时间，
+           第五个值iteration-count是设置动画的循环次数，默认是1次，infinite是无限次
+           第六个值direction设置动画播放的方向，默认是normal是向前播放，alternate表示在偶数次向前播放在奇数次反向播放
+           注意还可以添加其他属性值，但是duration是动画的周期时间必须在delay设置动画开始的延时时间之前
+        */
+        animation: myAnim 8s ease-in-out 0.5s infinite alternate;
+    }
+
+    .test:hover {
+        /* running代表运行动画效果，paused代表暂停动画效果 */
+        animation-play-state: paused;
+    }
+
+
+    /* myAnim是自己定义的动画名称 */
+    @keyframes myAnim {
+
+        /* from指定动画开始帧（可以不写使用元素默认样式），to指定动画结束帧。
+           但是使用它们只有一个动画变化，推荐使用百分比，从0%到100%之间可以设置多个变化帧
+        */
+        /* from{
+
+        }
+        to{
+
+        } */
+
+        0%{
+            width: 100px;
+            background-color: red;
+        }
+
+        12.5%{
+            width: 200px;
+            background-color: pink;
+        }
+        25%{
+            width: 300px;
+            background-color: rgb(204, 0, 255);
+        }
+
+        37.5%{
+            width: 400px;
+            background-color: blue;
+        }
+
+        50%{
+            width: 500px;
+            background-color: rgb(0, 234, 255);
+        }
+
+        62.5%{
+            width: 600px;
+            background-color: rgb(30, 255, 0);
+        }
+        75%{
+            width: 700px;
+            background-color: yellow;
+        }
+        87.5%{
+            width: 800px;
+            background-color: orange;
+        }
+        100%{
+            width: 900px;
+            background-color: red;
+        }
+    }
+</style>
+
+<div class="test">鼠标滑倒背景上暂停动画效果</div>
+~~~
+
+# css设置文本报纸排版
+~~~html
+<style>
+    .test {
+        font-size: 60px;
+        font-weight: bolder;
+        text-align: center;
+        margin: 0px auto;
+    }
+
+    .test1 {
+        /* 设置段落列数 */
+        column-count: 4;
+
+        /* 设置每个段落的宽度，如果父元素宽度放不下就按照这个宽度放下最大的段落列数 */
+        column-width: 200px;
+
+        /* 设置段落之间纵向的宽度间距 */
+        column-gap: 20px;
+
+        /* 设置段落的分割线颜色 */
+        /* column-rule-color: red; */
+        /* 设置段落的分割线线条条类型 */
+        /* column-rule-style: solid; */
+        /* 设置段落的分割线的宽度 */
+        /* column-rule-width: 3px; */
+        /* 设置段落的分割线多个属性，包含分割线颜色、线条类型、宽度 */
+        column-rule: red solid 3px;
+    }
+</style>
+
+<div class="test">报纸标题</div>
+<div class="test1">
+    <p>二愣子睁大着双眼，直直望着茅草和烂泥糊成的黑屋顶，身上盖着的旧棉被，已呈深黄色，看不出原来的本来面目，还若有若无的散发着淡淡的霉味。
+        在他身边紧挨着的另一人，是二哥韩铸，酣睡的十分香甜，从他身上不时传来轻重不一的阵阵打呼声。
+        离床大约半丈远的地方，是一堵黄泥糊成的土墙，因为时间过久，墙壁上裂开了几丝不起眼的细长口子，
+        从这些裂纹中，隐隐约约的传来韩母唠唠叨叨的埋怨声，偶还掺杂着韩父，抽旱烟杆的“啪嗒”“啪嗒”吸允声。
+        二愣子缓缓的闭上已有些发涩的双目，迫使自己尽早进入深深的睡梦中。
+        他心里非常清楚，再不老实入睡的话，明天就无法早起些了，也就无法和其他约好的同伴一进山拣干柴。
+        二愣子姓韩名立，这么像模像样的名字,他父母可起不出来，这是他父亲用两个粗粮制成的窝头，求村里老张叔给起的名字。
+        老张叔年轻时，曾经跟城里的有钱人当过几年的伴读书童，是村里唯一认识几个字的读书人，村里小孩子的名字，倒有一多半是他给起的。
+        韩立被村里人叫作“二愣子”，可人并不是真愣真傻，反而是村中首屈一指的聪明孩子，但就像其他村中的孩子一样，
+        除了家里人外，他就很少听到有人正式叫他名“韩立”，倒是“二愣子”“二愣子”的称呼一直伴随至今。
+        而之所以被人起了个“二愣子”的绰号，也只不过是因为村里已有一个叫“愣子”的孩子了。
+        这也没啥，村里的其他孩子也是“狗娃”“二蛋”之类的被人一直称呼着，这些名字也不见得比“二愣子”好听了哪里去。
+        因此，韩立虽然并不喜欢这个称呼，但也只能这样一直的自我安慰着。
+    </p>
+    <p>韩立外表长得很不起眼，皮肤黑黑的，就是一个普通的农家小孩模样。但他的内心深处，却比同龄人早熟了许多，
+        他从小就向往外面世界的富饶繁华，梦想有一天他能走出这个巴掌大的村子，去看看老张叔经常所说的外面世界。
+        当韩立的这个想法，一直没敢和其他人说起过。否则，一定会使村里人感到愕然，一个乳臭未干的小屁孩，
+        竟然会有这么一个大人也不敢轻易想的念头。要知道，其同韩立差不多大的小孩，都还只会满村的追鸡摸狗，更别说会有离开故土，这么一个古怪的念头。
+        韩立一家七口人，有两个兄长，一个姐姐，还有一个小妹，他在家里排行老四，今年刚十岁，
+        家里的生活很清苦，一年也吃不上几顿带荤腥的饭菜，全家人一直在温线上徘徊着。
+        此时的韩立，正处于迷迷糊糊，似睡未睡之间，恼中还一直残留着这样的念头：上山时，一定要帮他最疼爱的妹妹，多拣些她最喜欢吃的红浆果。
+        第二天中午时分，当韩立顶着火辣辣的太阳，背着半人高的木柴堆，怀里还揣着满满一布袋浆果，
+        从山里往家里赶的时侯，并不知道家中已来了一位，会改变他一生运的客人。
+        这位贵客，是跟他血缘很近的一位至亲，他的亲三叔。
+        听说，在附近一个小城的酒楼，给人当大掌柜，是他父母口中的大能人。韩家近百年来，可能就出了三叔这么一位有点身份的亲戚。
+        韩立只在很小的时侯，见过这位三叔几次。他大哥在城里给一位老铁匠当学徒的工作，就是这位三叔给介绍的，
+        这位三叔还经常托人给他父母捎带一些吃的用的东西很是照顾他们一家，因此韩立对这位三叔的印像也很好，知道父母虽然嘴里不说，心里也是很感激的。
+    </p>
+    <p>大哥可是一家人的骄傲，听说当铁匠的学徒，不但管吃管住，一个月还有三十个铜板拿，等到正式出师被人雇用时，挣的钱可就更多了。
+        每当父母一提起大哥，就神采飞扬，像换了一个人一样。
+        韩立年龄虽小，也羡慕不已，心目最好的工作也早早就有了，就是给小城里的哪位手艺师傅看上，收做学徒从此变成靠手艺吃饭的体面人。
+        所以当韩立见到穿着一身崭新的缎子衣服，胖胖的圆脸，留着一撮小胡子的三叔时，心里兴奋极了。
+        把木柴在屋后放好后，便到前屋腼腆的给三叔见了个礼，乖乖的叫了声：“三叔好”，就老老实实的站在一边，听父母同三叔聊天。
+        三叔笑眯眯的望着韩立，打量着他一番，嘴里夸了他几句“听话”“懂事”之类的话，然后就转过头，和他父母说起这次的来意。
+        韩立虽然年龄尚小，不能完全听懂三叔的话，但也听明白了大概的意思。
+        原来三叔工作的酒楼，属于一个叫“七玄门”的江湖门派所有，这个门派有外门和内门之分，
+        而前不久，三叔才正式成为了这个门派的外门弟子，能够推举7岁到12岁孩童去参加七玄门招收内门弟子的考验。
+        五年一次的“七玄门”招收内门弟子测试，下个月就要开始了。这位有着几分精明劲自己尚无子女的三叔，自然想到了适龄的韩立。
+    </p>
+    <p>一向老实巴交的韩父，听到“江湖”“门派”之类的从未听闻过的话，心里有些犹豫不决拿不定主意。
+        便一把拿起旱烟杆，“吧嗒”“吧嗒”的狠狠抽了几口，就坐在里，一声不吭。
+        在三叔嘴里，“七玄门”自然是这方圆数百里内，了不起的、数一数二的大门派。
+        只要成为内门弟子，不但以后可以免费习武吃喝不愁，每月还能有一两多的散银子零花。
+        而且参加考验的人，即使未能入选也有机会成为像三叔一样的外门人员，专替“七玄门”打理门外的生意。
+        当听到有可能每月有一两银子可拿，还有机会成为和三叔一样的体面人，韩父终于拿定了主意，答应了下来。
+        三叔见到韩父应承了下来，心里很是高兴。又留下几两银子，说一个月后就来带韩立走，在这期间给韩立多做点好吃的，给他补补身子，好应付考验。
+        随后三叔和韩打声招呼，摸了摸韩立的头，出门回城了。
+        韩立虽然不全明白三叔所说的话，但可以进城能挣大钱还是明白的。
+        一直以来的愿望，眼看就有可能实现，他一连好几个晚上兴奋的睡不着觉。
+        三叔在一个多月后，准时的来到村中，要带韩立走了，临走前韩父反复嘱咐韩立，做人要老实，遇事要忍让，别和其他人起争执，而韩母则要他多注意身体，要吃好好。
+    </p>
+    <p>在马车上，看着父母渐渐远去的身影，韩立咬紧了嘴唇，强忍着不让自己眼框中的泪珠流出来。
+        他虽然从小就比其他孩子成熟的多，但毕竟还是个十岁的小孩，第一次出远门让他的心里有点伤感和彷徨。
+        他年幼的心里暗暗下定了决心，等挣到了大钱就马上赶来，和父母再也不分开。
+        韩立从未想到，此次出去后钱财的多少对他已失去了意义，他竟然走上了一条与凡人不同的仙业大道，走出了自己的修仙之路。（未完待续）
+    </p>
+</div>
 ~~~
 
 # css
@@ -770,7 +1389,11 @@ z-index             设置定位块的覆盖优先级，兄弟元素之间该属
 </style>
 ~~~
 
-
+# css
+~~~html
+<style>
+</style>
+~~~
 
 
 
