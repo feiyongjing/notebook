@@ -93,7 +93,13 @@ background-origin   设置背景图片平铺的起始点位置，border-box、pa
 background-clip     设置背景图片平铺后的裁切位置，border-box、padding-box、content-box分别代表边框位置、内边距位置、内容区裁切，默认是border-box
 background-size     设置背景图片宽高占背景的宽高大小
 
-display             设置标签元素显示方式：inline表示行内元素，block表示块元素，inline-block表示行内块元素，none表示隐藏该元素（元素不占位）
+display             设置标签元素显示方式：
+                        inline表示行内元素
+                        block表示块元素
+                        inline-block表示行内块元素
+                        none表示隐藏该元素（元素不占位）
+                        flex值表示块级弹性盒子，弹性盒子中的子元素（不包含子元素的后代元素）全部都会变成具备块元素的特性（可以设置宽高等属性）
+                        inline-flex值表示行内块级弹性盒子（几乎不使用，盒子之间还有间隙，如果需要同样的效果可以调整父元素为flex控制）
 visibility          设置标签元素是否显示，默认是show显示，设置为hidden表示隐藏，但是实际还是会占据页面该元素的位置
 hidden              设置标签元素隐藏
 
