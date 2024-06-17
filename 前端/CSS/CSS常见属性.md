@@ -146,6 +146,20 @@ column-rule-color   设置报纸排版段落的分割线颜色
 column-rule-style   设置报纸排版段落的分割线线条条类型
 column-rule-width   设置报纸排版段落的分割线的宽度
 column-rule         设置报纸排版段落的分割线多个属性，包含分割线颜色、线条类型、宽度
+
+flex-direction      设置弹性盒子的主轴方向
+flex-wrap           设置弹性盒子的主轴换行方式
+flex-flow           设置弹性盒子主轴的复合属性，可以同时设置主轴方向和主轴换行方式
+justify-content     设置弹性盒子中弹性子元素主轴方向的对齐方式
+align-items         设置弹性盒子中弹性子元素只有一行时的侧轴方向对齐方式
+align-content       设置弹性盒子中弹性子元素多行时侧轴方向的对齐方式
+
+flex-grow           设置弹性盒子中弹性子元素占据主轴方向空余空间的权重，就是等比例的划分所有弹性子元素占据空余空间的宽或高，而原来设置的宽或高会失效
+flex-shrink         设置弹性盒子中弹性子元素在主轴方向父元素宽度缩小时需要缩小宽度的权重，就是一定比例的缩小所有弹性子元素占据空余空间的宽或高，而原来设置的宽或高会失效
+flex-basis          设置在分配多余空间之前，元素占据的主轴空间。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即元素的本来大小
+flex                设置flex-grow, flex-shrink 和 flex-basis的简写，但是注意顺序一定要按照上述顺序（除非简写）
+order               设置弹性盒子中弹性子元素在主轴方向的排序，数字越小的越靠前，不设置的默认值是0
+align-self          设置弹性盒子中弹性子元素在侧轴方向的对齐方式，默认值是auto表示继承父元素的align-items属性值
 ~~~
 
 ## 颜色设置
@@ -1389,10 +1403,158 @@ column-rule         设置报纸排版段落的分割线多个属性，包含分
 </div>
 ~~~
 
-# css
+# css弹性盒子flex
 ~~~html
 <style>
+    .test {
+        width: 400px;
+        height: 400px;
+        background-color: bisque;
+        border: 2px magenta solid;
+        /* flex值表示块级弹性盒子，弹性盒子中的子元素（不包含子元素的后代元素）全部都会变成具备块元素的特性（可以设置宽高等属性）
+           inline-flex值表示行内块级弹性盒子（几乎不使用，盒子之间还有间隙，如果需要同样的效果可以调整父元素为flex控制） 
+        */
+        display: flex;
+
+        /* flex-direction设置弹性盒子的主轴方向，默认是row
+           row设置主轴方向是从左向右，即子元素按照主轴方向摆放，默认左对齐
+           row-reverse设置主轴方向是从右向左，即子元素按照主轴方向摆放，默认右对齐
+           column设置主轴方向是从上向下，即子元素按照主轴方向摆放，默认上对齐
+           column-reverse设置主轴方向是从下向上，即子元素按照主轴方向摆放，默认下对齐
+        */
+        /* flex-direction: row; */
+
+        /* flex-wrap设置弹性盒子的主轴换行方式，默认是nowrap
+           nowrap设置主轴方向的子元素不换行，如果实在放不下就会强行放下，并且这一行的子元素宽度都等比例缩小
+           wrap设置主轴方向的子元素换行，实在放不下的元素就会换行，但是纵向的宽度足够放下子元素并且有剩余，则会与上一行有一定的间隙，设置垂直对齐方式可以解决间隙   问题
+           wrap-reverse设置主轴方向的子元素换行，但是反向向上换行，并且第一行在父元素的最下方
+        */
+        /* flex-wrap: nowrap; */
+
+        /* flex-flow是弹性盒子主轴的复合属性，可以同时设置主轴方向和主轴换行方式 */
+        flex-flow: row wrap;
+
+        /* justify-content设置弹性盒子中弹性子元素主轴方向的对齐方式
+          flex-start按照主轴的起始方向对齐
+          flex-end按照主轴的结束方向对齐
+          center主轴方向居中对齐
+          space-around设置每行子元素主轴方向均匀的分布，子元素与父元素的主轴方向边缘不会接触，且子元素与子元素的主轴方向距离是第一个或最后一个子元素与父元素主轴    方向边缘距离的两倍
+          space-between设置每行子元素主轴方向均匀的分布，第一个或最后一个子元素与父元素的主轴方向边缘会接触
+          space-evenly设置每行子元素主轴方向均匀的分布，第一个或最后一个子元素与父元素的主轴方向边缘不会接触
+        */
+        justify-content: center;
+
+        /* align-items设置弹性盒子中弹性子元素只有一行时的侧轴方向对齐方式，默认值是stretch
+           flex-start按照侧轴的起始方向对齐
+           flex-end按照侧轴的结束方向对齐
+           center侧轴方向居中对齐
+           stretch表示按照侧轴的起始方向对齐，并且当不设置子元素高度时所有行的子元素会均匀的填充整个父元素高度
+        */
+        /* align-items: flex-end; */
+
+        /* align-content设置弹性盒子中弹性子元素多行时侧轴方向的对齐方式，默认值是stretch
+           flex-start按照侧轴的起始方向对齐
+           flex-end按照侧轴的结束方向对齐
+           center侧轴方向居中对齐
+           space-around设置每行子元素侧轴方向均匀的分布，子元素与父元素的侧轴方向边缘不会接触，且子元素与子元素的侧轴方向距离是第一行或最后一行子元素与父元素侧 轴方向边缘距离的两倍
+           space-between设置每行子元素侧轴方向均匀的分布，第一行或最后一行子元素与父元素的侧轴方向边缘会接触
+           space-evenly设置每行子元素侧轴方向均匀的分布，第一行或最后一行子元素与父元素的侧轴方向边缘不会接触
+           stretch表示按照侧轴的起始方向对齐，并且当不设置子元素高度时所有行的子元素会均匀的填充整个父元素高度
+        */
+        align-content: center;
+    }
+
+    .test1 {
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: yellowgreen;
+    }
+
+    .test2 {
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: sandybrown;
+    }
+
+    .test3 {
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: turquoise;
+    }
+
+
+    .test4 {
+        width: 30px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: yellowgreen;
+
+        /* flex-grow设置弹性盒子中弹性子元素占据主轴方向空余空间的权重，就是等比例的划分所有弹性子元素占据空余空间的宽或高，而原来设置的宽或高会失效
+           弹性盒子主轴方向是横向（从左到右或者从右到左）时所有弹性子元素增加占据主轴方向空余空间按等比例的划分的宽
+           弹性盒子主轴方向是横向（从上到下或者从下到上）时所有弹性子元素增加占据主轴方向空余空间按等比例的划分的高
+           默认值是0，不增加宽或高
+        */
+        /* flex-grow: 1;  */
+
+        /* flex-shrink设置弹性盒子中弹性子元素在主轴方向父元素宽度缩小时需要缩小宽度的权重，就是一定比例的缩小所有弹性子元素占据空余空间的宽或高，而原来设置的宽    或高会失效
+           弹性盒子主轴方向是横向（从左到右或者从右到左）时所有弹性子元素按照一定比例缩小宽
+           弹性盒子主轴方向是横向（从上到下或者从下到上）时所有弹性子元素按照一定比例缩小高
+           默认值是1，表示按照原有元素宽或高的比例等比例缩小宽或高 */
+        /* flex-shrink: 1; */
+
+        /* flex-basis属性定义了在分配多余空间之前，元素占据的主轴空间。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即元素的本来大小 */
+        /* flex-basis: auto; */
+
+        /* flex属性是flex-grow, flex-shrink 和 flex-basis的简写，但是注意顺序一定要按照上述顺序（除非简写），
+           默认值为0 1 auto 简写 0 auto
+           auto 表示 1 1 auto
+           none 表示 0 0 auto
+           1 表示 1 1 0
+         */
+        flex: 0 auto;
+
+        /* order设置弹性盒子中弹性子元素在主轴方向的排序，数字越小的越靠前，不设置的默认值是0 */
+        order: 3;
+
+        /* align-self设置弹性盒子中弹性子元素在侧轴方向的对齐方式，默认值是auto表示继承父元素的align-items属性值 */
+        /* align-self: flex-end; */
+    }
+
+    .test5 {
+        width: 30px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: sandybrown;
+        flex-grow: 1; 
+
+        order: 2;
+    }
+
+    .test6 {
+        width: 30px;
+        height: 100px;
+        box-sizing: border-box;
+        background-color: turquoise;
+        flex-grow: 1; 
+
+        order: 1;
+    }
 </style>
+
+<div class="test">
+    <div class="test1">盒子1</div>
+    <div class="test2">盒子2</div>
+    <div class="test3">盒子3</div>
+</div>
+
+<div class="test">
+    <div class="test4">盒子4</div>
+    <div class="test5">盒子5</div>
+    <div class="test6">盒子6</div>
+</div>
 ~~~
 
 # css

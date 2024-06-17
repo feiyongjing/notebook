@@ -100,6 +100,7 @@ docker logs -ft --tail number 容器id
 
 # 获取容器/镜像的元数据，包含镜像的启动命令、容器的网络配置、容器的环境变量等，启动命令注意查看Cmd和Entrypoint指令
 docker inspect [镜像或容器ID] 
+# 检查镜像适用的架构 docker inspect [镜像或容器ID] | grep Architecture
 # 注意GraphDriver.Data下的属性
 #   LowerDir：这些是覆盖文件系统的只读层。对于容器来说这些宿主机目录下的每一个目录都对应一个镜像层的内部目录，这些目录组成了容器的根目录，容器中的这些目录是只读的
 #   UpperDir：这是覆盖文件系统的读写层。对于容器来说这些宿主机目录下的目录是该容器在启动之后所做的更改
