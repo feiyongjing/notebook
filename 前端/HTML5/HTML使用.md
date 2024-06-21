@@ -1,64 +1,65 @@
 # html标签元素如下，官方文档推荐看mdn
 ~~~
-DOCTYPE:  文档类型声明
-html：    html标签表示内部标签按照html解析
-head：    html头部标签
-meta：    html元数据标签
-titel：   网页标签
-body:     html主体标签
+DOCTYPE   文档类型声明
+html      html标签表示内部标签按照html解析
+head      html头部标签
+meta      html元数据标签
+titel     网页标签
+body      html主体标签
  
-h1~h6：   标题标签
-p：       段落标签
-br：      换行标签
-hr：      分割线标签
+h1~h6     标题标签
+p         段落标签
+br        换行标签
+hr        分割线标签
 
-span：    行标签
-div：     块标签
-pre：     原文显示标签，空格和换行都按照原文显示
+span      行标签
+div       块标签
+pre       原文显示标签，空格和换行都按照原文显示
  
-a:        链接标签
-img：     图片标签
-audio：   音频标签
-vidio:    视频标签
+a         链接标签
+img       图片标签
+audio     音频标签
+vidio     视频标签
 
-ul:       无序列表标签
-ol:       有序列表标签
-li:       列表行标签
-dl:       自定义列表标签
-dt:       自定义列表标题标签
-dd:       自定义列表段落标签
+ul        无序列表标签
+ol        有序列表标签
+li        列表行标签
+dl        自定义列表标签
+dt        自定义列表标题标签
+dd        自定义列表段落标签
 
-table:    表格标签
-caption:  表格标题标签
-thead:    表格头部标签
-tbody:    表格主体标签
-tfoot:    表格尾部标签
-tr:       表格行标签
-th:       表格头部单元格标签
-td:       表格主体单元格标签
+table     表格标签
+caption   表格标题标签
+thead     表格头部标签
+tbody     表格主体标签
+tfoot     表格尾部标签
+tr        表格行标签
+th        表格头部单元格标签
+td        表格主体单元格标签
 
-form：    表单标签
-input：   表单输入标签
-button：  按钮标签
-textarea：多行文本输入框标签
-select：  下拉框标签
-option：  下拉框选项标签
-label：   表单输入焦点绑定标签：包裹input输入标签控件，实现点击显示的文本与输入框关联获取焦点
+form      表单标签
+input     表单输入标签
+button    按钮标签
+textarea  多行文本输入框标签
+select    下拉框标签
+option    下拉框选项标签
+label     表单输入焦点绑定标签：包裹input输入标签控件，实现点击显示的文本与输入框关联获取焦点
 
-style:    样式标签，可以用来设置内部css样式
-link：    链接标签，可以用来设置引入外部css样式
+style     样式标签，可以用来设置内部css样式
+link      css链接标签，可以用来设置引入外部css样式
+script    js链接标签
 
-iframe:   这个标签可以用来在网站中嵌入一个其他的网页，有些网站就是使用这个嵌入的广告
+iframe    这个标签可以用来在网站中嵌入一个其他的网页，有些网站就是使用这个嵌入的广告
 
-b:        字体加粗标签
-strong:   字体加粗标签
-i:        字体倾斜标签
-em：      字体倾斜标签
-u：       字体下滑线标签
-del:      字体删除线标签
-s：       字体删除线标签
-sup:      字体上标标签，例如2的3次方
-sub:      字体下标签，例如氧气的化学表示
+b         字体加粗标签
+strong    字体加粗标签
+i         字体倾斜标签
+em        字体倾斜标签
+u         字体下滑线标签
+del       字体删除线标签
+s         字体删除线标签
+sup       字体上标标签，例如2的3次方
+sub       字体下标签，例如氧气的化学表示
 
 header    页面头部标签
 footer    页面脚部标签

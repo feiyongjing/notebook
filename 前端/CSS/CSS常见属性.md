@@ -1557,11 +1557,62 @@ align-self          设置弹性盒子中弹性子元素在侧轴方向的对齐
 </div>
 ~~~
 
-# css
+# css媒体样式设置（适应不同设备屏幕宽高的样式）
 ~~~html
 <style>
+    .css-mediaSelector{
+       width: 300px;
+       height: 300px;
+    }
+
+    /* @media 设置在不同媒体类型的样式（注意在后面写相同的样式属性会覆盖的），
+       print表示打印机
+       screen表示电子屏幕（包含pc屏幕、平板屏幕、手机屏幕等），可以设置不同大小的屏幕样式
+       all表示所有设备类型
+       max-width和min-width设置浏览器窗口的最大和最小界限宽度
+       max-height和min-height设置浏览器窗口的最大和最小界限高度
+       device-width和device-height设置设备的真实屏幕大小
+       max-device-width和min-device-width设置设备的真实屏幕的最大和最小界限宽度
+       max-device-height和min-device-height设置设备的真实屏幕的最大和最小界限高度
+       orientation: portrait 表示屏幕是否纵向，即高度大于宽度
+       orientation: landspace 表示屏幕是否横向，即宽度大于高度
+
+       and 表示且运算
+       or和逗号分隔 都表示或运算
+       not 表示非运算
+    */
+    /* 根据不同的屏幕窗口尺寸显示不同的样式，768px以下是手机屏幕 */
+    @media screen and (max-width: 768px) {
+       .css-mediaSelector{
+           background-color: aqua;
+       }
+    
+    }
+
+    /* 根据不同的屏幕窗口尺寸显示不同的样式，768px到996px以下是平板屏幕 */
+    @media screen and (min-width: 768px) and (max-width:996px) {
+       .css-mediaSelector{
+           background-color: chartreuse;
+       }
+    
+    }
+
+    /* 根据不同的屏幕窗口尺寸显示不同的样式，996px以上是电脑屏幕 */
+    @media screen and (min-width: 996px) {
+       .css-mediaSelector{
+           background-color: red;
+       }
+    
+    }
 </style>
+
+<div class="css-mediaSelector">
+    在不同的尺寸的屏幕下显示的效果不同，768px以下是手机屏幕是青色、768px到996px以下是平板屏幕是绿色、996px以上是电脑屏幕是红色
+</div>
 ~~~
+
+
+
 
 
 
