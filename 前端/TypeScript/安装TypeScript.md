@@ -9,7 +9,7 @@ npm i -g typescript
 tsc test.ts
 # -w参数 表示watch监视，发现ts文件发生变化就自动编译，注意发现过程可能有一定的延迟
 
-# 如果需要监视整个项目的ts文件那么需要配置tsconfig.json文件，然后直接tsc 无需添加-w参数就可以监视ts文件变动自动编译
+# 如果需要监视整个项目的ts文件那么需要配置项目根目录下的tsconfig.json文件，然后直接tsc 无需添加-w参数就可以监视ts文件变动自动编译
 {
     // tsconfig.json是ts编译器的配置文件，ts编译器可以根据它的信息来对代码进行编译
 

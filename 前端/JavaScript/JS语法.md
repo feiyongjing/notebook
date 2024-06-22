@@ -102,7 +102,7 @@ user1List.push("篮球")
 console.log("打印真正的数组对象", user1List);
 ~~~
 
-## JS的Set
+## JS的Set和Map
 ~~~js
 // Set数据结构，其实就是Java的HashSet,不能放重复的数据
 var s = new Set();
@@ -115,6 +115,18 @@ console.log("set转数组：", [...s]);
 console.log("字符串xaaabbbccccdddd字符去重：", [...new Set("xaaabbbccccdddd")].join(""));
 // 字符串"5"和数字5的数据类型不同，所以它们不是重复的数据可以同时在一个Set中
 console.log("字符串'5'和数字5的数据类型不同，所以它们不是重复的数据可以同时在一个Set中", ...new Set(["5", 5]));
+
+// Map数据结构，其实就是Java的HashMap,不能放重复的Key
+var m = new Set();
+// Map对象的set方法添加和修改键值对、get方法查看key的value、delete方法删除key对应的键值对、clear方法清空集合
+m.set("张三", 18)
+m.set("李四", 20)
+m.get("张三")
+m.delete("李四")
+m.clear()
+for(let v of m){
+    console.log(v) // 遍历获取一对键值对，拿到的是一个数组，第一个元素是key，第二个值是value
+}
 ~~~
 
 ## JS的强制类型转换
@@ -164,8 +176,14 @@ var user = {
     flag: true
 }
 
-// 循环获取的a是对象的属性名称
+// for in 循环获取的a是对象的属性名称
 for(var a in user){
+    console.log(user[a]);
+}
+
+// for of遍历，注意只有字符串、数组、set等这些对象可以使用该遍历方式
+var list = ["987","654","123"]
+for(var a of list){
     console.log(user[a]);
 }
 
@@ -268,6 +286,13 @@ var fun1 = function () {
 
 fun1("张三", 18)
 fun1("李四", 13)
+
+// 函数从参数可以设置默认值，如果不传递该参数就使用默认值
+var fun2 = function (name="王五") {
+    console.log(name)
+}
+
+fun2()
 ~~~
 
 ## JS正则
@@ -290,7 +315,7 @@ for (const i of username) {
     console.log(i);
 }
 
-// 字符串使用反引号可以包变量
+// 字符串使用反引号设置模板字符串，模板字符串包裹变量和直接换行
 var bilibili = "https://www.bilibili.com/"
 var html = `<a href="${bilibili}">跳转到bilibili</a>`
 
@@ -303,6 +328,19 @@ var html = `<a href="${bilibili}">跳转到bilibili</a>`
 // subslice方法截取子字符串返回，包含第一个参数索引字符，不包含第二个参数索引字符，不能写负数索引（写了会默认是0），如果第二参数小于第一参数则默认执行时会交换它们的位置
 // subslice方法截取子字符串返回，第一个参数设置开始索引，第二参数表示截取的字符数量
 // split方法参数分隔字符串拆分字符串为字符串数组，数组中的元素没有分隔的字符串
+~~~
+
+## JS的json字符串和对象互相转换
+~~~js
+var s1 = '{"name":"张三", "age": 18}'
+// JSON.parse方法将json字符串转化为对象
+var s1obj= JSON.parse(s1)
+console.log(s1obj)
+
+var s2 = {name:"李四", age: 28}
+// JSON.parse方法将对象转换为json字符串
+var s2str= JSON.stringify(s2)
+console.log(s2str)
 ~~~
 
 ## ES6的let变量和const常量
@@ -347,12 +385,12 @@ console.log("user对象解构赋值的属性age是", age)
 
 // 对象的扩展
 var name = "盖伦"
-var ae = "age"
+var a = "age"
 var user2 = {
     // name: name,
     name, // 如果是上面引用外面的变量就可以简写
     // age: "20",
-    [age]: "20", // 对象的属性名引用外面的数据和上面的age: "20"是一样的效果
+    [a]: "20", // 对象的属性名引用其他的变量值和上面的age: "20"是一样的效果
     // getName:function(){
     //     console.log("打印名称:",this.name);
     // }
@@ -371,6 +409,157 @@ var sum = (x, y) => x + y;
 var sum1 = (x, y) => ({ x, y });
 // 注意对于普通函数来说this是指向的函数运行时所在的对象，而箭头函数则是指向函数运行时上层作用域中的this
 ~~~
+
+## ES6的异步处理(promise)
+~~~html
+<div class="loadImageAsync">图片异步加载中</div>
+<script>
+    function loadImageAsync(url) {
+        // Promise构造器接收一个函数，函数的两个参数：resolve和reject是默认的
+        // resolve函数在异步代码执行成功后手动调用，接收的参数是异步操作成功返回的结果
+        // reject函数在异步代码执行失败后手动调用，接收的参数是异步操作失败返回的结果
+        const promise = new Promise(function (resolve, reject) {
+            const image = new Image();
+            image.onload = function () {
+                resolve(image);
+            }
+            image.onerror = function () {
+                reject(new Error("图片url错误" + url))
+            }
+            image.src = url;
+        })
+        return promise;
+    }
+
+    var loadImageAsyncElement = document.querySelector(".loadImageAsync")
+    // 执行异步操作，得到未来的结果
+    const pormise = loadImageAsync("https://img.zcool.cn/community/015b9e595f0a8da8012193a34dafb4.jpg?x-oss-process=image/  auto-orient,1/resize,m_lfit,w_1280,limit_1/sharpen,100");
+
+    // pormise.then对异步操作未来的结果进行处理，接收两个函数参数，
+    // 第一个函数接收resolve函数异步操作成功返回的结果，并对这个结果进行处理
+    // 第二个函数接收reject函数异步操作失败返回的结果，并对这个结果进行处理
+    // 无论是异步操作成功或者失败处理，两种处理内部都可以继续进行新的异步处理，而如果将新的异步处理pormise对象作为成功处理或失败处理函数的返回值，则then的返回值就是新的异步处理pormise对象，而这样做就可以在后面继续接then方法来处理新的异步处理的结果，做到外部的链式调用从而摆脱内部包裹的多层回调地狱
+    // 当然如果在成功处理或失败处理函数中没有进行新的的异步处理返回新的的异步处理pormise对象，这样默认会将成功处理或失败处理函数的实参作为返回值
+    pormise.then(function (data) {
+        loadImageAsyncElement.appendChild(data);
+    }, function (error) {
+        loadImageAsyncElement.innerHTML = "图片加载失败";
+        console.log(error);
+    })
+</script>
+~~~
+
+## ES6的class
+~~~js
+// 在ES5都是使用首字母大写的函数作为类
+// function Person(name,age){
+//     this.name=name;
+//     this.age=age;
+// }
+
+// 原型对象设置属性
+// Person.prototype.getName(){
+//     console.log(this.name);
+// }
+
+
+// ES6类独立出来了,注意必须先定义后使用类，
+// 子类继承父类和java基本一致都是使用extends，只有一点不同的是子类也会继承父类的静态方法和静态属性
+// 可以通过子类的类名去调用父类的静态方法和属性
+class Person {
+    
+    static staticTest(){
+        return "静态方法的设置使用java一样";
+    }
+
+    // 构造函数，并且可以设置参数的默认值
+    constructor(name, age=10) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // 读取实例对象的name属性时这个方法会被调用，例如 new Person("哈哈").name，并且返回值就是最终读取到的数据
+    get name(){
+        console.log();
+        return this.name;
+    }
+
+    // 修改实例对象的name属性时这个方法会被调用，例如 new Person("哈哈").name="abc"
+    set name(name){
+        this.name = name;
+    }
+
+    toString() {
+        return "(" + this.name + "," + this.age + ")";
+    }
+
+}
+// 通过类名点属性给静态属性赋值，和java static静态赋值是一样的但是是在外面赋值没有static修饰
+Person.status="静态属性";
+console.log("根据类创建对象实例调用实例方法",new Person("赵信",20).toString());
+console.log(Person.staticTest());
+~~~
+
+## ES6的obj方法扩展
+~~~js
+// 比较两个对象或者值是否相等，和比较运算符===类似，但是这个方法在两个NaN的比较也是true
+Object.is(NaN, NaN)
+
+// Object.assign方法用于合并两个对象，如果两个对象有相同的属性，则这些相同的属性以第二个参数对象为准
+var user1 = { name: "张三", age: 18, test1: 22 }
+var user2 = { name: "李四", age: 20, test2: 33 }
+console.log(Object.assign(user1, user2))
+
+// Object.setPrototypeOf方法和Object.getPrototypeOf方法分别用于设置对象的原型对象和获取对象的原型对象
+var user3 = { name: "张三", age: 18 }
+var p = { test3: ["c", "c++", "c#"] }
+Object.setPrototypeOf(user3, p)
+console.log(user3)
+~~~
+
+## ES6的模块化
+### export.js
+~~~js
+// export将当前的变量或函数做成模块的变量和函数
+// 模块变量和函数可以在其他的模块通过import进行引入使用
+// 注意在HTML的script标签在声明js文件的类型是模块 type="module" 
+// 项目开发中：模块资源服务端配置 Access-Control-Allow-Origin，可以指定具体域名，或者直接使用 * 通配符
+// 日常学习中：VS Code 安装Live Server插件，然后在html中右键Open with Live Server 
+export var firstName = "firstName"
+export var lastName = "lastName"
+export function getName() {
+    return "嘉文四世"
+}
+// default默认函数在import使用时无需知道函数的名称，可以自定义函数的名称，
+// 这个自定义函数的名称在模块文件中找不到就会自动的使用默认函数
+export default function(){
+    return "default默认函数，一个模块文件中只能有一个默认函数"
+}
+~~~
+### import.js
+~~~js
+// 导入变量或函数，变量和函数的来源是指定的js文件(如下是./export.js文件)，可以使用as重新命名变量和函数
+// 注意在HTML的script标签在声明js文件的类型是模块 type="module"
+// 项目开发中：模块资源服务端配置 Access-Control-Allow-Origin，可以指定具体域名，或者直接使用 * 通配符
+// 日常学习中：VS Code 安装Live Server插件，然后在html中右键Open with Live Server 
+
+// 导入具体的变量或者函数
+// import { firstName, lastName, getName as myGetName} from "./export.js"
+// 导入变量后可以使用变量和函数
+// console.log(firstName)
+// console.log("英雄联盟在皇子的全名是",myGetName())
+
+// 使用*简化引入./export.js文件中的全部变量和函数，as为*添加别名，通过别名点变量名和函数名引用变量和函数
+import * as MyHello from "./export.js"
+console.log(MyHello.firstName)
+console.log("英雄联盟在皇子的全名是",MyHello.getName())
+
+// default默认函数在import使用时无需知道函数的名称，可以自定义函数的名称并且无需使用花括号包裹，
+// 这个自定义函数的名称在模块文件中找不到就会自动的使用默认函数
+// import xxxxx from "./export.js"
+// console.log("模块引用default默认函数，",xxxxx())
+~~~
+
 
 ## 将变量与对象的属性绑定，两者变化一个另一个也会随之变化
 ~~~js

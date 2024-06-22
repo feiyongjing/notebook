@@ -22,6 +22,12 @@ history.forward()
 
 // history.go设置浏览器页面向前或者向后跳转多个页面，正数表示向前跳转，负数表示向后跳转
 history.go(2)
+
+// location代表的是当前页面的完整url，通过一些属性可以获取协议、域名、端口
+// 如果斜杠location表示的url就可以跳转到其他页面
+console.log(location)
+location.assign("https://www.baidu.com")  // 跳转到其他页面，和直接修改location的效果是一样的
+location.reload()  // 表示重新加载页面，即刷新网页，如果传递参数true表示清除缓存强制刷新
 ~~~
 
 
