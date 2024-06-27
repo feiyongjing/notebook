@@ -37,6 +37,22 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 - vue列表渲染
 - vue过滤器
 - vue对象生命周期
+- vue组件使用
+- vue-cli框架使用
+- vue通过ref查找元素或者vm对象
+- props接收父组件传递的数据
+- mixins混入复用公共代码
+- vue插件使用
+- vue组件模板的style样式设置
+- vue组件绑定自定义事件实现子组件向父组件传递数据
+- vue组件的$nextTick设置Dom生成后的回调函数
+- animate动画库使用: https://animate.style
+- vue配置后端服务的代理
+- vue的插槽：默认插槽、具名插槽、作用域插槽
+- vuex插件传输组件之间的数据
+- vue路由组件基础使用
+- vue多层嵌套路由组件使用
+- 
 
 # vue常见指令
 - v-bind      单向绑定元素属性
@@ -52,6 +68,7 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 - v-cloak     配合css使用隐藏带由v-cloak属性的元素，直到Vue的js库引入成功（网络差的情况会出现满屏的{{}}元素插值内容）后vue自动去除标签的v-cloak属性
 - v-once      v-once指定的节点在初次动态的渲染后被认为是静态内容，不会再发生变化了
 - v-pre       Vue跳过了带有v-pre属性的元素的编译，所以这些元素Vue无法影响
+- ref         Vue的ref属性替代dom查找元素
 
 
 

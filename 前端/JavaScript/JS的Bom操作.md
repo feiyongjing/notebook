@@ -30,6 +30,73 @@ location.assign("https://www.baidu.com")  // 跳转到其他页面，和直接�
 location.reload()  // 表示重新加载页面，即刷新网页，如果传递参数true表示清除缓存强制刷新
 ~~~
 
+# 浏览器localStorage存储
+~~~html
+<div>
+    <h2>浏览器localStorage存储（一般最大是5MB）的数据只有手动清除（清除浏览器缓存或者手动调用clear）才会消失</h2>
+    <button onclick="saveData()">点我向浏览器localStorage写数据</button><br />
+    <button onclick="getData()">点我从浏览器localStorage获取数据并弹窗</button><br />
+    <button onclick="removeByDataKey()">点我从浏览器localStorage删除一个数据</button><br />
+    <button onclick="clearData()">点我从浏览器localStorage清除所有数据</button><br />
+</div>
+
+<script type="text/javascript">
+    function saveData() {
+        localStorage.setItem("user1", '{"name":"张三", "age": 18}')
+        localStorage.setItem("user2", '{"name":"李四", "age": 20}')
+    }
+
+    function getData() {
+        alert(localStorage.getItem("user1")+localStorage.getItem("user2"))
+    }
+
+    function removeByDataKey() {
+        localStorage.removeItem("user1")
+    }
+
+    function clearData() {
+        localStorage.clear()
+    }
+</script>
+~~~
+
+
+# 浏览器localStorage存储
+~~~html
+<div>
+    <h2>浏览器sessionStorage存储的数据会随着浏览器窗口的关闭而清除</h2>
+    <button onclick="saveData()">点我向浏览器sessionStorage写数据</button><br />
+    <button onclick="getData()">点我从浏览器sessionStorage获取数据并弹窗</button><br />
+    <button onclick="removeByDataKey()">点我从浏览器sessionStorage删除一个数据</button><br />
+    <button onclick="clearData()">点我从浏览器sessionStorage清除所有数据</button><br />
+</div>
+
+<script type="text/javascript">
+    function saveData() {
+        sessionStorage.setItem("user1", '{"name":"张三", "age": 18}')
+        sessionStorage.setItem("user2", '{"name":"李四", "age": 20}')
+    }
+
+    function getData() {
+        alert(sessionStorage.getItem("user1")+sessionStorage.getItem("user2"))
+    }
+
+    function removeByDataKey() {
+        sessionStorage.removeItem("user1")
+    }
+    
+    function clearData() {
+        sessionStorage.clear()
+    }
+</script>
+~~~
+
+
+
+
+
+
+
 
 
 

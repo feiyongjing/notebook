@@ -1,4 +1,4 @@
-~~~
+~~~vue
 <template>
   <div class="school">
     <button @click="getSchoolName()">获取学校名称</button>
