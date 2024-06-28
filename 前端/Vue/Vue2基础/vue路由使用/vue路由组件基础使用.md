@@ -61,7 +61,7 @@ export default new VueRouter({
     // 设置不同路径路由到不同的组件
     routes: [
         {
-            path: "/about",
+            path: "/about",  // 最外层路由一定需要添加/前缀
             component: About
         },
         {
@@ -95,6 +95,7 @@ export default {
 ~~~vue
 <template>
   <h2>我是Home的内容</h2>
+  <input type="text">
 </template>
 
 <script>
@@ -122,14 +123,28 @@ export default {
 
     <!-- Vue中借助router-link标签实现路由的切换，最终router-link标签在浏览器中是a标签 -->
     <!-- 每一次切换组件后，原来的组件会被销毁而新的组件被创建 -->
+    <!-- router-link的push属性设置当前页面被浏览器记录（默认），而replace属性是设置当前页面及其子路由页面不被浏览器记录，
+        即跳转到其他页面后无法回退到之前的页面，但是会继续向更早的页面跳转 -->
     <router-link to="/about">About</router-link>
     <br />
     <router-link to="/home">Home</router-link>
 
     <div>
-      <!-- 指定路由组件的呈现位置，类似于插槽 -->
+      <!-- keep-alive标签是让包裹设置的同一级的路由组件在切换时进行缓存从而不被销毁，做到用户的输入不被清理掉
+      默认是包裹的全部路由组件不被销毁，
+      不过有些情况下需要组件不被销毁但是组件内部的资源（例如定时器）销毁请在路由组件中编写deactivated钩子销毁资源（清楚定时器）
+      另外路由组件中的activated钩子可以设置进入路由组件时创建资源（例如创建定时器）
+      include属性是用于指定特定的路由组件不被销毁而其他的路由组件都被销毁(内部的值是组件名称，而不是路由名称)
+      :include="['About','Home']" 设置多个路由组件缓存
+       -->
+      <!-- <keep-alive include="Home">
+        <router-view></router-view>
+      </keep-alive> -->
+
       <router-view></router-view>
     </div>
+
+    
   </div>
 </template>
 

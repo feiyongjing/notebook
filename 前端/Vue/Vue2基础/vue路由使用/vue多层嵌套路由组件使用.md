@@ -54,11 +54,11 @@ export default new VueRouter({
     // 设置不同路径路由到不同的组件
     routes: [
         {
-            path: "/about",
+            path: "/about",  // 最外层路由一定需要添加/前缀
             component: About
         },
         {
-            path: "/home",
+            path: "/home",   // 最外层路由一定需要添加/前缀
             component: Home,
             // 设置子路由，路由到不同的组件
             children:[
@@ -67,7 +67,7 @@ export default new VueRouter({
                     component: Message
                 },
                 {
-                    path:"news",
+                    name: 'news',   // 给路由命名后在router-link标签的to属性值对象写法，从而简化过长的path
                     component:News
                 }
             ]
@@ -97,16 +97,18 @@ export default {
     <div>
       <ul class="nav nav-tabs">
         <li>
-          <!-- 注意to跳转的路由路径需要写全路径 -->
+          <!-- 注意to跳转的路由路径需要写全路径-->
           <router-link
             to="/home/message"   
             >message</router-link
           >
         </li>
         <li>
-          <!-- 注意to跳转的路由路径需要写全路径 -->
+          <!-- to属性值对象写法可以写设置好的name，从而简化过长的path  -->
           <router-link
-            to="/home/news"
+            :to="{
+              name: 'news'
+            }"
             >news</router-link
           >
         </li>

@@ -52,7 +52,13 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 - vuex插件传输组件之间的数据
 - vue路由组件基础使用
 - vue多层嵌套路由组件使用
-- 
+- vue路由父组件传递参数给路由子组件
+- vue不使用router-link标签进行路由
+- vue的路由守卫
+- vue路由的hash模式和history模式
+-
+-
+
 
 # vue常见指令
 - v-bind      单向绑定元素属性
