@@ -27,6 +27,9 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
 ~~~
 
+### 方式二：参考vue-cli框架使用笔记
+
+---
 
 # vue学习路线
 - vue数据绑定
@@ -56,8 +59,8 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 - vue不使用router-link标签进行路由
 - vue的路由守卫
 - vue路由的hash模式和history模式
--
--
+- 
+- 
 
 
 # vue常见指令
@@ -77,5 +80,8 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
 - ref         Vue的ref属性替代dom查找元素
 
 
-
+# vue的特殊标签
+- 
+- 
+- 
 
