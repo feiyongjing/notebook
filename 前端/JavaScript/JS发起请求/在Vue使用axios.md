@@ -8,7 +8,7 @@
 </template>
 
 <script>
-// 引入axios
+// 引入axios，需要提前 npm i axios 安装
 import axios from "axios";
 
 export default {

@@ -21,7 +21,7 @@ cd 项目名
 # vue-cli会将webPack的配置默认隐藏起来，如果需要查看请在项目下执行 vue inspect > output.json 将配置打印到output.json文件中c查看
 # 如果需要修改上述的css、App.vue、src/assets的目录或名称（注意项目下的public目录、public/index.html、public/favicon.ico、src目录、src/main.js这5个文件或者目录名称不能修改），请在项目根目录下创建vue.config.js进行修改，可以修改的属性参考：https://cli.vuejs.org/zh/config/
 
-# 常见项目目录结构如下
+# Vue2常见项目目录结构如下
 /
 ├── public
 │   ├── css

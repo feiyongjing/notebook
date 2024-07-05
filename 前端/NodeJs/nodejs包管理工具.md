@@ -57,9 +57,11 @@ npm i -g [包名]
 # express -e [目录]
 
 # npm设置淘宝镜像，注意这里是npm单独设置加速而不是cnpm，npm配置淘宝镜像后反而比cnpm快
-# 旧淘宝镜像
-npm config set registry https://registry.npm.taobao.org
+# 清除缓存
+npm cache clean --force
 # 新淘宝镜像
+npm config set registry https://registry.npmmirror.com
+# cnpm设置新淘宝镜像
 npm install -g cnpm --registry=https://registry.npmmirror.com
 
 # 查看npm配置
