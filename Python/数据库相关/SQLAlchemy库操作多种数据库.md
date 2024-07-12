@@ -1,7 +1,7 @@
 # SQLAlchemy 简介
 - SQLAlchemy 是一个开源的 Python SQL 工具包，提供了一种灵活、高效的数据库访问方式。它支持多种数据库后端，包括 SQLite、MySQL、PostgreSQL 等，并且可以通过 ORM（对象关系映射）的方式操作数据库。相比于直接使用 SQL 语句，SQLAlchemy 提供了更加 Pythonic 的方式进行数据库操作。
 
-## 安装sqlalchemy
+## 安装sqlalchemy（笔记中sqlalchemy使用的版本是2.0.31）
 ~~~shell
 pip install sqlalchemy
 ~~~
