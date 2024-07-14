@@ -45,7 +45,7 @@ Vue是一套用于构建用户界面的渐进式JavaScript框架，渐进式的�
   - vue组件使用
   - vue-cli框架使用
   - vue通过ref查找元素或者vm对象
-  - props接收父组件传递的数据
+  - props接收组件标签上传递的数据
   - mixins混入复用公共代码
   - vue插件使用
   - vue组件模板的style样式设置
