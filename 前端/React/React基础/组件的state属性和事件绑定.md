@@ -122,6 +122,10 @@
         wind: "微风"
       }
 
+      // 注意标签事件绑定的 onXxx 中on后面的首字母需要大写，
+      // 这使用的不是原生的Dom事件，而是React的自定义合成事件
+      // React的事件处理是委托给最外层的元素
+      // 通过event.targer可以获取到发生事件的Dom元素对象
       render() {
         const { isHot, wind } = this.state
         return (
