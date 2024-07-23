@@ -1,19 +1,41 @@
 # 依赖样例
 
 ~~~xml
-            <!--依赖的第三方包声明        -->
-            <dependency>
-                <!--标签放的是不同组织的名字        -->
-                <groupId>org.junit.jupiter</groupId>
-                <!--标签放的是不同功能的名字        -->
-                <artifactId>junit-jupiter-engine</artifactId>
-                <!--标签放的是不同的版本号        -->
-                <version>5.6.0</version>
-                <!--test声明只在测试中可以使用第三方包，compile声明在生产和测试都可以使用，provided声明只在编译时有效在运行是无效的   -->
-                <scope>test</scope>
-            </dependency>
+<!--依赖的第三方包声明        -->
+<dependency>
+    <!--标签放的是组织名称或者公司域名的反写        -->
+    <groupId>org.junit.jupiter</groupId>
+    <!--标签放的是不同功能的名字        -->
+    <artifactId>junit-jupiter-engine</artifactId>
+    <!--标签放的是不同的版本号        -->
+    <version>5.6.0</version>
+    <!--test声明只在测试中可以使用第三方包，compile声明在生产和测试都可以使用，provided声明只在编译时有效在运行时由JDK或者某个服务器提供  -->
+    <scope>test</scope>
+</dependency>
 ~~~
 ---
+
+### 常见标签
+- groupId/artifactId/version是依赖的语义化版本
+- 依赖的scope标签
+  - 默认是compile，代表编译时需要用到该jar包
+  - runtime，代表编译时不需要用到该jar包，但是运行时需要用到该jar包
+  - provided，编译时需要用到，但是运行时由JDK或者某个服务器提供
+  - test，编译Test时需要用到该jar包
+- 通过 properties 标签即可自定义变量配置，然后使用 ${} 引用变量
+- 项目包含多个子项目时，通过 modules 标签即可实现子模块管理
+- 通过 parent 标签即可标记当前模块的父模块，且子模块将会继承父模块中的所有依赖配置。子模块若没有指定的 groupId 和 version 默认继承父模块中的配置。
+其中 relativePath 用于指定父模块的 POM 文件目录，省略时默认值为 ../pom.xml 即当前目录的上一级中，若仍未找到则会在本地仓库中寻找
+- 当一共项目包含多个模块，且多个模块引用了相同依赖时显然重复引用是不太合适的，而通过 dependencyManagement 即可很好的解决依赖共用的问题。
+将项目依赖统一定义在父模块的 dependencyManagement 标签中，子模块只需继承父模块并在 dependencies 引入所需的依赖，便可自动读取父模块 dependencyManagement 所指定的版本。dependencyManagement 既不会在当前模块引入依赖，也不会给其子模块引入依赖，但其可以被继承的，只有在子模块下同样声明了该依赖，才会引入到模块中，子模块中只需在依赖中引入 groupId 与 artifactId 即可, 也可以指定版本则会进行覆盖
+- 默认项目打包后 /resources 目录下文件都将统一打包进编译后的 JAR 文件，通过resource 标签可以设置打包时排除包中的配置文件，启动jar时只需将配置文件放置于 JAR 同级目录，这样方便修改配置文件
+- 在打包时可能出现无法识别工程主类的问题，导致编译后的文件无法正常运行，此时则可以在 pom 文件中手动设置工程的主类。一般是在 org.springframework.boot 的 spring-boot-maven-plugin 插件中配置 mainClass 标签
+
+### 插件
+- Maven 打包后的 JAR 文件，解压后 META-INF 目录用于存放工程的元数据信息（例如MANIFEST.MF文件），通过org.apache.maven.plugins 的maven-jar-plugin 插件即可在添加额外信息至打包后的 JAR 文件
+- 在普通 Maven 工程打包时默认仅会编译工程中新建的 java 文件并存储其 .class 文件，对于 POM 文件中引用的第三方依赖并不会一同打包，通过 org.apache.maven.plugins 的maven-assembly-plugin 插件即可将 POM 配置中的所有依赖一同打包编译至 JAR 文件中
+- Shade 插件的功能更为强大，其提供了两个功能：第一个即与 assembly 类似可实现依赖的打包编译，与 assembly 不同的是 Shade 提供了更灵活的执行策略，可指定需要打包编译的依赖集合。另一个即实现包的重命名功能，我们都知道 Maven 在一共工程中同时引入单个依赖的不同版本但是实际只会使用其中一个版本的依赖，而通过 Shade 插件即可实现二次包装从而绕开该限制
+- org.apache.maven.plugins 的 maven-compiler-plugin 插件可指定工程打包编译时使用的 JDK 版本，可根据服务器环境手动修改版本
 
 # 完整完整的Maven标签
 ~~~xml            
