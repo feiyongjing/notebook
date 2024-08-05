@@ -14,7 +14,7 @@ npm start
 
 ~~~
 
-# 项目结构
+# 初始化之后的项目结构
 ~~~
 my-app
 ├── README.md
