@@ -154,4 +154,14 @@
 </html>
 ~~~
 
+### 常见事件绑定
+- onChange事件，这是input独有的输入数据修改事件
+- checked事件，这是checkbox类型input标签的数据绑定
+- onClick事件，鼠标点击事件
+- onKeyDown事件，按下键盘事件
+- onMouseEnter事件，鼠标进入标签事件
+- onMouseLeave事件，鼠标离开标签事件
+
+
+
 
