@@ -95,7 +95,7 @@ export default {
 ~~~vue
 <template>
   <h2>我是Home的内容</h2>
-  <input type="text">
+  <input type="text"/>
 </template>
 
 <script>
@@ -118,8 +118,8 @@ export default {
     <div class="page-header"><h2>Vue Router Demo</h2></div>
 
     <!-- 原始html中我们使用a标签实现页面的跳转 -->
-    <!-- <a class="list-group-item active" href="./about.html">About</a> -->
-    <!-- <a class="list-group-item" href="./home.html">Home</a> -->
+    <!-- <a href="./about.html">About</a> -->
+    <!-- <a href="./home.html">Home</a> -->
 
     <!-- Vue中借助router-link标签实现路由的切换，最终router-link标签在浏览器中是a标签 -->
     <!-- 每一次切换组件后，原来的组件会被销毁而新的组件被创建 -->
