@@ -74,6 +74,9 @@ npm root -g
 # 原因是一般情况下代码仓库都是不会存储node_modules文件夹下的依赖包
 npm i 或者是 npm install
 
+# 查看已安装包的信息
+npm info [包名]
+
 # 删除已经安装的包
 npm remove [包名]
 # 简写
