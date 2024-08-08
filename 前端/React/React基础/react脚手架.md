@@ -23,6 +23,8 @@ my-app
 ├── .gitignore            // git排查文件版本追踪设置
 ├── public                // 静态资源文件夹
 │   ├── favicon.ico       // 网站页签图标
+│   ├── css               // 一般存放网站第三方的css
+│   │    └── bootstrap.js  
 │   ├── index.html        // 主页面(重要文件)
 │   ├── logo192.png       // logo图
 │   ├── logo512.png       // logo图

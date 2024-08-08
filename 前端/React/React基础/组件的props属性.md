@@ -56,12 +56,14 @@
 
       render() {
         // 读取通过在组件对象上的props属性
-        const { name, age, sex } = this.props
+        // 注意props中children默认是收集的标签体内容
+        const { name, age, sex, children} = this.props
         return (
           <div className='title'>
             <h3>姓名：{name}</h3>
             <h3>年龄：{age}</h3>
             <h3>性别：{sex}</h3>
+            <h3>爱好：{children}</h3>
           </div>
         )
       };
@@ -69,13 +71,13 @@
     }
 
 
-    // 设置自定义的标签属性，最终这些属性会存储在组件对象的props属性上
-    ReactDOM.render(<MyApp name='张三' age={15} sex='男' />, document.getElementById('test1'));
+    // 设置自定义的标签属性，最终这些属性会存储在组件对象的props属性上，并且默认会将标签体内容收集到props属性中children上
+    ReactDOM.render(<MyApp name='张三' age={15} sex='男'>篮球</MyApp>, document.getElementById('test1'));
 
     const user2 = { name: '李四', age: 20, sex: '男' }
-    ReactDOM.render(<MyApp {...user2} />, document.getElementById('test2'));
+    ReactDOM.render(<MyApp {...user2} children="足球" />, document.getElementById('test2'));
 
-    const user3 = { ...user2, name: '王舞', sex: '女' }
+    const user3 = { ...user2, name: '王舞', sex: '女' , children: "羽毛球"}
     ReactDOM.render(<MyApp {...user3} />, document.getElementById('test3'));
   </script>
 </body>
