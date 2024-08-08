@@ -38,14 +38,13 @@ export default class App extends Component {
 }
 ~~~
 
-### src/components/Message/Message.jsx Message组件向路由组件传递 path params参数
+### src/components/Message/Message.jsx Message组件向路由组件传递参数，并且将Message这个一般组件加工成拥有路由组件API的特殊组件 
 ~~~js
 import React, { Component } from 'react'
-import { NavLink, Route } from 'react-router-dom';
+import { NavLink, Route, withRouter } from 'react-router-dom';
 import Detail from '../../pages/Detail/Detail'
 
-export default class Message extends Component {
-
+class Message extends Component {
 
     state = {
         messageArr: [
@@ -90,9 +89,10 @@ export default class Message extends Component {
                                     {/* 传递具体的body params参数给路由组件 */}
                                     <NavLink to={{ pathname: '/detail', state: { id, title, content } }}>{title}</NavLink>
 
-                                    {/* 编程式路由导航，即手动触发事件进行路由导航，但是注意当前组件必须是路由组件，否则this.props中没有history */}
-                                    {/* <button onClick={() => this.pushShow(id, title, content)} >push跳转</button>
-                                    <button onClick={() => this.replaceShow(id, title, content)} > replace跳转</button> */}
+                                    {/* 编程式路由导航，即手动触发事件进行路由导航，但是注意当前组件必须是路由组件，否则this.props中没有history 
+                                        如果当前组件不是路由组件，请使用withRouter将其加工成拥有路由组件API的特殊组件  */}
+                                    <button onClick={() => this.pushShow(id, title, content)} >push跳转</button>
+                                    <button onClick={() => this.replaceShow(id, title, content)} > replace跳转</button> 
                                 </li>
                             )
                         })
@@ -115,13 +115,17 @@ export default class Message extends Component {
                 <Route path="/detail" component={Detail} />
 
 
-                {/* 路由的回退与前进，注意当前组件必须是路由组件，否则this.props中没有history */}
-                {/* <button onClick={this.goBock} >后退</button>
-                <button onClick={this.goForward} >前进</button> */}
+                {/* 路由的回退与前进，注意当前组件必须是路由组件，否则this.props中没有history 
+                    如果当前组件不是路由组件，请使用withRouter将其加工成拥有路由组件API的特殊组件   */}
+                <button onClick={this.goBock} >后退</button>
+                <button onClick={this.goForward} >前进</button>
             </div >
         )
     }
 }
+
+// 通过withRouter将一般组件可以加工成拥有路由组件API的特殊组件 
+export default withRouter(Message)
 ~~~
 
 ### src/pages/Detail/Detail.jsx Detail路由组件
