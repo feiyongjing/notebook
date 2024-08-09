@@ -62,8 +62,8 @@ class Message extends Component {
         this.props.history.replace(`/detail`, { id, title, content })
     }
 
-    goBock = () => {
-        this.props.history.goBock()
+    goBack = () => {
+        this.props.history.goBack()
     }
 
     goForward = () => {
@@ -117,7 +117,7 @@ class Message extends Component {
 
                 {/* 路由的回退与前进，注意当前组件必须是路由组件，否则this.props中没有history 
                     如果当前组件不是路由组件，请使用withRouter将其加工成拥有路由组件API的特殊组件   */}
-                <button onClick={this.goBock} >后退</button>
+                <button onClick={this.goBack} >后退</button>
                 <button onClick={this.goForward} >前进</button>
             </div >
         )

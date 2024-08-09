@@ -549,6 +549,8 @@ export default function(){
 // console.log(firstName)
 // console.log("英雄联盟在皇子的全名是",myGetName())
 
+// 注意自己的代码引入一般是通过相对路径引入，而第三方库的包是直接写名称然后到node_modules下查找
+
 // 使用*简化引入./export.js文件中的全部变量和函数，as为*添加别名，通过别名点变量名和函数名引用变量和函数
 import * as MyHello from "./export.js"
 console.log(MyHello.firstName)

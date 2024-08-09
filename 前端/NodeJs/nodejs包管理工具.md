@@ -32,6 +32,7 @@ npm init -y
 # 安装包，安装的包存放在node_modules文件夹下（开发依赖和生产依赖都安装在这里），
 # 而package-lock.json文件是用于固定包的安装信息确保现在和将来安装的包版本一致
 # 安装完包可以使用CommonJs引入包使用或者是ES6的模块化引入
+# 在一些情况下依赖不网站需要 rm -rf node_modules package-lock.json 后重新安装依赖
 npm install [包名]
 # 简写
 npm i [包名]
@@ -117,6 +118,7 @@ yarn global bin
 yarn global remove [包名]
 
 # 安装项目全部依赖
+# 在一些情况下依赖不网站需要 rm -rf node_modules yarn.json 后重新安装依赖
 yarn
 
 # 运行package.json中的脚本
