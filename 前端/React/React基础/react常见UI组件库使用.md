@@ -16,6 +16,7 @@ npm install antd
 - 注意ant-design UI v5版本默认就完成了按需引入样式，参考 https://blog.csdn.net/tuzi007a/article/details/129868891
 - antd/dist/reset.css 是用来重置一些基础样式
 - 如果环境不支持默认的 Tree Shaking 按需加载就参考 https://mobile.ant.design/zh/guide/import-on-demand/
+- 修改组件的样式请使用 ConfigProvider 组件，参考官网 https://ant.design/components/config-provider-cn?locale=zh-CN
 ~~~js
 import React, { Component } from 'react';
 import { Button, Modal, ConfigProvider } from 'antd';
