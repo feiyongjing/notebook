@@ -1,4 +1,4 @@
-# react组件通信redux基础使用
+# redux基础使用
 - 官网 https://cn.redux.js.org/
 
 ### 安装redux

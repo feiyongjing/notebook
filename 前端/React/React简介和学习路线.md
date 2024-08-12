@@ -17,10 +17,10 @@
 - react路由基本使用（有react-router-dom5和6两个版本）
 - react路由参数使用（有react-router-dom5和6两个版本）
 - react常见UI组件库使用
-- 组件通信redux基础使用
+- redux基础使用
 - redux异步action使用
 - react-redux库简化redux使用
-
+- redux实现组件通信
 
 
 
