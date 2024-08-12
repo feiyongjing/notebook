@@ -4,7 +4,7 @@ Pydantic 是一个用于数据验证和配置管理的 Python 库。它通过 Py
 
 ## pydantic 安装（笔记中使用的pydantic版本是2.7.1 pydantic-settings的版本是2.2.1）
 ~~~shell
-pip install pydantic
+pip install pydantic pydantic-settings
 ~~~
 
 ## Pydantic读取配置文件

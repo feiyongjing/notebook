@@ -1,16 +1,14 @@
-# react组件通信redux基础使用
+# redux异步action使用
 - 官网 https://cn.redux.js.org/
 
-### 安装redux或者reduxjs toolkit
-- Redux Toolkit是官方推荐的编写 Redux 逻辑的方法。封装了核心的 redux 包，包含构建 Redux 应用所必须的 API 方法和常用依赖 Redux Toolkit 集成了最佳实践，简化了大部分 Redux 任务，阻止了常见错误，并让编写 Redux 应用程序变得更容易
+### 安装redux和redux-thunk
 ~~~shell
 # redux
 npm install redux
 yarn add redux
 
-# reduxjs-toolkit
-npm install @reduxjs/toolkit
-yarn add @reduxjs/toolkit
+# redux-thunk是异步Action需要使用的
+npm install redux-thunk
 ~~~
 
 ### 项目目录
@@ -81,14 +79,14 @@ export default class App extends Component {
 }
 ~~~
 
-### src/components/Count/Count.jsx   redux的核心store配置
+### src/components/Count/Count.jsx   Count组件，有调用异步Action
 ~~~js
 import React, { Component } from 'react'
 // 自己创建的redux核心对象store
 import store from '../../redux/store' 
 
-// 引入自定义的action对象构建函数
-import {createIncrementAction, createDecrementAction} from '../../redux/count/create_count_action'
+// 引入自定义的action对象构建函数，createIncrementAsyncAction是创建异步Action函数
+import {createIncrementAction, createDecrementAction, createIncrementAsyncAction} from '../../redux/count/create_count_action'
 
 export default class Count extends Component {
 
@@ -126,10 +124,7 @@ export default class Count extends Component {
 
     incrementAsync = () => {
         const value = this.selectNumber.value * 1
-        setTimeout(() => {
-            store.dispatch(createIncrementAction(value))
-        }, 1000)
-
+        store.dispatch(createIncrementAsyncAction(value, 1000))
     }
 
     render() {
@@ -154,13 +149,17 @@ export default class Count extends Component {
 ### src/redux/store.js   redux的核心store配置
 ~~~js
 // 引入createStore函数用于创建redux的核心对象store
-import {createStore} from 'redux'  
+// applyMiddleware函数是开启中间件，具体开启什么中间件就看参数了，这里是开启 thunk 异步中间件
+import { createStore, applyMiddleware } from 'redux'
 
 // 引入自定义的reducer，每一个reducer都专为一个组件进行服务（这里是Count组件）
-import count_reducer from './count/count_reducer' 
+import count_reducer from './count/count_reducer'
+
+// 引入thunk异步中间件
+import {thunk} from 'redux-thunk'
 
 // 使reducer被store对象管理，整个应用只有一个store对象，它管理所有的reducer
-const store =createStore(count_reducer)
+const store = createStore(count_reducer, applyMiddleware(thunk))
 
 // 暴露store对象
 export default store;
@@ -191,8 +190,10 @@ export default function count_reducer(oldState=initState, action) {
 }
 ~~~
 
-### src/redux/count/create_count_action.js   与组件有关的action对象创建函数
+### src/redux/count/create_count_action.js   与组件有关的action对象创建函数，包含异步Action函数创建
 ~~~js
+import store from '../store' 
+
 // 定义不同的action操作常量
 export const INCREMENT="increment"
 export const DECREMENT="decrement"
@@ -200,6 +201,15 @@ export const DECREMENT="decrement"
 // 设置不同的action对象构建函数
 export const createIncrementAction= data => ({ type: INCREMENT, data})
 export const createDecrementAction= data => ({ type: DECREMENT, data})
+
+// 异步Action：Action的值是一个函数，并且在异步Action中一般会调用dispatch函数修改数据，参数是调用同步的Action对象
+export const createIncrementAsyncAction = (data, time) => {
+    return (dispatch)=>{
+        setTimeout(() => {
+            dispatch(createIncrementAction(data))
+        }, time)
+    }
+}
 ~~~
 
 
