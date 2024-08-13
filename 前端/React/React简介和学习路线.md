@@ -19,8 +19,14 @@
 - react常见UI组件库使用
 - redux基础使用
 - redux异步action使用
-- react-redux库简化redux使用
-- redux实现组件通信
+- react-redux库简化redux基础使用
+- redux-redux实现多组件通信
+- react项目打包运行
+- 
+- 
+
+
+
 
 
 
