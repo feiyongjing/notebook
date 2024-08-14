@@ -27,7 +27,7 @@
 - react扩展Hook（函数式组件方便使用state、生命周期钩子、ref）
 - react扩展Fragment组件标签（解决组件必须只能有一个根元素，导致结构破坏）
 - react扩展Context（父组件方便快捷的向后代组件传递数据）
-- 
+- react扩展PureComponent（优化组件不必要的渲染）
 - 
 - 
 
