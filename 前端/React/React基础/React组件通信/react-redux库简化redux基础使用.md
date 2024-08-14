@@ -67,7 +67,7 @@ root.render(
 reportWebVitals();
 ~~~
 
-###  src/App.js   APP组件
+### src/App.js   APP组件
 ~~~js
 import React, { Component } from 'react';
 import CountContainer from './containers/Count'
