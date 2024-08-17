@@ -1,6 +1,4 @@
-# react路由
-- react-router-dom是专用于web网页SPA（单页面）路由的react官方插件库
-
+# ReactRoute5路由基本使用
 
 ### 安装react-router-dom
 - 注意react-router-dom版本5和6的使用完全不同
@@ -135,6 +133,10 @@ export default class App extends Component {
 
 .aaa {
   background-color: aqua;
+}
+
+.bbb {
+  background-color: orange;
 }
 ~~~
 

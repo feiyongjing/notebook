@@ -1,4 +1,4 @@
-# react路由参数使用
+# ReactRoute5路由参数使用
 
 ### 项目目录
 - 以下几种路由参数使用都是这个项目结构
@@ -91,8 +91,8 @@ class Message extends Component {
 
                                     {/* 编程式路由导航，即手动触发事件进行路由导航，但是注意当前组件必须是路由组件，否则this.props中没有history 
                                         如果当前组件不是路由组件，请使用withRouter将其加工成拥有路由组件API的特殊组件  */}
-                                    <button onClick={() => this.pushShow(id, title, content)} >push跳转</button>
-                                    <button onClick={() => this.replaceShow(id, title, content)} > replace跳转</button> 
+                                    <button onClick={() => this.pushShow(id, title, content)} >push模式路由跳转</button>
+                                    <button onClick={() => this.replaceShow(id, title, content)} > replace模式路由跳转</button> 
                                 </li>
                             )
                         })
