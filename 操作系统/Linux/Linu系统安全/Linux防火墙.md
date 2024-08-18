@@ -1,5 +1,5 @@
 # Linux防火墙
-Linux 系统下的防火墙主要分为两层：第一层是对 IP 进行过滤的 iptables，第二层就是 tcp_wrappers
+Linux 系统下的防火墙主要分为两层：第一层是对 IP 和端口进行过滤，例如 iptables 等，第二层是应用层面的例如 waf、 tcp_wrappers等
 
 # iptables防火墙
 iptables 是集成在 Linux 内核中的包过滤防火墙系统。
@@ -20,7 +20,7 @@ iptables 是集成在 Linux 内核中的包过滤防火墙系统。
 
 ## iptables 的规则设置(其实就是报文过滤器和拦截器)，参考：https://blog.csdn.net/daocaokafei/article/details/115091313
 ~~~shell
-# 防火墙规则查看和设置
+# 防火墙规则查看和设置，注意四表都有默认规则，默认规则就是相当于在对应表的最后添加该表的其他规则都是拒绝或者放行（即明确设置的表规则优先级高）
 sudo iptables [-t table] [COMMAND] [chain] [CRETIRIA] -j [ACTION]
 # -t：指定需要维护的防火墙规则表 filter、nat、mangle或raw。在不使用 -t 时则默认使用 filter 表
 # COMMAND：子命令定义对规则的管理，下面会详细介绍
@@ -54,8 +54,12 @@ sudo iptables [-t table] [COMMAND] [chain] [CRETIRIA] -j [ACTION]
 #   --mac-source	设置匹配源MAC地址
 #   --sports	    设置匹配源端口，可以设置多个端口，例如不连续的 80,443 端口或连续的 8000-9000 端口
 #   --dports	    设置匹配目标端口，可以设置多个端口，例如不连续的 80,443 端口或连续的 8000-9000 端口
-#   --stste	        设置匹配状态（INVALID、ESTABLISHED、NEW、RELATED)
 #   --string	    设置匹配应用层字串
+#   --stste	        设置匹配的数据包状态（INVALID、ESTABLISHED、NEW、RELATED)，四种状态对于TCP、UDP、ICMP三种协议均有效
+#                   INVALID：表示无法识别状态的破损的数据包
+#                   ESTABLISHED：已经连接成功之后的数据包状态
+#                   NEW：建立新连接发送中的第一个包，状态就是NEW
+#                   RELATED：当一个连接和另外一个已处于ESTABLISHED状态的连接有关系时，这个连接传输的数据包被认为是RELATED的了
 
 
 # ACTION：触发动作详情如下
@@ -97,6 +101,29 @@ sudo iptables -A INPUT -p icmp --icmp-type 8 -j DROP   # 8代表echo-request
 # 例子8：添加规则允许接收其他主机 ping 的 icmp 数据包和允许ping 发送数据包给其他主机
 sudo iptables -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT   # 注意恢复时确定前面的规则是否还是有禁止规则
 sudo iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT  # 注意恢复时确定前面的规则是否还是有禁止规则
+
+# 例子9：设置net表规则实现共享上网，类似于阿里云NAT网关中的SNAT
+# 简单来说就是一台linux有两块网卡，比如eth0及eth1，eth0可以正常连接外网，eth1连接内部网络，那么可以通过iptables实现eth1内部网络上的设备共享eth0的网络，即linux充当网关的作用，操作如下
+# 开启linux内核ip地址转发 sudo sysctl -w net.ipv4.ip_forward=1 永久开启请编辑 /etc/sysctl.conf 文件添加 net.ipv4.ip_forward=1
+# 重启电脑或者网络服务
+# 修改eth1网卡同网段设备（需要真实物理连接）的 gateway 为eth1网卡IP地址
+# 设置A服务器的iptables规则，将非本机地址的ip包修改源地址后从连网的网口发出去
+sudo iptables -t nat -A POSTROUTING -s 172.10.1.0/24 -o eth0 -j MASQUERADE
+# -o eth0 的意思是设置包的出口为eth0（此处可依据实际可以正常上网的网卡名称来填写）
+# -s 设置eth1网卡同网段设备（需要真实物理连接）ip网段
+# -j MASQUERADE 的意思是将eth1网卡同网段设备（需要真实物理连接）ip转换为不固定的公网IP（公网IP地址会变化，所以写-j MASQUERADE）
+# 如果不使用-j MASQUERADE 也可以使用 --to-source [固定公网IP地址] 直接设置需要转换的固定目标公网IP地址
+
+# 例子10：设置net表实现IP和端口的内网穿透，类似于阿里云NAT网关中的DNAT
+# 简单来说就是两台linux服务器，它们在同一个内网中，其中一台有公网IP地址并简称A服务器，另一台没有公网IP地址简称B服务器，访问A服务器的公网IP加端口转发到B服务器开启的服务端口上，操作如下
+# B服务器配置 gateway 为 A服务器的内网IP地址
+# 设置A服务器的iptables规则
+sudo iptables -t nat -A PREROUTING -d 10.1.2.3 -p tcp --dport 9000 -j DNAT --to-destination 192.168.0.98:443
+# -d 10.1.2.3 设置的是A服务器的公网IP地址，对客户端来说是目标IP地址
+# -p tcp 设置的是客户端使用的协议
+# --dport 9000 设置A服务器的公网IP地址暴露的端口，对客户端来说目标端口号
+# -j DNAT 设置进行DNAT转发
+# --to-destination 192.168.0.98:443 设置B服务器的内网IP地址和端口号
 ~~~
 ---
 
@@ -122,6 +149,29 @@ iptables-restore < [文件名称]
 # 如果防火墙规则没有保存到系统默认防火墙规则文件中，则需要手动加载防火墙规则文件或者在 /etc/profile 文件中添加脚本在系统启动时加载防火墙规则
 ~~~
 ---
+
+## 生产环境防火墙规则配置案例
+~~~shell
+# 允许其他服务器访问当前服务器 22端口的ssh服务
+sudo iptables -A INPUT -p tcp --dports 22 -j ACCEPT
+
+# 允许本地回环网卡接收和输出数据包
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A OUTPUT -o lo  -j ACCEPT
+
+# 允许其他服务器访问当前服务器 80和443端口的服务
+sudo iptables -A INPUT -p tcp --dports 80,443 -j ACCEPT
+
+# 允许指定网段的服务器访问当前服务器，一般是设置内网或者是vpn的网段
+sudo iptables -A INPUT -s 10.0.0.0/24 -j ACCEPT
+
+# 允许TCP、UDP、ICMP三种协议的有状态连接
+sudo iptables -A INPUT --stste NEW,ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A OUTPUT --stste NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# 最后设置 INPUT 链路的默认规则，拒绝其他所有的输入数据包
+sudo iptables -P INPUT  DROP
+~~~
 
 # tcpwrraper轻量级防火墙
 ### 主要是设置软件的防火墙
@@ -160,5 +210,7 @@ PARANOID：正向解析与反向解析不对应的主机
 deny：主要用在/etc/hosts.allow定义“拒绝”规则，例如 sshd:192.168.111.120:deny
 allow：主要用在/etc/hosts.deny定义“允许”规则，例如 sshd:192.168.111.120:allow
 ~~~
+
+
 
 
