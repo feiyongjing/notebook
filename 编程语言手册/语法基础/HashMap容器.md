@@ -194,7 +194,7 @@ public class SequenceId {
 具体什么时候扩容，主要由table数组的大小（n）和装载因子（loadFactor）决定。当HashMap容器中的元素个数超过n * loadFactor时，就会触发扩容。其中，n * loadFactor在HashMap类中定义为属性threshold。
 
 在HashMap中，装载因子laodFactor的默认值为0.75，table数组的默认初始大小为16。也就说，当添加元素个数超过12（16*0.75）个时，HashMap容器就会触发第一次扩容。当然，我们也可以通过带参构造函数，自定义table数组的初始大小和装载因子，如下代码所示。
-
+~~~java
 //HashMap类的其中一个构造函数
 public HashMap(int initialCapacity, float loadFactor) {
     if (initialCapacity < 0)
@@ -208,8 +208,10 @@ public HashMap(int initialCapacity, float loadFactor) {
     this.loadFactor = loadFactor;
     this.threshold = tableSizeFor(initialCapacity);
 }
-前面讲到，为了便于使用位运算来实现取模运算，table数组的大小必须是2的幂次方，但是，如果通过构造函数，传入的参数initialCapacity不是2的幂次方，那么，又该怎么办呢？实际上，在上述代码中，使用tableSizeFor()函数就是为了解决这个问题。tableSizeFor()函数的代码实现如下所示。tableSizeFor()函数会寻找比initialCapacity大的第一个2的幂次方数。比如，tableSizeFor(7)=8，tableSizeFor(13)=16。
+~~~
 
+前面讲到，为了便于使用位运算来实现取模运算，table数组的大小必须是2的幂次方，但是，如果通过构造函数，传入的参数initialCapacity不是2的幂次方，那么，又该怎么办呢？实际上，在上述代码中，使用tableSizeFor()函数就是为了解决这个问题。tableSizeFor()函数的代码实现如下所示。tableSizeFor()函数会寻找比initialCapacity大的第一个2的幂次方数。比如，tableSizeFor(7)=8，tableSizeFor(13)=16。
+~~~java
 static final int tableSizeFor(int cap) {
     int n = cap - 1;
     n |= n >>> 1;
@@ -220,36 +222,36 @@ static final int tableSizeFor(int cap) {
     return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) 
                    ? MAXIMUM_CAPACITY : n + 1;
 }
-至于为什么上述代码可以获取某个数最邻近的2的幂次方数，对此我们不做证明。我们仅仅通过如下所示的一个例子来看下上述代码是如何工作的。
-
-imag
+~~~
 
 这里稍微解释一下，以免细心的你会有疑问，tableSizeFor(initialCapacity)的值赋值给了threshold，这似乎有些不对。因为tableSizeFor(initialCapacity)的值是table数组的大小，threshold是触发扩容的阈值，按理来说，tableSizeFor(initialCapacity)的值乘以loadFactor才应该是threshold。实际上，这是因为在创建HashMap对象时，table数组只声明未创建，其值为null。只有当第一次调用put()函数时，table数组才会被创建。但是，HashMap并没有定义表示table数组大小的属性，于是，tableSizeFor(initialCapacity)的值就暂存在了threshold属性中，当真正要创建table数组时，HashMap会使用如下所示代码，先使用threshold作为数组大小创建table数组，再将其重新赋值为真正的扩容阈值。
-
+~~~java
 this.table = new T[this.threshold];
 this.threshold *= this.factor;
+~~~
+
 装载因子的默认值0.75是权衡空间效率和时间效率，精心挑选出来的。在平时的开发中，我们不要轻易修改装载因子，除非我们对时间和空间有比较特殊的要求，比如，如果更关注时间效率，我们可以适当减小装载因子，这样哈希冲突的概率会更小，链表长度更短，增删改查操作更快，但空间消耗会更大；相反，如果更关注空间效率，我们可以适当增大装载因子，甚至可以将其设置为大于1，这样table数组中的空闲空间就更少，不过，这也会导致哈希冲突概率更大，链表长度更长，增删改查以及扩容都会变慢。
 
-六、动态扩容
+## 动态扩容
 当调用put()函数往HashMap容器中添加键值对之后，如果HashMap容器中键值对的个数是否超过threshold（table数组大小*装载因子），那么就会触发HashMap的动态扩容，即申请一个新的table[]数组，大小为原table数组的2倍，并将原table数组中的链表节点，一个一个的搬移到新的table[]数组中。
 
 在进行扩容时，HashMap会逐一处理table数组中的每条链表。在JDK8中，HashMap中的table数组还有可能存储的是红黑树而非链表（这点待会会讲）。因为红黑树的处理方法，跟链表的处理方法类似，所以，我们拿链表举例讲解。
 
 因为新的table数组大小newCap是原table数组大小oldCap的两倍，所以，一些节点在新table数组中的存储位置将会改变，我们需要重新计算其对应的数组下标。但因为每个节点的key的哈希值，已经存储在节点的hash属性中，所以，不需要调用哈希函数重新计算，只需要将节点node中存储的hash值跟newCap取模即可。取模操作仍然可以使用位运算来替代，也就是node.hash & (newCap-1)，由此得到节点node搬移到新的table数组中的位置下标。
 
-实际上，在JDK8中，新的位置下标并非通过node.hash跟newCap取模计算得到的，其计算过程做了更进一步的优化：如果node.hash & oldCap == 0，则节点在新table数组中的下标不变；如果node.hash & oldCap != 0，则节点在新table数组中的下标变为i+oldCap（i为节点在原table数组中的下标）。如下图举例所示，node.hash的二进制表示中，从右向左第5个二进制位为0的的节点，新的数组下标未变，从右向左第5个二进制位为1的的节点，新的数组下标为原下标+16（二进制10000）。
-
-imag
+实际上，在JDK8中，新的位置下标并非通过node.hash跟newCap取模计算得到的，其计算过程做了更进一步的优化：如果node.hash & oldCap == 0，则节点在新table数组中的下标不变；如果node.hash & oldCap != 0，则节点在新table数组中的下标变为i+oldCap（i为节点在原table数组中的下标）。
 
 HashMap依次扫描table数组中的每一条链表，根据节点在新table数组中的下标是否更改，将链表中的节点分配到lo链表或hi链表。lo链表中存储的是下标值未变的节点（节点在table数组中的位置下标为i，在新的table数组中的位置下标也是i），hi链表中存储的是下标值有所改变的节点（节点在新的table数组中的位置下标变为j）。扫描完一条链表之后，HashMap将lo链表存储到新的table数组中下标为i的位置，将hi链表存储到新的table数组中下标为j的位置。
 
-七、链表树化
+## 链表树化
 尽管我们可以通过装载因子，使HashMap容器中不会装载太多的键值对，但这只能限制平均链表长度，无法限制单个链表的长度。如下代码所示，12个键值对均存储在table数组中下标为1的链表中。虽然链表的平均长度为1，但是，最大链表长度为12。
-
+~~~java
 Map<Integer, String> map = new HashMap<>(); //默认table大小为16
 for (int i = 0; i < 12; ++i) { //16*0.75=12，超过12个键值对才扩容
   map.put(1+i*16, "value"+i);
 }
+~~~
+
 链表过长会导致HashMap性能下降，针对这个问题，JDK8做了一些优化。当链表中的节点个数大于等于8，并且table数组的大小大于等于64时，HashMap会将链表转化为红黑树。假设原链表中包含n个节点，那么，增删改查操作的时间复杂度为O(n)。当我们将链表转化为红黑树之后，增删改查操作的时间复杂度变为O(logn)，性能大大提高。我们把将链表转化为红黑树的过程叫做链表树化（treeify）。
 
 不过，链表树化比较耗时，并且，存储同样个数的节点，红黑树占用的空间要比链表更大（红黑树节点包含两个指针，而链表节点只包含一个指针），因此，我们希望链表树化极少发生。如果table数组长度小于64，即便链表中的节点个数大于等于8，那么，这种情况也不会触发链表树化，而是会触发动态扩容。HashMap试图通过扩容将长链表拆分为短链表。在小数据量的情况下，扩容要比树化更简单、更省时间。
@@ -257,13 +259,17 @@ for (int i = 0; i < 12; ++i) { //16*0.75=12，超过12个键值对才扩容
 跟树化相反的过程叫做反树化（untreeify）。当红黑树中节点个数较少时，HashMap会将红黑树重新转换回链表。毕竟维护红黑树平衡的成本比较高，对于少数节点来说，使用链表存储比使用红黑树存储更加高效。触发反树化的场景有两个：一个是删除操作，另一个是动态扩容。
 
 我们先来看删除操作。当删除操作执行完成之后，HashMap会检查红黑树是否需要进行反树化。不过，是否需要进行反树化，并非直接由红黑树中的节点个数来决定，而是由红黑树的树形结构来决定，如下代码所示。
-
+~~~java
 if (root == null || (movable && (root.right == null
                                  || (rl = root.left) == null
                                  || rl.left == null))) {
     tab[index] = first.untreeify(map);  // too small
     return;
 }
+~~~
+
 通过上述代码，我们反推得到这样的结论：触发反树化的红黑树的节点个数处于[2,6]之间。红黑树结构的不同，对应触发反树化的节点个数也不同，但当红黑树中节点个数超过6个时，肯定不会触发反树化。也就是说，尽管树化的阈值是8，但是反树化的阈值却不是8，而是[2,6]之间的某个数。之所以树化的阈值和反树化的阈值不相等，是为了避免频繁的插入删除操作，导致节点个数在7、8之间频繁波动，进而导致链表和红黑树之间频繁的转换。毕竟转换操作也是耗时的。
 
 我们再来看动态扩容。前面讲到，在进行动态扩容时，每一条链表都会分割为lo和hi两条链表，同理，每一个红黑树也会分割为lt和ht两个红黑树。lt中存储的是下标位置不变的节点，ht中存储的是下标位置变化的节点。不过，在构建lt和ht之前，HashMap会先统计下标位置不变的节点个数lc，以及下标位置变化的的节点个数hc。如果lc小于等于6，在新的table数组中，HashMap会使用链表来存储下标不变的节点。同理，如果hc小于等于6，在新的table数组中，HashMap会使用链表来存储下标改变的节点。
+
+
