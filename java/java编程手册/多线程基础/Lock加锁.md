@@ -601,34 +601,49 @@ ReadWriteLock rwLock = new ReentrantReadWriteLock(); //默认为非公平锁
 ## 读写锁的升级和降级
 绝大部分锁都是可重入锁，读写锁也不例外。一个线程获取读锁之后，在读锁释放前，还可以再次获取读锁。同理，一个线程获取写锁之后，在写锁释放前，还可以再次获取写锁。但是，一个线程在获取读锁之后，在读锁释放前，是否还能再获取写锁？还有一个线程在获取写锁之后，在写锁释放前，是否还能再获取读锁呢？
 
-读写锁不支持锁升级，也就是，一个线程获取读锁之后，在读锁释放前，不可以再获取写锁。这是因为在一个线程获取读锁时，有可能同时还有其他线程也获取了读锁。将其中一个线程的读锁升级为写锁，就有可能违背读写锁中读锁和写锁互斥的要求。
+读写锁不支持锁升级，也就是，一个线程获取读锁之后，在读锁释放前，不可以再获取写锁。这是因为在一个线程获取读锁时，有可能同时还有其他线程也获取了读锁。将其中一个线程的读锁升级为写锁，就有可能违背读写锁中读锁和写锁互斥的要求。会发生线程死锁，因为写锁是独占锁，而当前线程已经持有了读锁，必须等到它释放读锁后才能获得写锁。由于这个线程正在等待写锁，而写锁不能在它释放读锁之前被授予，这就造成了死锁情况
 读写锁支持锁降级，也就是，一个线程在获取写锁之后，在写锁释放前，可以再获取读锁。当写锁释放之后，线程持有的锁从写锁降级为读锁
 
 当临界区中既有写操作又有读操作时，如果我们用写锁来给整个临界区加锁，那么代码的并行度就不高。如果我们先加写锁，写操作完成之后释放写锁，再加读锁执行读操作。这样做就有可能存在多线程安全问题，无法保证写操作和读操作组合起来的原子性。写操作完成之后，切换到其他线程进行更新了共享变量的值，读操作就无法读取到其他线程最新写操作的值了。而使用锁降级，我们便既可以保证临界区线程安全，又能提到代码的并行度。如下
 ~~~java
-public class Demo {
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-  private ReadWriteLock rwLock = new ReentrantReadWriteLock();
-  private Lock rLock = rwLock.readLock(); //读锁
-  private Lock wLock = rwLock.writeLock(); //写锁
-  
-  public static void main(int idx, String elem) {
-    wLock.lock(); //加写锁
-    try {
-      // 写操作
-    } finally {
-      // 锁降级   
-      rLock.lock(); //加读锁
-      wLock.unlock(); //释放写锁
+public class ReadWriteLockExample {
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private int sharedData = 0;
+
+    public void writeAndRead() {
+        try (AutoLock writeLock = new AutoLock(lock.writeLock())) {
+            // 执行写操作
+            sharedData++;
+            System.out.println("Writing: " + sharedData);
+
+            try (AutoLock readLock = new AutoLock(lock.readLock())) {
+                // 执行读操作
+                System.out.println("Reading: " + sharedData);
+            }
+        }
     }
 
-    try {
-      // 读操作
-    } finally {
-      rLock.unlock(); //释放读锁
+    public static void main(String[] args) {
+        ReadWriteLockExample example = new ReadWriteLockExample();
+        example.writeAndRead();
     }
-  }
-  
+}
+
+class AutoLock implements AutoCloseable {
+    private final Lock lock;
+
+    public AutoLock(Lock lock) {
+        this.lock = lock;
+        this.lock.lock();
+    }
+
+    @Override
+    public void close() {
+        lock.unlock();
+    }
 }
 ~~~
 
@@ -975,7 +990,6 @@ public class Demo {
 ~~~
 
 在上述代码中，tryOptimisticRead()获取的是乐观读锁，返回一个时间戳stamp。因为乐观读锁并非真正加锁，所以，乐观读锁并不需要解锁。在执行完读操作之后，我们只需要验证stamp是否有被更改过，如果stamp有被更改过，那么，就说明执行读操作期间，writeLock()函数有被执行，也就说明有对共享资源的写操作发生（也就是执行了add()函数），此时，之前得到的结果需要作废，我们使用读锁来重新获取数据。
-
 
 
 
