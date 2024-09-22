@@ -14,8 +14,8 @@ public interface Lock {
     void lockInterruptibly() throws InterruptedException;   // 可中断锁，用于阻塞获取锁，如果阻塞期间线程被终止，就抛出异常，一般用于线程终止时抓取异常处理资源的关闭
     boolean tryLock();                                      // 非阻塞锁，尝试获取锁，不阻塞立即返回结果
     boolean tryLock(long time, TimeUnit unit) throws InterruptedException;  // 可超时锁，获取不到锁就阻塞等待一段时间，超过了设定的超时时间，线程仍然没有获取到锁就直接返回，并且是可被中断的
-    void unlock();
-    Condition newCondition();
+    void unlock(); // 解锁
+    Condition newCondition();  // 获取锁相关的条件变量
 }
 ~~~
 

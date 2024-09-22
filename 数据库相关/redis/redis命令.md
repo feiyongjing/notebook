@@ -6,6 +6,10 @@ redis-cli
 redis-cli -h host -p port -a password  
 # 如果在登录时不指定密码，则登录后使用命令无权限，需要使用 auth myPassword 验证密码获得权限
 
+# 也可以使用 redli 来连接redis，相比redis-cli来说 redli 更加支持windows，例如支持TLS加密连接
+redli -h xxx -p 6379 --tls --certfile xxx.pem
+
+
 # 切换数据区
 select [num]
 
