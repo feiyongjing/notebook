@@ -26,7 +26,7 @@ metadata:
   namespace: kube-system # pod所在的命名空间
 spec:
   initContainers:                    # initC容器的创建方式，可以创建多个容器
-  - image: xxx                       # 创建容器使用的镜像
+  - image: busybox                   # 创建容器使用的镜像，BusyBox 是一个轻量级的 Unix 工具集，通常用于构建小型容器。它包含了各种常见的 Linux 命令行工具，适合用于构建简单的容器或执行初始化任务
     name: coredns1                   # 创建出的容器的名字
     commend: ["/bin/sh","-c","echo Hello"]    # initC容器的退出命令
   containers:                        # mainC容器的创建方式，可以创建多个容器
