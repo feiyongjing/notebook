@@ -20,6 +20,7 @@ PI = 3.14
 # 数字类型：int、float
 
 # 布尔类型bool，只有True或者False。
+# None表示False
 # 0以外的数字转换为布尔都是True，而0转换为布尔是False。
 # ""以外的字符串转换为布尔都是True，而""字符串转换为布尔是False
 # []以外的列表转换为布尔都是True，而[]列表转换为布尔是False
