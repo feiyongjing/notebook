@@ -120,14 +120,14 @@ systemctl [参数] [服务名称]
 # /etc/systemd/system/                               — 这是自定义服务单元文件的推荐位置。文件放在这里后，系统启动时会加载这些单元。
 # /lib/systemd/system/ 或 /usr/lib/systemd/system/   — 这是系统安装时默认的服务单元文件目录，通常不要在这里放置自定义服务单元。
 # Systemd 默认从上述目录读取原始配置文件 
-# 而从/etc/systemd/system/multi-user.target.wants/读取自启动配置文件，但是，里面存放的大部分系统安装时默认的服务单元文件都是符号链接，指向原始配置文件
+# 而从/etc/systemd/system/multi-user.target.wants/读取自启动配置文件，里面可以有多个启动配置文件来启动多个服务，不过存放的大部分系统安装时默认的服务单元文件都是符号链接，指向原始配置文件
 systemctl cat docker  # 查看服务的Unit 配置文件内容和配置文件目录
 
 
 # 而systemctl enable命令用于在上面两个目录之间，建立符号链接关系。所有下面第一条命令等同与第二命令
 systemctl enable xxx.service   # 不加后缀名sysystemctl会默认后缀名为.service
 ln -s '/etc/systemd/system/xxx.service' '/etc/systemd/system/xxx.target.wants/xxx.service'
-# 如果配置文件里面设置了开机启动，systemctl enable命令相当于激活开机启动。
+# 如果配置文件里面设置了开机启动，systemctl enable命令相当于激活开机启动，然后根据/etc/systemd/system/xxx.target.wants/ 目录下的多个配置文件启动多个服务
 # 与之对应的，systemctl disable命令用于在两个目录之间，撤销符号链接关系，相当于撤销开机启动。
 
 # 查看Unit的依赖关系，即一个Unit A依赖于Unit B，就意味着 Systemd 在启动 A 的时候，同时会去启动 B
