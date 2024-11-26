@@ -117,14 +117,16 @@ systemctl [参数] [服务名称]
 # disable参数撤销开机启动
 
 # 每一个 Unit 都有一个配置文件，告诉 Systemd 怎么启动这个 Unit 
-# Systemd 默认从目录/etc/systemd/system/或者是/etc/systemd/system/multi-user.target.wants/读取配置文件。但是，里面存放的大部分文件都是符号链接，指向目录/usr/lib/systemd/system/，真正的配置文件存放在那个目录。
+# /etc/systemd/system/                               — 这是自定义服务单元文件的推荐位置。文件放在这里后，系统启动时会加载这些单元。
+# /lib/systemd/system/ 或 /usr/lib/systemd/system/   — 这是系统安装时默认的服务单元文件目录，通常不要在这里放置自定义服务单元。
+# Systemd 默认从上述目录读取原始配置文件 
+# 而从/etc/systemd/system/multi-user.target.wants/读取自启动配置文件，但是，里面存放的大部分系统安装时默认的服务单元文件都是符号链接，指向原始配置文件
 systemctl cat docker  # 查看服务的Unit 配置文件内容和配置文件目录
 
 
-# 而systemctl enable命令用于在上面两个目录之间，建立符号链接关系。所有下面第一条命令等同与第二和第三条命令的组合
-systemctl enable mysqld.service   # 不加后缀名sysystemctl会默认后缀名为.service
-ln -s '/usr/lib/systemd/system/mysqld.service' '/etc/systemd/system/multi-user.target.wants/mysql.service'
-ln -s '/usr/lib/systemd/system/mysqld.service' '/etc/systemd/system/mysql.service'
+# 而systemctl enable命令用于在上面两个目录之间，建立符号链接关系。所有下面第一条命令等同与第二命令
+systemctl enable xxx.service   # 不加后缀名sysystemctl会默认后缀名为.service
+ln -s '/etc/systemd/system/xxx.service' '/etc/systemd/system/xxx.target.wants/xxx.service'
 # 如果配置文件里面设置了开机启动，systemctl enable命令相当于激活开机启动。
 # 与之对应的，systemctl disable命令用于在两个目录之间，撤销符号链接关系，相当于撤销开机启动。
 
