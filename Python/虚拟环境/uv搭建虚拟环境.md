@@ -35,12 +35,13 @@ uv python list
 uv init [project-name] [-r requirements.txt]
 
 # 根据pyproject.toml进行安装下载依赖，同时修改pyproject.toml新增和移除依赖之后也是一样同步依赖库
-uv install
-# --force参数进行强制重新安装所有依赖
+# 并且创建一个项目默认的虚拟环境，默认的虚拟环境在当前目录下的 .venv 目录中
+uv sync
 
-# 在虚拟环境之外直接执行uv run 会默认在当前目录创建一个虚拟环境，默认的虚拟环境在当前目录下的 .venv 目录中
+# 在虚拟环境之外直接执行uv run 会使用项目默认的虚拟环境
 uv run
 # 无需指定程序入口，一般是配置在pyproject.toml中或者其他框架的配置文件中
+# 当然在虚拟环境之外也可以通过 --python 指定一个虚拟环境的python解释器（虚拟环境）执行，例如 uv run --python .venv/bin/python3.12 -- test.py
 ~~~
 
 ## 虚拟环境管理
