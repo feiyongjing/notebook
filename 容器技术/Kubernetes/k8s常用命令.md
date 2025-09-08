@@ -206,3 +206,26 @@ kubectl api-resources
 # `KIND`：这是资源对象的种类，例如 `Pod`、`Service`、`Deployment` 等
 # `VERBS`：这个列列出了你可以对这种资源执行的操作，例如 `get`、`list`、`create`、`delete` 等
 ~~~
+
+23. 查看连接集群的config配置
+~~~shell
+kubectl config view
+# kubectl config view 显示配置为空就需要按照以下方式获取配置
+
+# k3s 集群（最常见）k3s 的默认配置文件路径为 /etc/rancher/k3s/k3s.yaml，复制到 ~/.kube/config 即可：
+# 复制配置文件
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+# 修复权限（确保当前用户可读取）
+sudo chown $USER:$USER ~/.kube/config
+chmod 600 ~/.kube/config  # 安全权限，避免其他用户读取
+
+
+#rke2 集群配置文件路径为 /etc/rancher/rke2/rke2.yaml，操作同上：
+sudo cp /etc/rancher/rke2/rke2.yaml ~/.kube/config
+sudo chown $USER:$USER ~/.kube/config
+
+
+# 原生 Kubernetes（kubeadm）配置文件通常在 /etc/kubernetes/admin.conf：
+sudo cp /etc/kubernetes/admin.conf ~/.kube/config
+sudo chown $USER:$USER ~/.kube/config
+~~~

@@ -107,6 +107,9 @@ docker inspect [镜像或容器ID]
 #   WorkDir：这是覆盖所需的目录，它需要一个内部使用的空目录
 #   MergedDir：docker会通过Union File System（联合文件系统）将这些LowerDir下的目录和UpperDir下的目录联合挂载成完整的容器根目录
 # 
+
+# 查看容器的启动命令
+docker inspect --format '{{.Config.Cmd}}' 容器id 
 ~~~
 
 
