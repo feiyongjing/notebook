@@ -35,10 +35,7 @@ https://help.aliyun.com/document_detail/322237.html
 ssh -T git@fyj
 ~~~
 
-停止指定文件的版本控制，但该文件会保留在工作区      
-~~~shell
-git rm --cached [targetDir] 
-~~~
+
  
 
  
