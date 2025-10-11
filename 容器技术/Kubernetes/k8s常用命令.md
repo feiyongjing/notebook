@@ -207,9 +207,10 @@ kubectl api-resources
 # `VERBS`：这个列列出了你可以对这种资源执行的操作，例如 `get`、`list`、`create`、`delete` 等
 ~~~
 
-23. 查看连接集群的config配置
+23. 查看kubectl连接集群使用的config配置
 ~~~shell
 kubectl config view
+# 默认kubectl会读取~/.kube/config连接集群调用ApiServer
 # kubectl config view 显示配置为空就需要按照以下方式获取配置
 
 # k3s 集群（最常见）k3s 的默认配置文件路径为 /etc/rancher/k3s/k3s.yaml，复制到 ~/.kube/config 即可：
@@ -228,4 +229,29 @@ sudo chown $USER:$USER ~/.kube/config
 # 原生 Kubernetes（kubeadm）配置文件通常在 /etc/kubernetes/admin.conf：
 sudo cp /etc/kubernetes/admin.conf ~/.kube/config
 sudo chown $USER:$USER ~/.kube/config
+~~~
+
+24. kubeadm安装的集群使用kubectl连接不上报509证书过期
+~~~shell
+# kubeadm安装的集群证书和etcd的证书存储在 /etc/kubernetes/pki 目录下，这些证书的有效期默认是1年，根证书的有效期默认是10年
+# 查看当前集群证书的有效期
+kubeadm certs check-expiration
+
+# 提前备份集群证书
+cp -rf /etc/kubernetes/ /etc/kubernetes.bak
+
+# 提前备份etcd数据目录
+cp -rf /var/lib/etcd /var/lib/etcd.bak 
+
+# 集群证书的有效期更新续期1年
+kubeadm certs renew all
+
+# 更新完证书需要重启 apiServer、controller-manager、scheduler、etcd，这些组件都在kube-system命名空间下 kubectl get pods -n kube-system 
+kubectl delete pod -n kube-system [apiServer的pod名称] [controller-manager的pod名称] [scheduler的pod名称] [etcd的pod名称]
+
+# 查看组件启动状态 
+kubectl get pods -n kube-system 
+
+# 再查看当前集群证书的有效期可以看到续期到一年了
+kubeadm certs check-expiration
 ~~~
