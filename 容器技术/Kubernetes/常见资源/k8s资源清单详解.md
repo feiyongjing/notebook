@@ -320,7 +320,7 @@ metadata:
 spec: 
   type: ClusterIP                # svc的类型，默认是ClusterIP类型，如果是无头服务就不需要设置type，默认是ClusterIP类型，并且需要设置clusterIP: None，无头服务，无头服务可以跨名称空间访问，访问方式是 {svc的名称}.{svc所在的名称空间}.svc.cluster.local
   selector:                      # 标签匹配器
-    app: myappv1                 # 匹配POD的标签，标签key是app值是myappv1的标签
+    app: myappv1                 # 匹配POD的标签，标签key是app值是myappv1的标签，对应标签选择器匹配的是 Deployment 中 spec.template.metadata.labels 定义的 Pod 标签或者其他资源中的pod标签
     release: stabel              # 匹配POD的标签，标签key是release值是stabel的标签
   ports:                         # 指定端口集合
   - name: http                   # 端口映射名称

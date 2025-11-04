@@ -37,6 +37,9 @@ pip show [包名]
 # pip list | grep [package-name]
 # pip freeze | grep [package-name]
 
+# 导入包
+pip install -r requirements.txt
+
 ~~~
 ---
 
