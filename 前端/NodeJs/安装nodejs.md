@@ -24,6 +24,9 @@ nvm -v
 # 查看已经安装的所有nodejs版本
 nvm ls 
 
+# 查看可以安装的nodejs版本
+nvm list available
+
 # 可安装指定版本的nodejs
 nvm install [node版本号]
 
