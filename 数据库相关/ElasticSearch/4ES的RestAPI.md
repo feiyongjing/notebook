@@ -45,20 +45,31 @@ PUT /test1/_doc/1
 - 其他类型
 
 ### 新建一个索引并指定字段类型，然后后续就可以向里面放数据了
+- "number_of_shards": "3"        分片数
+- "number_of_replicas": "2"      副本数
+- "analyzer": "ik_max_word"      存入文档数据时选择用 ik_max_word （细粒度）类型IK分词器进行拆分文本然后倒排索引
+- "search_analyzer": "ik_smart"  搜索文档数据时选择用 ik_smart（粗粒度）类型IK分词器对 用户输入的搜索关键词 做粗粒度的拆分，只拆分出最核心、最精准的词语，目的是 “减少冗余匹配，提升搜索精准度
 ~~~
 PUT /test2
 {
+  "settings": {
+    "number_of_shards": "3",
+    "number_of_replicas": "2"
+  },
   "mappings": {
     "properties": {
-      "name":{
-        "type":"text"
+      "title": {
+        "type": "text",
+        "analyzer": "ik_max_word",    
+        "search_analyzer": "ik_smart" 
       },
-      "age":{
-        "type":"long"
+      "content": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
       },
-      "birthday":{
-        "type":"date"
-      }
+      "createTime": {"type": "date"},
+      "author": {"type": "keyword"}
     }
   }
 }
