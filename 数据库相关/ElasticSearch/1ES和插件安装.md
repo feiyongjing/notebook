@@ -58,6 +58,11 @@ http.cors.allow-origin: "*"
 # 设置汉化：找到和bin目录同级的config目录，进入后编辑kibana.yaml配置文件，使用如下设置
 i18n.locale: "zh-CN"
 
+# 设置ES连接配置，默认不写是连接localhost:9200
+elasticsearch.ssl.certificateAuthorities: [ "/etc/kibana/certs/http_ca.crt" ]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "password"
+elasticsearch.hosts: ["https://127.0.0.1:9200"]
 
 # windows启动bin下的bat文件，浏览器打开 http://localhost:5601/
 ~~~
