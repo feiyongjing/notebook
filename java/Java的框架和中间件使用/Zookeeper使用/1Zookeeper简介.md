@@ -16,6 +16,26 @@ ZooKeeper 是一个分布式的，开放源码的分布式应用程序协同服�
 - 持久顺序性的 znode (PERSISTENT_SEQUENTIAL): znode 除了具备持久性 znode 的特点之外，znode 的名字具备顺序性。自动生成唯一序号，适用于分布式锁、队列等场景
 - 临时顺序性的 znode (EPHEMERAL_SEQUENTIAL): znode 除了具备临时性 znode 的特点之外，znode 的名字具备顺序性。
 
+# Watcher机制
+ZooKeeper 中引入了Watcher机制来实现了发布/订阅功能能，能够让多个订阅者同时监听某一个对象，当一个对象自身状态变化时会通知所有订阅者
+### ZooKeeper提供了三种Watcher:
+- NodeCache:只是监听某一个特定的节点
+- PatriChildrenCache:监控一个ZNode的子节点
+- TreeCache:可以监控整个树上的所有节点，类似于PathChildrenCache和NodeCache的组合，也就是监听一个Znode节点和下面的所有后代子节点
+
+### zookeeper 的 watcher 机制，可以分为四个过程
+1. 客户端注册 watcher
+2. 服务端处理 watcher
+3. 服务端触发 watcher 事件
+4. 客户端回调 watcher
+
+# Zookeeper实现分布式锁的原理
+核心思想:当客户端要获取锁，则创建节点，使用完锁，则删除该节点。
+1. 客户端获取锁时，在lock节点下创建临时顺序节点。
+2. 然后获取lock下面的所有子节点，客户端获取到所有的子节点之后，如果发现自己创建的子节点序号最小，那么就认为该2客户端获取到了锁。使用完锁后，将该节点删除。
+3. 如果发现自己创建的节点并非lock所有子节点中最小的，说明自己还没有获取到锁，此时客户端需要找到比自己小的那个节点，同时对其注册事件监听器，监听删除事件。
+4. 如果发现比自己小的那个节点被删除，则客户端的Watcher会收到相应通知，此时再次判断自己创建的节点是否是lock子节点中序号最小的，如果是则获取到了锁，如果不是则重复以上步骤继续获取到比自己小的一个节点并注册监听。
+
 # Zookeeper安装
 1. 去https://zookeeper.apache.org/releases.html 下载对应版本的zookeeper压缩包解压缩
 2. 进入解压缩目录下的conf目录，把 zoo_sample.cfg 重命名为 zoo.cfg，然后修改配置
@@ -109,4 +129,7 @@ history
 # 查看帮助
 help
 ~~~
+
+
+
 
