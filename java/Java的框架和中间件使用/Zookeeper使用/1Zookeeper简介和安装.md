@@ -41,7 +41,7 @@ ZooKeeper 中引入了Watcher机制来实现了发布/订阅功能能，能够�
 2. 进入解压缩目录下的conf目录，把 zoo_sample.cfg 重命名为 zoo.cfg，然后修改配置
 ~~~
 # 存储内存中数据快照的位置，如果不设置参数，更新事务日志将被存储到默认位置。
-# 注意windows的路径需要使用双斜杠" \ "，例如 D:\\bigdata\\zookeeper\\3.6.4\\data
+# 注意windows的路径需要使用双斜杠"\"或者是反斜杠"/"，例如 D:\\bigdata\\zookeeper\\3.6.4\\data
 dataDir=/data/zookeeper
 
 # ZK 服务器端的监听端口  
@@ -49,7 +49,7 @@ clientPort=2181
 ~~~
 3. 设置环境变量：ZOOKEEPER_HOME=Zookeeper安装目录，环境变量Path添加%ZOOKEEPER_HOME%\bin
 4. 命令启动Zookeeper，windows启动直接执行zkServer就行了，linux有如下的管理命令
-~~~
+~~~shell
 # 启动Zookeeper
 zkServer start
 
@@ -65,7 +65,7 @@ zkServer restart
 
 # 客户端zkCli连接Zookeeper
 - 如需更友好的界面工具，可考虑：ZooInspector（图形化）、zk-shell（Python 工具，功能更强）
-~~~
+~~~shell
 # 当然如果配置了上面安装时第三步的环境变量，可执行命令可以直接写zkCli
 # 如果不指定 -server，默认连接 localhost:2181
 # Linux / macOS
@@ -80,7 +80,7 @@ quit
 
 ### zkCli客户端常见命令
 - 使用 zkCli 仅用于只读查询或测试环境调试，生产环境的操作应通过应用程序或管理平台完成，避免人为误操作修改删除重要节点
-~~~
+~~~shell
 # 列出指定路径下的子节点，根节点是 / ，类似根目录但是可以存放数据，并且都必须使用绝对路径
 ls [path]
 # -R参数：递归列出所有子节点（ZooKeeper 3.5.3+）
@@ -130,6 +130,7 @@ history
 help
 ~~~
 
-
+### Zookeeper可视化客户端安装
+- PrettyZoo安装下载：https://github.com/vran-dev/prettyzoo/releases
 
 

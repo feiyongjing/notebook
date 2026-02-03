@@ -48,13 +48,13 @@ dataDir=/data/zookeeper
 clientPort=2181
 ~~~
 3. 在每个zookeeper的 data 目录下创建一个 myid 文件，内容分别是1、2、3。这个文件就是记录每个服务器的ID
-~~~
+~~~shell
 echo 1>/usr/local/zookeeper-cluster/zookeeper-1/data/myid
 echo 2>/usr/local/zookeeper-cluster/zookeeper-2/data/myid
 echo 3>/usr/local/zookeeper-cluster/zookeeper-3/data/myid
 ~~~
 4. 在每一个zookeeper 的 zoo.cfg配置客户端访问端口(cientPort)和集群服务器IP列表。集群服务器IP列表如下
-~~~
+~~~shell
 vim /usr/local/zookeeper-cluster/zookeeper-1/conf/zoo.cfg
 vim /usr/local/zookeeper-cluster/zookeeper-2/conf/zoo.cfq
 vim /usr/local/zookeeper-cluster/zookeeper-3/conf/zoo.cfg
@@ -67,14 +67,14 @@ server.3=127.0.0.1:2883:3883
 
 5. 启动集群
 启动集群就是分别启动每个实例，报错也不要管，必须要过半数选出leader集群才算是正常启动了
-~~~
+~~~shell
 /usr/1ocal/zookeeper-cluster/zookeeper-1/bin/zkServer.sh start
 /usr/local/zookeeper-cluster/zookeeper-2/bin/zkServer.sh start
 /usr/local/zookeeper-cluster/zookeeper-3/bin/zkServer.sh start
 ~~~
 
 6. 查看节点状态
-~~~
+~~~shell
 # 选择其中一个节点进入bin目录下执行命令，Windows 下可以用 Git Bash、Cygwin 或 WSL 执行
 ./zkServer.sh status
 # 可以看到Mode: follower 或者 Mode: leader
