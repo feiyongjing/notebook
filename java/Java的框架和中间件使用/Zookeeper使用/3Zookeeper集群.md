@@ -46,6 +46,11 @@ dataDir=/data/zookeeper
 
 # ZK 服务器端的监听端口  
 clientPort=2181
+
+# 默认集群会开启开启 AdminServer控制台，可以通过浏览器访问：http://localhost:8080/commands
+# 如果不行占用8080端口，就修改端口为 8081（或其他未被占用的端口）或者直接关闭AdminServer控制台
+admin.enableServer=true
+admin.serverPort=8081
 ~~~
 3. 在每个zookeeper的 data 目录下创建一个 myid 文件，内容分别是1、2、3。这个文件就是记录每个服务器的ID
 ~~~shell

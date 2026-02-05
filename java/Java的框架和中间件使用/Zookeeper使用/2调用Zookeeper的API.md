@@ -51,7 +51,7 @@ public class ZKClientConfig {
     Integer connectionTimeoutMs;
 
     @Bean(destroyMethod = "close")
-    public CuratorFramework a(){
+    public CuratorFramework zkClient(){
         // connectString：指的是需要连接的zookeeperAddress ip和端口
         // sessionTimeoutMs：指的是会话超时时间
         // connectionTimeoutMs：指的是连接超时时间
