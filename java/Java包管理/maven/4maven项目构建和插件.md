@@ -98,6 +98,23 @@ mvn site-deploy
 - org.apache.maven.plugins 的 maven-compiler-plugin 插件可指定工程打包编译时使用的 JDK 版本，可根据服务器环境手动修改版本
 
 
+### 使用 Maven Wrapper 插件，确保每个人在项目中都能使用相同的 Maven 版本（mvnw）
+1. 使用以下命令为你的项目生成 Maven Wrapper（如果没有 wrapper 插件会自动下载）
+~~~shell
+mvn wrapper:wrapper
+# 执行上述命令后，你的项目目录中应该会出现以下新文件和目录：
+#   mvnw: 这是 Unix/Linux/macOS 系统上的 Maven Wrapper 启动脚本。
+#   mvnw.cmd: 这是 Windows 系统上的 Maven Wrapper 启动脚本。
+#   .mvn/wrapper/maven-wrapper.properties: 这个文件包含 Maven Wrapper 的配置信息，例如要使用的 Maven 版本和下载 URL。
+#   .mvn/wrapper/maven-wrapper.jar: 这是 Maven Wrapper 的核心 JAR 文件，它负责确保使用正确的 Maven 版本。
+~~~
+
+2. 使用mvnw替换mvn命令就可以使用 .mvn/wrapper/maven-wrapper.properties 中指定的maven版本构建项目了
+~~~shell
+./mvnw clean install
+~~~
+
+
 ### spring-boot-maven-plugin 插件使用
 spring-boot-maven-plugin 插件把 Spring Boot 项目打包成一个包含所有依赖的可执行 JAR，可以直接用 java -jar 运行
 以下是使用案例

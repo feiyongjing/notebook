@@ -2,6 +2,13 @@
 ~~~
 your-project/
 ├── pom.xml                                    # maven项目配置文件
+├── .mvn/                                       
+│   └── wrapper/
+│       ├── maven-wrapper.properties           # Maven Wrapper 的配置信息，例如要使用的 Maven 版本和下载 URL
+│       └── maven-wrapper.jar                  # Maven Wrapper 的核心 JAR 文件，它负责确保使用正确的 Maven 版本
+├── mvnw                                       # Unix/Linux/macOS 系统上的 Maven Wrapper 启动脚本
+├── mvnw.cmd                                   # Windows 系统上的 Maven Wrapper 启动脚本
+├── target/                                    # 编译后的字节码、打成的包[Jar、War]、测试报告等信息
 ├── src/
 │   ├── main/
 │   │   ├── java/                              # 开发目录
