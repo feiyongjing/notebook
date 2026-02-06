@@ -155,11 +155,11 @@ bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic
 broker.id=1 
 
 # 服务启动监听的节点ip地址和端口，如果只有一台服务器就需要更换3个端口9092、9093、9094
-# PLAINTEXT 为明文协议，需指定节点 IP，避免使用 localhost和127.0.0.1，建议设置0.0.0.0监听所有网卡，包括回环和物理网卡，如果设置127.0.0.1连接只能走本地回环，但 Windows 对回环连接的清理机制很慢，大量连接关闭后停留在 CLOSE_WAIT 状态，无法释放。然后 Kafka 内部通信线程被阻塞Controller 不断重连，但连接一直处于半关闭状态，无法正常通信Windows 网络栈处理更稳定
-listeners=PLAINTEXT://0.0.0.0:9092 
+# PLAINTEXT 为明文协议，需指定节点 IP，避免使用 localhost和127.0.0.1，建议设置为局域网ip地址
+listeners=PLAINTEXT://192.168.0.101:9092 
 
-# 广告地址（客户端实际连接的地址，默认与 listeners 配置一致在linux无需设置，但是windows需要明确告诉其他节点：“请通过 127.0.0.1 连接我”，避免地址解析问题。）
-advertised.listeners=PLAINTEXT://127.0.0.1:9092 
+# 广告地址（客户端实际连接的地址，默认与 listeners 配置一致在linux无需设置。）
+#advertised.listeners=PLAINTEXT://192.168.0.101:9092 
 
 # 每个节点下的日志目录（也是消息存储目录），需要提前创建好
 log.dirs=D:\kafka-3.8-node1\logs 
