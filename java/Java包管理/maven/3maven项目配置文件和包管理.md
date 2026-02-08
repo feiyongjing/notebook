@@ -43,6 +43,8 @@ Maven项目中的所有依赖包都可以Maven坐标通过在Maven仓库中找�
          test表示当前依赖仅参与测试，在编译、运行、打包时不会使用这个依赖
          runntime表示当前依赖参与打包、运行、测试，在编译时下不会被使用
          provided表示当前参与编译和测试，打包和运行时不需要，例如 spring-boot-devtools 依赖在生产运行是不需要热部署，所有可以设置为这个值
+
+         import 仅在 dependencyManagement 生效：用在 <dependencies> 块中无意义，并且import 只能用于 <type>pom</type> 的依赖，目标就是突破单父 POM 继承（parent标签）的限制，批量导入其他 POM 的 <dependencyManagement> 版本规则
          
          通过设置test和provided不参与打包可以避免一下不是必要的依赖被传递到其他项目，当然如果是必要的依赖也可以通过下面的optional设置依赖不要扩散到其他项目
     -->
