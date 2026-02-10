@@ -165,8 +165,15 @@ public class VerifyController {
         // 消息发送到topic类型的交换机，发送消息时指定RoutingKey，会将消息发送到BindingKey与RoutingKey匹配的队列，可以根据消息的一些属性等进行判断决定发送到的队列
         rabbitTemplate.convertAndSend(topicExchange, "china.abc", message+"china.abc");
         rabbitTemplate.convertAndSend(topicExchange, "abc.weather", message+"abc.weather");
-        rabbitTemplate.convertAndSend(topicExchange, "china.weather", message+"中国天气");
 
+        // 直接设置消息的过期时间，当然也可以在队列中设置，消息级的 expiration 有效期优先级高于队列级的 x-message-ttl 有效期
+        rabbitTemplate.convertAndSend(topicExchange, "china.weather", message+"中国天气", new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                message.getMessageProperties().setExpiration("10000");
+                return message;
+            }
+        });
 
         // 对象序列化发送
         User user = new User(message, 13);
@@ -185,7 +192,7 @@ public class VerifyController {
 
 5. 消息的接收消费
 - 通过 @RabbitListener的bindings属性可以设置交换机和队列的绑定关系，同时交换机和队列不存在也会创建对应的交换机和队列
-- 当然也可以通过手动创建队列、交换机和绑定关系的Bean,不过有些麻烦，没有消费者直接注解声明简便就不写对应例子了
+- 当然也可以通过手动创建队列、交换机和绑定关系的Bean（参考一：https://www.cnblogs.com/chengxy-nds/p/13217828.html  参考二：https://www.jianshu.com/p/f77a0b10c140）,不过有些麻烦，没有消费者直接注解声明简便就不写对应例子了
 ~~~java
 import com.entity.User;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -212,7 +219,7 @@ public class Consumer {
 
     // 声明队列、交换机的绑定关系，并且设置队列持久化，交换机类型，队列和交换机如果不存在会自动的进行创建，无需手动进行创建
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "hello1", declare = "true"),
+            value = @Queue(name = "hello1", durable = "true"),
             exchange = @Exchange(name = "fanout_test", type = ExchangeTypes.FANOUT))
     )
     public void processHello1Message(String content) {
@@ -222,7 +229,7 @@ public class Consumer {
 
     // direct 定向类型的交换机可以设置RoutingKey进行精确匹配
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "red_queue", declare = "true"),
+            value = @Queue(name = "red_queue", durable = "true"),
             exchange = @Exchange(name = "direct_test", type = ExchangeTypes.DIRECT),
             key = {"red"}
     ))
@@ -231,7 +238,7 @@ public class Consumer {
     }
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "blue_queue", declare = "true"),
+            value = @Queue(name = "blue_queue", durable = "true"),
             exchange = @Exchange(name = "direct_test", type = ExchangeTypes.DIRECT),
             key = {"blue"}
     ))
@@ -242,7 +249,7 @@ public class Consumer {
 
     // topic类型的交换机可以设置RoutingKey进行模糊匹配
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "china_queue", declare = "true"),
+            value = @Queue(name = "china_queue", durable = "true"),
             exchange = @Exchange(name = "topic_test", type = ExchangeTypes.TOPIC),
             key = {"china.#"}
     ))
@@ -251,7 +258,7 @@ public class Consumer {
     }
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "weather_queue", declare = "true"),
+            value = @Queue(name = "weather_queue", durable = "true"),
             exchange = @Exchange(name = "topic_test", type = ExchangeTypes.TOPIC),
             key = {"#.weather"}
     ))
@@ -262,7 +269,7 @@ public class Consumer {
 
     // 接收序列化对象消息
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "user_queue", declare = "true"),
+            value = @Queue(name = "user_queue", durable = "true"),
             exchange = @Exchange(name = "object_test", type = ExchangeTypes.DIRECT),
             key = {"User"}
     ))
@@ -285,7 +292,7 @@ public class Consumer {
 1. 配置文件添加配置
 - 设置重连机制避免网络波动
 - 开启publisher-confirm-type确认ACK
-- 开启publisher-returns获取发送失败的消息和详细原因（一般使用的比较少，因为有publisher-confirm-type确认ACK，但是如果消息无法路由到队列的消息会直接丢弃，但是ack是返回ok的，这种ack正常但是消息丢失的情况需要开启这个配置查看详细原因）
+- 开启publisher-returns获取发送失败的消息和详细原因（一般使用的比较少，因为有publisher-confirm-type确认ACK，但是如果消息无法路由到队列的消息会直接丢弃，但是ack是返回ok的，这种ack正常但是消息丢失的情况需要开启这个配置查看详细原因，又比如使用延迟消息插件，然后向延迟交换机中发送消息也是会报ack正常但是找不到路由队列）
 ~~~yml
 spring:
   rabbitmq:
@@ -418,30 +425,212 @@ spring:
 在开启重试模式后，重试次数耗尽，如果消息依然失败，则需要有MessageRecoverer接口来处理，它包含三种不同的实现:
 - RejectAndDontRequeueRecoverer：重试耗尽后，直接reject，丢弃消息。默认就是这种方式（一定不能使用这种，消息丢失不可取）
 - ImmediateRequeueMessageRecoverer：重试耗尽后，返回nack，消息重新入队（不建议使用，因为重新入队还是大概率会失败）
-- RepublishMessageRecoverer：重试耗尽后，将失败消息投递到指定的交换机（建议使用这种方式，重试多次依旧失败的消息需要人工处理）
+- RepublishMessageRecoverer：重试耗尽后，将失败消息投递到指定交换机下的队列（建议使用这种方式，重试多次依旧失败的消息需要人工处理）
+
+全局的死信队列配置（不推荐，全局的死信队列不够灵活，而且不是真正的绑定了死信队列，只有在有消费者重试耗尽失败抛出异常才会发送到设定好的交换机和队列进行处理，要是发送消息时对消息设置expiration有效期，则在mq队列中过期的消息是不会进入设定的交换机和队列。如果是需要使用死信队列还是建议直接在队列上进行绑定，参考下面单个队列的死信队列配置或者是手动的对队列进行绑定死信队列）
 ~~~java
 // 重试耗尽后，spring会自动的将消息投递到指定的交换机，可以在绑定该交换机的消息队列中看到具体的异常栈信息和该消息的原来所在的交换机名称、routingKey、以及消息内容等信息
 @Bean
 public MessageRecoverer republishMessageRecoverer(RabbitTemplate rabbitTemplate) {
     // 设置交换机和routingKey
     // 对于原本不同业务的消息消费失败可以通过routingKey进行划分将失败的消息发送到不同的队列中
+    // 注意这里的MessageRecoverer 是全局设置，对所有业务的不同的消息队列都生效
     return new RepublishMessageRecoverer(rabbitTemplate, "error.direct", "error");
 }
 ~~~
 
+单个队列的死信队列配置（推荐使用）
+配置方式一：消费者直接注解声明死信交换机和死信路由键，但是对应的死信交换机和死信队列需要手动的进行创建（当然也可以继续使用RabbitListener注解定义死信交换机和队列的消费者同时将死信交换机和队列一并创建出来）
+~~~java
+import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RabbitMQListener {
+
+    // 核心：在 @Queue 中通过 arguments 配置死信参数，一键绑定死信队列，但是注意对应的死信交换机和死信队列不会自动的进行创建
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(
+                    name = "china_queue",
+                    durable = "true",
+                    // 配置死信核心参数（RabbitMQ 原生参数，注解内直接声明）
+                    arguments = {
+                            // 1. 绑定死信交换机
+                            @Argument(name = "x-dead-letter-exchange", value = "dlx_topic_test"),
+                            // 2. 绑定死信路由键
+                            @Argument(name = "x-dead-letter-routing-key", value = "china.dlx"),
+                            // 3. 可选：消息过期时间（60秒）
+                            @Argument(name = "x-message-ttl", value = "60000", type = "java.lang.Long")
+                    }
+            ),
+            exchange = @Exchange(name = "topic_test", type = ExchangeTypes.TOPIC),
+            key = {"china.#"}
+    ))
+    public void processChinaQueueMessage(String content) {
+        System.out.println("收到了中国的消息：" + content);
+        throw new RuntimeException("消息处理出错了");
+    }
+
+    // 死信队列的消费者（同样用 @RabbitListener 极简声明，并且自动的创建了死信交换机和交换机）
+    // 如果原消息队列设置了消息有效期，那么过期的消息会进入死信队列，如果同时这个死信队列有消费者，可以使用死信队列的消费者做一些业务场景处理
+    // 这消息进入原消息队列过期然后进入死信队列被死信队列的消费者处理正好对应了延时消息业务的处理
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "china_dlx_queue", durable = "true"),
+            exchange = @Exchange(name = "dlx_topic_test", type = ExchangeTypes.TOPIC),
+            key = {"china.dlx"}
+    ))
+    public void processChinaDlxQueueMessage(String content) {
+        System.out.println("收到中国队列的死信消息：" + content);
+    }
+}
+~~~
+
+配置方式二：单独的进行创建配置
+~~~java
+@Configuration
+public class RabbitQueueConfig {
+
+    // 订单队列：绑定专属死信交换机 order.dlx.direct
+    @Bean("orderQueue")
+    public Queue orderQueue() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-dead-letter-exchange", "order.dlx.direct");     // 专属死信交换机
+        args.put("x-dead-letter-routing-key", "order.dlx");         // 专属死信路由键
+        args.put("x-message-ttl", 60000);                           // 可选：消息过期时间，过期的消息会进入死信队列
+        return QueueBuilder.durable("order.queue")
+                .withArguments(args)
+                .build();
+    }
+
+    // 声明订单队列的死信交换机和死信队列
+    @Bean("orderDlxExchange")
+    public Exchange orderDlxExchange() {
+        return ExchangeBuilder.directExchange("order.dlx.direct").durable(true).build();
+    }
+
+    @Bean("orderDlxQueue")
+    public Queue orderDlxQueue() {
+        return QueueBuilder.durable("order.dlx.queue").build();
+    }
+
+    @Bean
+    public Binding orderDlxBinding(@Qualifier("orderDlxQueue") Queue queue, @Qualifier("orderDlxExchange") Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with("order.dlx").noargs();
+    }
+
+}
+~~~
+
+配置方式三：手动的操作创建队列设置x-dead-letter-exchange和x-dead-letter-routing-key，并且把对应的死信交换机和死信队列创建出来
 
 
+## 延迟消息
+延迟消息的实现方式
+- 死信交换机和队列：通过设置原队列的消息有效期（直接在消息上设置或者队列上设置都行，消息级的 expiration 有效期优先级高于队列级的 x-message-ttl 有效期）过期，消息进入死信队列被死信队列的消费者处理，正好完成了延迟消息业务的处理，具体案例在上面的"单个队列的死信队列配置"
+- 延迟消息插件：通过mq的插件可以在消息发送时设置消息延迟时间 delay，而消费者端无需做代码任何修改
 
 
+### 死信交换机和队列
+如果队列通过dead-letter-exchange属性指定了一个交换机，那么该队列中的死信就会投递到这个交换机中。这个交换机称为死信交换机(Dead LetterExchange，简称DLX)。 同意还可以设置 Dead letter routing key 属性进行绑定死信交换机下的队列
+当一个队列中的消息满足下列情况之一时，就会成为死信(dead letter)
+- 消费者使用basic.reject或 basic.nack声明消费失败（简单点说就是消费者认为这个消息无法正常进行消费），并且消息的requeue参数设置为false
+- 消息是一个过期消息(达到了队列或消息本身设置的过期时间)，超时无人消费
+- 要投递的队列消息堆积满了，最早的消息可能成为死信
+
+### 延迟消息插件
+安装延迟消息插件和使用
+1. 去 https://www.rabbitmq.com/community-plugins 插件市场，搜索 rabbitmq_delayed_message_exchange 插件下载
+2. 将其放置到plugins目录下，如果是docker就要先停止容器，然后在对应挂载目录下找到plugins目录放入，重启容器，运行
+~~~shell
+# 将插件拷贝到容器内
+docker cp rabbitmq_delayed_message_exchange-3.9.0.ez rabbitmq:/plugins/
+
+# 进入容器并赋权、启用插件
+docker exec -it rabbitmq bash
+chmod 777 /plugins/rabbitmq_delayed_message_exchange-3.9.0.ez
+rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+
+# 验证插件是否启用
+rabbitmq-plugins list
+
+# 推出容器
+exit
+~~~
+
+3. 发送消息给延迟消息插件出来
+~~~java
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 
+@RestController
+@RequiredArgsConstructor
+public class VerifyController {
 
+    // topic类型的交换机
+    static String directExchange = "direct_test";
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
+    @GetMapping("/send/{message}")
+    public String sendMessage(@PathVariable String message) {
 
+        System.out.println("发送消息的时间" + LocalDateTime.now());
+        // 直接设置消息延迟消费的时长 delay
+        MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                message.getMessageProperties().setDelay(10000);
+//                message.getMessageProperties().setHeader("x-delay", 10000L);
+                return message;
+            }
+        };
 
+        rabbitTemplate.convertAndSend(directExchange, "china", message, messagePostProcessor);
+        return "一切正常";
 
+    }
+}
+~~~
 
+4. 消费者接收延迟消息进行消费
+~~~java
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+
+@Component
+public class Consumer {
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "china_queue", durable = "true"),
+            exchange = @Exchange(name = "direct_test",
+                    // RabbitMQ 延迟插件专属的交换机类型：delayed为true 设置交换机为延迟交换机（x-delayed-message）
+                    delayed = "true",
+                    // 延迟消息队列插件只能使用direct交换机，topic交换机无法使用
+                    type = ExchangeTypes.DIRECT,
+                    durable = "true"
+            ),
+            key = {"china"}
+    ))
+    public void processChinaQueueMessage(String content) {
+        System.out.println("接收消息的时间"+ LocalDateTime.now());
+        System.out.println("收到了中国的消息：" + content);
+    }
+}
+~~~
 
 
 
