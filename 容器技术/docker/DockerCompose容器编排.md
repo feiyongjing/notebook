@@ -56,6 +56,7 @@ version: "3"                # 资源清单的版本号
 services:                   # 定义有那些service的容器需要启动，下一节点的属性是service的名称
   web:                      # 定义service的名称
     build: .                # 定义镜像创建清单的 DockerFile 路径，如果同时指定了 build 和 image 那么会使用build提供的 DockerFile 创建镜像，image指定创建出来的新镜像镜像名称和版本
+    image: myApp:1.0.0      
     networks:               # 定义使用那些docker网络
       - my-bridge
     ports:                  # 定义service容器启动的端口号映射
@@ -63,11 +64,13 @@ services:                   # 定义有那些service的容器需要启动，下�
   redis:                    # 定义service的名称
     image: redis:alpine     # 直接定义镜像和版本，默认是docker hub 仓库拉取
     volumes:
-      - /opt/data:/var/lib/mysql:ro  # 设置宿主机挂载数据卷到容器中，并且最后的ro表示文件只读权限，默认是rw读写权限
-    ports:                  # 定义service容器启动的端口号映射
+      - redis_data:/data/db          # 方式一：使用设置好的卷进行挂载
+      - /opt/data:/var/lib/mysql:ro  # 方式二：设置宿主机挂载数据卷到容器中，并且最后的ro表示文件只读权限，默认是rw读写权限
+    ports:                           
       - "6379"              
     networks:               # 定义使用那些docker网络
       - my-bridge
+    restart: always         # 故障自动重启，保障可用性
     deploy:
       replicas: 2           # 定义启动的容器数量
       update_config:        # 定义更新配置
@@ -75,11 +78,12 @@ services:                   # 定义有那些service的容器需要启动，下�
         delay: 10s          # 更新一组容器之间的等待时间
       restart_policy:       # 配置是否以及如何在退出时重新启动容器
         condition: on-failure  # none（不重启）, on-failure（启动失败重启）、any（总是重启），默认any
-networks:                  # 设置自定义docker网络
-  my-bridge:               # 自定义的docker网络名称
-    drivace: bridge        # 设置该docker的网络类型
-volumes:                   # 设置的数据挂载卷，但是该数据卷一般是直接设置在service中
-  datavolume:              # 这是匿名卷，由docker引擎自动指定数据卷的宿主机目录，一般不使用该方式
+networks:                     # 设置自定义docker网络
+  my-bridge:                  # 自定义的docker网络名称
+    drivace: bridge           # 设置该docker的网络类型
+volumes:                      # 设置的数据挂载卷，但是该数据卷一般是直接设置在service中
+  test_data:                  # 这是匿名卷，由docker引擎自动指定数据卷的宿主机目录，一般不使用该方式
+  redis_data: /opt/data/redis # 设置卷供其他容器进行挂载使用   
 ~~~
 
  
