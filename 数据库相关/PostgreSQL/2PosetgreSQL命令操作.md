@@ -72,6 +72,9 @@ CREATE TABLE table_name(
 -- 删除数据表
 DROP TABLE [tablename];
 
+-- 删除表的数据，但不删除表结构
+TRUNCATE TABLE  table_name
+
 -- 给表添加列
 ALTER TABLE [table_name] ADD [column_name] datatype;
 
