@@ -1,5 +1,5 @@
 ## Grafana是什么？
-Grafana是一款用Go语言开发的开源数据可视化工具
+Grafana是一款用Go语言开发的开源数据可视化工具，可以做数据监控和数据统计，带有告警功能
 
 ## Grafana Docker安装
 Grafana Docker镜像有两个版本:
